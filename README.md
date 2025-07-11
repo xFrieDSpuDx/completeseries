@@ -24,11 +24,12 @@ Any changes to the hidden / unhidden books will be visible when you login again 
 ### Home page
 ![alt text](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HomePage.png)
 ### Results page
-
+![alt text](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/ResultsPage.png)
 ### Book modal
-
+![alt text](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/BooksModal.png)
 ### Hide books
-
+![alt text](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HideBooks.png)
 ### Hide Series
-
+![alt text](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HideSeries.png)
 ### Hidden books and series panel
+![alt text](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HiddenBooksAndSeries.png)
