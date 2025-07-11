@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Series Tracker</title>
+    <link rel="stylesheet" href="styles/style.css" />
+  </head>
+  <body>
+    <div id="form-container" class="form-container">
+      <form id="loginForm" novalidate>
+        <label for="serverUrl">AudiobookShelf Server URL</label>
+        <input
+          type="text"
+          id="serverUrl"
+          name="serverUrl"
+          placeholder="https://example.com"
+          required
+        />
+        <div class="error-message" id="urlError"></div>
+
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Username"
+          required
+        />
+        <div class="error-message" id="usernameError"></div>
+
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Password"
+          required
+        />
+        <div class="error-message" id="passwordError"></div>
+
+        <label for="audibleRegion">Audible Region:</label>
+        <select id="audibleRegion" name="audibleRegion" required>
+          <option value="uk">United Kingdom</option>
+          <option value="us">United States</option>
+          <option value="ca">Canada</option>
+          <option value="au">Australia</option>
+          <option value="fr">France</option>
+          <option value="de">Germany</option>
+          <option value="jp">Japan</option>
+          <option value="it">Italy</option>
+          <option value="in">India</option>
+          <option value="es">Spain</option>
+          <option value="br">Brazil</option>
+        </select>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="filterUnabridged" checked />
+          <label for="filterUnabridged" class="label-checkbox"
+            >Only include unabridged books</label
+          >
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="ignoreTitleMatch" checked />
+          <label for="ignoreTitleMatch" class="label-checkbox"
+            >Ignore matching titles in a series</label
+          >
+        </div>
+
+        <button type="submit">Login</button>
+      </form>
+    </div>
+
+    <div id="message" class="message">
+      <span id="spinner" class="spinner" style="display: none"></span>
+      <span id="statusText" class="statusText"></span>
+    </div>
+    <div id="seriesOutput"></div>
+    <div class="books-modal-overlay" id="modalOverlay"></div>
+    <div class="books-modal" id="booksModal">
+      <button class="books-modal-close" id="modalCloseBtn">&times;</button>
+      <div id="modalContent"></div>
+    </div>
+    <div id="visibilityOverlay"></div>
+
+    <div id="visibilityManager">
+      <button class="close-btn" id="closeVisibilityManager">✕</button>
+      <p style="color: #ccc; font-size: 0.95rem; margin-bottom: 10px">
+        Hidden books and series
+      </p>
+      <h3>Series</h3>
+      <div id="hiddenSeries" class="visibility-list"></div>
+      <h3>Books</h3>
+      <div id="hiddenBooks" class="visibility-list"></div>
+    </div>
+
+    <div id="burgerContainer">
+      <button id="settingsToggle" title="Show hidden items">☰</button>
+    </div>
+
+    <script src="scripts/main.js"></script>
+  </body>
+</html>
