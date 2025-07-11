@@ -5,7 +5,7 @@ I host a version of this at https://completeseries.lily-pad.uk if you don't want
 
 This is an initial draft of the code, very poorly written and horribly laid out. It will need a full refactor to be a viable long term product.
 
-# Use
+## Use
 On the form page enter your AudiobookShelf server URL, username and password. These are required to get a list of audiobooks and series from your AudiobookShelf server.
 By default it's expected that if you own a book in a series with a title you don't want any repeated titles. Unticking this option will allow duplicate names in a book series to be brought through.
 It is assumed you only want to see missing unabridged titles.
@@ -21,14 +21,14 @@ Individual books can also be removed from the returned results.
 The list of hidden books and series is stored in a cookie that is read when the page opens.
 Any changes to the hidden / unhidden books will be visible when you login again and reload the results page.
 
-# Home page
+### Home page
 
-# Results page
+### Results page
 
-# Book modal
+### Book modal
 
-# Hide books
+### Hide books
 
-# Hide Series
+### Hide Series
 
-# Hidden books and series panel
+### Hidden books and series panel
