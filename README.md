@@ -22,7 +22,7 @@ The list of hidden books and series is stored in a cookie that is read when the 
 Any changes to the hidden / unhidden books will be visible when you login again and reload the results page.
 
 ### Home page
-![alt text](https://github.com/xFrieDSpuDx/completeseries/blob/main/HomePage.png?raw=true)
+![alt text]([https://github.com/xFrieDSpuDx/completeseries/blob/main/HomePage.png?raw=true](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HomePage.png))
 ### Results page
 
 ### Book modal
