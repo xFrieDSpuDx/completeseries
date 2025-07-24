@@ -1,30 +1,75 @@
 <?php
+// existingSeriesFetcher.php
+
+// -----------------------------------------------------------------------------
+// This script fetches book or series metadata from audimeta.de based on input.
+// -----------------------------------------------------------------------------
+
 header('Content-Type: application/json');
 
-$type = $_GET['type'] ?? 'book'; // 'book' or 'series'
-$asin = $_GET['asin'] ?? null;
-$region = $_GET['region'] ?? 'uk';
+// -----------------------------------------------------------------------------
+// Step 1: Read and validate incoming JSON payload
+// -----------------------------------------------------------------------------
 
-if (!$asin || !in_array($type, ['book', 'series'])) {
+$rawInput = file_get_contents('php://input');
+$input = json_decode($rawInput, true);
+
+// Validate the input is a proper JSON object
+if (!is_array($input)) {
     http_response_code(400);
-    echo json_encode(['error' => 'Invalid or missing parameters']);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Invalid JSON input'
+    ]);
     exit;
 }
 
-if ($type === 'book') {
-    $url = "https://audimeta.de/book/{$asin}?cache=true&region={$region}";
-} else {
-    $url = "https://audimeta.de/series/{$asin}/books?region={$region}&cache=true";
+// Extract and sanitize input fields
+$type = $input['type'] ?? 'book';     // 'book' or 'series'
+$asin = trim($input['asin'] ?? '');
+$region = strtolower(trim($input['region'] ?? 'uk')); // Default to UK
+
+// Validate required fields
+if (!$type || !$asin || !$region) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Missing required fields: type, asin, or region'
+    ]);
+    exit;
 }
 
-$ch = curl_init($url);
-curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => ['Accept: application/json']
-]);
-$response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
+// -----------------------------------------------------------------------------
+// Step 2: Build the correct URL for the audimeta.de API
+// -----------------------------------------------------------------------------
 
-http_response_code($httpCode);
+if ($type === 'book') {
+    $endpoint = "https://audimeta.de/book/{$asin}?cache=true&region={$region}";
+} else {
+    $endpoint = "https://audimeta.de/series/{$asin}/books?region={$region}&cache=true";
+}
+
+// -----------------------------------------------------------------------------
+// Step 3: Perform cURL request to audimeta
+// -----------------------------------------------------------------------------
+
+$curl = curl_init($endpoint);
+
+curl_setopt_array($curl, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => [
+        'Accept: application/json',
+        'User-Agent: AudibleMetaBot/1.0 (+https://seriescomplete.lily-pad.uk)'
+    ]
+]);
+
+$response = curl_exec($curl);
+$httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+curl_close($curl);
+
+// -----------------------------------------------------------------------------
+// Step 4: Return response with appropriate status
+// -----------------------------------------------------------------------------
+
+http_response_code($httpStatus);
 echo $response;

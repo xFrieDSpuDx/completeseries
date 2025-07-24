@@ -61,9 +61,9 @@
           >
         </div>
         <div class="checkbox-row">
-          <input type="checkbox" id="ignoreTitleMatch" checked />
-          <label for="ignoreTitleMatch" class="label-checkbox"
-            >Ignore matching titles in a series</label
+          <input type="checkbox" id="includeSubSeries" />
+          <label for="includeSubSeries" class="label-checkbox"
+            >Include results for book subseries</label
           >
         </div>
 
@@ -81,13 +81,13 @@
       <button class="books-modal-close" id="modalCloseBtn">&times;</button>
       <div id="modalContent"></div>
     </div>
-    <div id="visibilityOverlay"></div>
 
     <div id="visibilityManager">
       <button class="close-btn" id="closeVisibilityManager">✕</button>
-      <p style="color: #ccc; font-size: 0.95rem; margin-bottom: 10px">
+      <div id="requestReloadDiv" class="request-reload">Onload hidden items now visible. Please reload to view change.</div>
+      <div>
         Hidden books and series
-      </p>
+      </div>
       <h3>Series</h3>
       <div id="hiddenSeries" class="visibility-list"></div>
       <h3>Books</h3>
@@ -98,6 +98,6 @@
       <button id="settingsToggle" title="Show hidden items">☰</button>
     </div>
 
-    <script src="scripts/main.js"></script>
+    <script type="module" src="scripts/main.js"></script>
   </body>
 </html>
