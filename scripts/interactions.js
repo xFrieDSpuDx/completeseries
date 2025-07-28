@@ -1,6 +1,6 @@
 // interactions.js
 
-import { populateHiddenItemsMenu, closeBookModal } from "../scripts/render.js";
+import { populateHiddenItemsMenu, getBookModalAnchor, emptyDivContent } from "../scripts/render.js";
 
 /**
  * Sets up event listeners for static UI interactions across the app.
@@ -13,9 +13,13 @@ export function initializeUIInteractions() {
   const booksModal = document.getElementById("booksModal");
   const visibilityManagerPanel = document.getElementById("visibilityManager");
   const openSettingsButton = document.getElementById("settingsToggle");
-  const closeVisibilityManagerButton = document.getElementById("closeVisibilityManager");
-  document.getElementById("bookDetailModalOverlay").addEventListener("click", closeBookModal);
-
+  const closeVisibilityManagerButton = document.getElementById(
+    "closeVisibilityManager"
+  );
+  const bookDetailModalOverlay = document.getElementById("bookDetailModalOverlay");
+  const bookDetailModal = document.getElementById("bookDetailModal");
+  const bookDetailContent = document.getElementById("bookDetailModalContent");
+  const closeBookDetail = document.getElementById("closeBookDetail");
 
   /**
    * Closes the books modal and overlay
@@ -32,6 +36,22 @@ export function initializeUIInteractions() {
   function closeVisibilityPanel() {
     visibilityManagerPanel.classList.remove("active");
     modalOverlay.classList.remove("active");
+  }
+
+  /**
+   * Closes the book detail modal and overlay
+   */
+  function closeBookDetailModal() {
+    closeBookDetail.classList.remove("active");
+    bookDetailModalOverlay.classList.remove("active");
+    bookDetailModal.style.pointerEvents = "none";
+    bookDetailModal.style.transform = getBookModalAnchor() || "translateX(-50%) scale(0)";
+    // After transition, hide modal and clear content
+    setTimeout(() => {
+      emptyDivContent(bookDetailContent);
+      bookDetailModal.classList.remove("active");
+      bookDetailModal.style.pointerEvents = "none";
+    }, 500); // match your transition duration
   }
 
   // Close modal when close button is clicked
@@ -58,6 +78,17 @@ export function initializeUIInteractions() {
 
   // Close the visibility manager panel from inside the panel
   if (closeVisibilityManagerButton) {
-    closeVisibilityManagerButton.addEventListener("click", closeVisibilityPanel);
+    closeVisibilityManagerButton.addEventListener(
+      "click",
+      closeVisibilityPanel
+    );
+  }
+
+  if (closeBookDetail) {
+    closeBookDetail.addEventListener("click", closeBookDetailModal);
+  }
+
+  if (bookDetailModalOverlay) {
+    bookDetailModalOverlay.addEventListener("click", closeBookDetailModal);
   }
 }

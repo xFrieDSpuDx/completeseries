@@ -1,4 +1,4 @@
-// render.js
+// --- Imports ---
 import {
   isCurrentlyHidden,
   toggleHiddenItem,
@@ -6,7 +6,25 @@ import {
   toggleHiddenItemVisibilityMenu,
   totalHiddenInSeries,
 } from "./visibility.js";
-import { showBooksModal, adjustModalWidth, toggleElementVisibilityFullEntity } from "../utils/uiFeedback.js";
+import {
+  showBooksModal,
+  adjustModalWidth,
+  toggleElementVisibilityFullEntity,
+} from "../utils/uiFeedback.js";
+
+// --- Modal Anchor State ---
+let bookDetailModalAnchor = null;
+
+/**
+ * Returns the current modal anchor transform string.
+ * @returns {string|null}
+ */
+export function getBookModalAnchor() {
+  return bookDetailModalAnchor;
+}
+
+// ================== SERIES & BOOK TILE RENDERING ==================
+
 /**
  * Entry point to render all series and book tiles.
  * @param {Array} groupedMissingBooks - Array of series objects with missing books.
@@ -15,63 +33,52 @@ export function renderSeriesAndBookTiles(groupedMissingBooks) {
   const outputElement = getHTMLElement("seriesOutput");
   const titleContent = getTitleContent(groupedMissingBooks);
 
-  // Add a title header
   addTextElement(titleContent, "h2", outputElement);
-
-  // Create the grid container for the series tiles
   const gridContainer = addSeriesGridContainer(outputElement);
 
-  // Render each series tile
   for (const seriesContent of groupedMissingBooks) {
     generateSeriesTiles(seriesContent, gridContainer);
   }
 }
 
 /**
- * Gets an HTML element by ID.
- * @param {string} elementId - The ID of the element to retrieve.
- * @returns {HTMLElement}
+ * Renders all book tiles for a given series in the modal.
+ * @param {Object} seriesContent - Series object with books.
  */
-function getHTMLElement(elementId) {
-  return document.getElementById(elementId);
-}
+function generateBookTiles(seriesContent) {
+  let booksModalContainer = document.getElementById("modalContent");
+  emptyDivContent(booksModalContainer);
 
-/**
- * Adds a text element like <h2>, <div>, etc. to the DOM.
- * @param {string} textContent - The content to insert.
- * @param {string} textStyle - The tag name (e.g. 'h2', 'div').
- * @param {HTMLElement} parentElement - The parent to append to.
- */
-function addTextElement(textContent, textStyle, parentElement) {
-  const textElement = document.createElement(textStyle);
-  textElement.textContent = textContent;
-  parentElement.appendChild(textElement);
-}
+  const seriesTitle = seriesContent.series;
+  addTextElement(seriesTitle, "h3", booksModalContainer);
 
-/**
- * Creates a <div> element and sets properties from a given object.
- * @param {Object} divObject - Object with property names and values.
- * @param {HTMLElement} parentElement - Where to append the div.
- * @returns {HTMLDivElement}
- */
-function addDivElement(divObject, parentElement) {
-  const divElement = document.createElement("div");
-  Object.assign(divElement, divObject);
-  parentElement.appendChild(divElement);
-  return divElement;
-}
+  const gridContainer = addSeriesGridContainer(booksModalContainer);
 
-/**
- * Creates an <img> element with given attributes.
- * @param {Object} imageObject - Object of attributes (e.g. src, alt).
- * @param {HTMLElement} parentElement - Where to append the image.
- * @returns {HTMLImageElement}
- */
-function addImageElement(imageObject, parentElement) {
-  const imageElement = document.createElement("img");
-  Object.assign(imageElement, imageObject);
-  parentElement.appendChild(imageElement);
-  return imageElement;
+  for (const bookContent of seriesContent.books) {
+    const bookTitle = bookContent.title;
+    const hideItemObject = hideItemObjectBuilder(
+      bookContent,
+      seriesTitle,
+      "book"
+    );
+    const seriesArray = bookContent.series;
+    const isHidden = isCurrentlyHidden(hideItemObject);
+    if (isHidden) continue;
+
+    const tileWrapper = addTileWrapper(bookContent, gridContainer);
+    const tileContainer = addSeriesTile(tileWrapper);
+
+    const seriesPositionValue = getPositionBySeriesName(
+      seriesArray,
+      seriesTitle
+    );
+
+    addSeriesBadge(tileContainer, seriesPositionValue);
+    addSeriesImage(tileContainer, bookContent, bookTitle);
+    addSeriesTitle(tileContainer, bookTitle);
+    const eyeBadge = addEyeBadge(tileContainer);
+    addEyeIcon(eyeBadge, tileWrapper, hideItemObject, isHidden);
+  }
 }
 
 /**
@@ -102,62 +109,56 @@ function generateSeriesTiles(seriesContent, outputElement) {
   addEyeIcon(eyeBadge, tileWrapper, hideItemObject, isHidden);
 }
 
-function generateBookTiles(seriesContent) {
-  let booksModalContainer = document.getElementById("modalContent");
-  // Empty books modal content
-  emptyDivContent(booksModalContainer);
-  const seriesTitle = seriesContent.series;
-  // Add a series header
-  addTextElement(seriesTitle, "h3", booksModalContainer);
-  // Create the grid container for the book tiles
-  const gridContainer = addSeriesGridContainer(booksModalContainer);
-  // Render each book tile
-  for (const bookContent of seriesContent.books) {
-    const bookTitle = bookContent.title;
-    const hideItemObject = hideItemObjectBuilder(
-      bookContent,
-      seriesTitle,
-      "book"
-    );
-    const seriesArray = bookContent.series;
-    const isHidden = isCurrentlyHidden(hideItemObject);
-    if (isHidden) {
-      continue;
-    }
-    const tileWrapper = addTileWrapper(bookContent, gridContainer);
-    const tileContainer = addSeriesTile(tileWrapper);
+// ================== DOM UTILITY FUNCTIONS ==================
 
-    const seriesPositionValue = getPositionBySeriesName(seriesArray, seriesTitle);
-
-    addSeriesBadge(tileContainer, seriesPositionValue);
-    addSeriesImage(tileContainer, bookContent, bookTitle);
-    addSeriesTitle(tileContainer, bookTitle);
-    const eyeBadge = addEyeBadge(tileContainer);
-    addEyeIcon(eyeBadge, tileWrapper, hideItemObject, isHidden);
-  }
+/**
+ * Gets an HTML element by ID.
+ * @param {string} elementId
+ * @returns {HTMLElement}
+ */
+function getHTMLElement(elementId) {
+  return document.getElementById(elementId);
 }
 
 /**
- * Finds the position value for a given series name.
- * Returns "N/A" if the value is null, undefined, or the series is not found.
- *
- * @param {Array<Object>} seriesArray - The array of series objects.
- * @param {string} seriesName - The name of the series to match.
- * @returns {string} - The position value or "N/A" if not available.
+ * Adds a text element like <h2>, <div>, etc. to the DOM.
+ * @param {string} textContent
+ * @param {string} textStyle
+ * @param {HTMLElement} parentElement
  */
-function getPositionBySeriesName(seriesArray, seriesName) {
-  const match = seriesArray.find(series => series.name === seriesName);
-  return match && match.position != null ? match.position : "N/A";
+function addTextElement(textContent, textStyle, parentElement) {
+  const textElement = document.createElement(textStyle);
+  textElement.textContent = textContent;
+  parentElement.appendChild(textElement);
 }
 
 /**
- * Generates a user-friendly title based on how many series exist.
- * @param {Array} groupedMissingBooks
- * @returns {string}
+ * Creates a <div> element and sets properties from a given object.
+ * @param {Object} divObject
+ * @param {HTMLElement} parentElement
+ * @returns {HTMLDivElement}
  */
-function getTitleContent(groupedMissingBooks) {
-  return `You have ${groupedMissingBooks.length} series with missing books.`;
+function addDivElement(divObject, parentElement) {
+  const divElement = document.createElement("div");
+  Object.assign(divElement, divObject);
+  parentElement.appendChild(divElement);
+  return divElement;
 }
+
+/**
+ * Creates an <img> element with given attributes.
+ * @param {Object} imageObject
+ * @param {HTMLElement} parentElement
+ * @returns {HTMLImageElement}
+ */
+function addImageElement(imageObject, parentElement) {
+  const imageElement = document.createElement("img");
+  Object.assign(imageElement, imageObject);
+  parentElement.appendChild(imageElement);
+  return imageElement;
+}
+
+// ================== TILE STRUCTURE HELPERS ==================
 
 function addSeriesGridContainer(parentElement) {
   return addDivElement({ className: "series-grid" }, parentElement);
@@ -175,11 +176,9 @@ function addTileWrapper(metaData, parentElement) {
       adjustModalWidth(metaData.books.length);
       showBooksModal();
     } else {
-      //window.open(metaData.link, "_blank").focus();
       openBookModal(metaData, tileWrapper);
     }
   });
-
   return tileWrapper;
 }
 
@@ -215,6 +214,8 @@ function addSeriesTitle(parentElement, textValue) {
 function addEyeBadge(parentElement) {
   return addDivElement({ className: "eye-badge" }, parentElement);
 }
+
+// ================== EYE ICON & VISIBILITY ==================
 
 function addEyeIcon(
   parentElement,
@@ -267,13 +268,12 @@ function addEyeIcon(
 
 function toggleTileMask(eyeIcon, maskParent) {
   eyeIcon.classList.toggle("eyeClosed");
-
   if (maskParent) {
     maskParent.classList.toggle("series-mask");
   }
 }
 
-function emptyDivContent(divElement) {
+export function emptyDivContent(divElement) {
   divElement.innerHTML = "";
 }
 
@@ -286,6 +286,11 @@ function hideItemObjectBuilder(metaData, seriesTitle, itemType) {
   };
 }
 
+// ================== HIDDEN ITEMS MENU ==================
+
+/**
+ * Populates the hidden items menu with series and books.
+ */
 export function populateHiddenItemsMenu() {
   const hiddenSeriesHTMLContainer = document.getElementById("hiddenSeries");
   const hiddenBooksHTMLContainer = document.getElementById("hiddenBooks");
@@ -310,17 +315,39 @@ export function populateHiddenItemsMenu() {
       const hiddenBookText = item.series + " - " + item.title;
       addTextElement(hiddenBookText, "span", hiddenItemDivContainer);
     }
-
     addEyeIcon(hiddenItemDivContainer, false, item, true, true);
   }
+}
+
+// ================== SERIES UTILITY ==================
+
+/**
+ * Finds the position value for a given series name.
+ * Returns "N/A" if not available.
+ * @param {Array<Object>} seriesArray
+ * @param {string} seriesName
+ * @returns {string}
+ */
+function getPositionBySeriesName(seriesArray, seriesName) {
+  const match = seriesArray.find((series) => series.name === seriesName);
+  return match && match.position != null ? match.position : "N/A";
+}
+
+/**
+ * Generates a user-friendly title based on how many series exist.
+ * @param {Array} groupedMissingBooks
+ * @returns {string}
+ */
+function getTitleContent(groupedMissingBooks) {
+  return `You have ${groupedMissingBooks.length} series with missing books.`;
 }
 
 function getItemSeries(hideItemObject) {
   const seriesTiles = document.querySelectorAll(".series-tile");
   let foundTile = false;
-
   seriesTiles.forEach((tile) => {
     const title = tile.querySelector(".series-title")?.textContent;
+
     if (title === hideItemObject.series) {
       foundTile = tile;
       return;
@@ -334,8 +361,13 @@ function updateSeriesMissingBookNumber(hideItemObject, isClosed) {
   if (hideItemObject.type === "series") {
     return;
   }
-  
+
   const parentTile = getItemSeries(hideItemObject);
+
+  if (!parentTile) {
+    return; // No parent tile found, nothing to update
+  }
+
   let missingBooksBadge = parentTile.querySelector(".series-badge");
   let visibleMissingBooks = parentTile.querySelector(".series-badge").innerHTML;
 
@@ -344,41 +376,139 @@ function updateSeriesMissingBookNumber(hideItemObject, isClosed) {
     toggleElementVisibilityFullEntity(parentTile.parentElement, true);
   } else {
     missingBooksBadge.innerHTML = Number(visibleMissingBooks) - 1;
-    toggleElementVisibilityFullEntity(parentTile.parentElement, false);
+
+    if (Number(visibleMissingBooks) === 1) {
+      toggleElementVisibilityFullEntity(parentTile.parentElement, false);
+    }
   }
 }
 
+// ================== MODAL LOGIC ==================
+
+/**
+ * Opens the book detail modal with transition from the clicked tile.
+ * @param {Object} metaData - Book metadata object.
+ * @param {HTMLElement} originElement - The tile element that was clicked.
+ */
 function openBookModal(metaData, originElement) {
   const modal = document.getElementById("bookDetailModal");
   const overlay = document.getElementById("bookDetailModalOverlay");
   const content = document.getElementById("bookDetailModalContent");
 
-  // Populate modal with metadata content
+  // Authors
+  const authorsHTML =
+    metaData.authors && metaData.authors.length
+      ? metaData.authors.map((a) => a.name).join(", ")
+      : "Unknown";
+  // Genres
+  const genresHTML =
+    metaData.genres && metaData.genres.length
+      ? metaData.genres.map((g) => g.name || g).join(", ")
+      : "Unknown";
+  // Narrators
+  const narratorsHTML =
+    metaData.narrators && metaData.narrators.length
+      ? metaData.narrators.map((n) => n.name || n).join(", ")
+      : "Unknown";
+  // Publisher
+  const publisherHTML = metaData.publisher || "Unknown";
+  // Release date
+  const releaseDate = metaData.releaseDate
+    ? new Date(metaData.releaseDate).toLocaleDateString()
+    : "Unknown";
+  // Length
+  const lengthHTML = metaData.lengthMinutes
+    ? Math.round(metaData.lengthMinutes / 60) + " hrs"
+    : "Unknown";
+  // Rating
+  const ratingHTML = metaData.rating ? metaData.rating.toFixed(2) : "N/A";
+  // Summary
+  const summaryHTML = metaData.summary
+    ? metaData.summary
+    : `${metaData.description || "No description available."}`;
+
+  // Set modal content
   content.innerHTML = `
-    <h2>${metaData.title}</h2>
-    <p>${metaData.author}</p>
-    <p>${metaData.description || "No description available."}</p>
-    <a href="${metaData.link}" target="_blank">View on Audible</a>
+    <div class="book-modal-header">
+      <a class="audible-btn" href="${
+        metaData.link
+      }" target="_blank" rel="noopener">View on Audible</a>
+    </div>
+    <div class="book-modal-main">
+      <div class="book-modal-image">
+        <img src="${metaData.imageUrl}" alt="${metaData.title}" />
+      </div>
+      <div class="book-modal-info">
+        <div class="book-modal-title">
+          <h2>${metaData.title}</h2>
+          ${
+            metaData.subtitle
+              ? `<h3 class="subtitle">${metaData.subtitle}</h3>`
+              : ""
+          }
+        </div>
+        <div class="book-modal-info-stacked">
+          <div><span class="section-header">Authors:</span> <span class="section-content">${authorsHTML}</span></div>
+          <div><span class="section-header">Narrator:</span> <span class="section-content">${narratorsHTML}</span></div>
+          <div><span class="section-header">Genres:</span> <span class="section-content">${genresHTML}</span></div>
+          <div><span class="section-header">Publisher:</span> <span class="section-content">${publisherHTML}</span></div>
+        </div>
+        <div class="book-modal-info-inline">
+          <span>
+            <span class="section-header">Release Date:</span>
+            <span class="section-content">${releaseDate}</span>
+            <span class="info-separator">|</span>
+          </span>
+          <span>
+            <span class="section-header">Length:</span>
+            <span class="section-content">${lengthHTML}</span>
+            <span class="info-separator">|</span>
+          </span>
+          <span>
+            <span class="section-header">Rating:</span>
+            <span class="section-content">${ratingHTML}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="book-modal-summary">
+      <div class="section-header">Summary:</div>
+      <div class="section-content">${summaryHTML}</div>
+    </div>
   `;
 
-  // Get origin position
+  // --- Transition effect ---
+  // Get tile center relative to viewport
   const rect = originElement.getBoundingClientRect();
-  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  const tileCenterX = rect.left + rect.width / 2;
+  const tileCenterY = rect.top + rect.height / 2;
 
-  modal.style.transform = `translate(${rect.left}px, ${rect.top + scrollTop}px) scale(0.2)`;
-  modal.style.opacity = "0";
-  modal.classList.add("active");
+  // Get modal center (final position)
+  const modalCenterX = window.innerWidth / 2;
+  const modalCenterY = window.innerHeight * 0.05 + modal.offsetHeight / 2;
 
-  // Force reflow before animating
-  requestAnimationFrame(() => {
-    modal.style.transition = "transform 0.4s ease, opacity 0.4s ease";
-    modal.style.transform = "translate(0, 0) scale(1)";
-    modal.style.opacity = "1";
-  });
-}
+  // Calculate offset from modal center to tile center
+  const offsetX = tileCenterX - modalCenterX;
+  const offsetY = tileCenterY - modalCenterY;
 
-export function closeBookModal() {
-  const modal = document.getElementById("bookDetailModal");
-  modal.classList.remove("active");
+  // Set initial transform: modal starts at tile center, scaled down
   modal.style.transition = "none";
+  modal.style.transform = `translate(calc(-50% + ${offsetX}px), ${offsetY}px) scale(0)`;
+  bookDetailModalAnchor = `translate(calc(-50% + ${offsetX}px), ${offsetY}px) scale(0)`;
+  modal.style.opacity = "0";
+  modal.style.pointerEvents = "auto";
+  modal.classList.remove("active");
+
+  // Force reflow for transition
+  void modal.offsetWidth;
+
+  // Animate to center and scale up
+  modal.style.transition =
+    "transform 0.5s cubic-bezier(0.77,0,0.175,1), opacity 0.5s cubic-bezier(0.77,0,0.175,1)";
+  requestAnimationFrame(() => {
+    modal.classList.add("active");
+    overlay.classList.add("active");
+    modal.style.transform = "translateX(-50%) scale(1)";
+    modal.style.opacity = "0.95";
+  });
 }
