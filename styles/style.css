@@ -465,14 +465,14 @@ label {
   padding: 0.625rem;
   border-bottom-right-radius: 0.75rem;
   width: 3.125rem;
-  height: 2.8125rem;
+  height: 3.125rem;
   box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.4);
 }
 
 #settingsToggle {
   position: fixed;
   top: 0;
-  left: 0.625rem;
+  left: 0.3rem;
   background: none;
   border: none;
   cursor: pointer;
