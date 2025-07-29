@@ -59,7 +59,7 @@ curl_setopt_array($curl, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER => [
         'Accept: application/json',
-        'User-Agent: AudibleMetaBot/1.0 (+https://seriescomplete.lily-pad.uk)'
+        'User-Agent: AudibleMetaBot/1.0 (+https://github.com/xFrieDSpuDx/completeseries)'
     ]
 ]);
 
