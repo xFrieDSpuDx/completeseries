@@ -28,12 +28,18 @@ export function hideSpinner() {
  * @param {boolean} show
  */
 export function toggleElementVisibility(elementId, show) {
-  const el = document.getElementById(elementId);
-  if (el) {
-    el.style.display = show ? "flex" : "none";
+  const targetElement = document.getElementById(elementId);
+  if (targetElement) {
+    targetElement.style.display = show ? "flex" : "none";
   }
 }
 
+/**
+ * Shows or hides an entire DOM element using flex display.
+ *
+ * @param {HTMLElement} element - The element to show or hide.
+ * @param {boolean} show - Whether to show (true) or hide (false) the element.
+ */
 export function toggleElementVisibilityFullEntity(element, show) {
   element.style.display = show ? "flex" : "none";
 }

@@ -1,7 +1,7 @@
 // visibility.js
 
-import { populateHiddenItemsMenu } from "../scripts/render.js";
-import { sortBySeriesThenTitle } from "../scripts/dataCleaner.js";
+import { populateHiddenItemsMenu } from "./tileVisibilityUpdater.js";
+import { sortBySeriesThenTitle } from "./dataCleaner.js";
 
 // Local storage key value
 const VISIBILITY_KEY = "hiddenItems";

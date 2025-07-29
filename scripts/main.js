@@ -1,10 +1,11 @@
 // main.js
 import { getFormData, validateForm, clearErrors } from "./formHandler.js";
-import { setMessage, showSpinner, hideSpinner, toggleElementVisibility } from "../utils/uiFeedback.js";
-import { collectBookMetadata, collectSeriesMetadata } from "../utils/metadataFlow.js";
+import { setMessage, showSpinner, hideSpinner, toggleElementVisibility } from "./uiFeedback.js";
+import { collectBookMetadata, collectSeriesMetadata } from "./metadataFlow.js";
 import { fetchExistingContent } from "./dataFetcher.js";
 import { removeHiddenSeries, findMissingBooks, groupBooksBySeries } from "./dataCleaner.js";
-import { renderSeriesAndBookTiles, populateHiddenItemsMenu } from "./render.js";
+import { renderSeriesAndBookTiles } from "./seriesTileBuilder.js";
+import { populateHiddenItemsMenu } from "./tileVisibilityUpdater.js";
 import { initializeUIInteractions } from "./interactions.js";
 
 document.addEventListener("DOMContentLoaded", () => {

@@ -1,9 +1,9 @@
 // metadataCollector.js
 
-import { fetchAudibleMetadata } from "../scripts/dataFetcher.js";
-import { setMessage } from "../utils/uiFeedback.js";
-import { removeHiddenBooks } from "../scripts/dataCleaner.js";
-import { isCurrentlyHidden } from "../scripts/visibility.js";
+import { fetchAudibleMetadata } from "./dataFetcher.js";
+import { setMessage } from "./uiFeedback.js";
+import { removeHiddenBooks } from "./dataCleaner.js";
+import { isCurrentlyHidden } from "./visibility.js";
 
 /**
  * Fetches metadata for a list of Audible book ASINs.

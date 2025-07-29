@@ -1,6 +1,7 @@
 // interactions.js
 
-import { populateHiddenItemsMenu, getBookModalAnchor, emptyDivContent } from "../scripts/render.js";
+import { populateHiddenItemsMenu } from "./tileVisibilityUpdater.js";
+import { bookDetailModalAnchor } from "./modalHandler.js";
 
 /**
  * Sets up event listeners for static UI interactions across the app.
@@ -25,33 +26,29 @@ export function initializeUIInteractions() {
    * Closes the books modal and overlay
    */
   function closeBooksModal() {
-    booksModal.classList.remove("active");
     modalOverlay.classList.remove("active");
-    seriesOutput.classList.remove("no-scroll");
+    booksModal.classList.remove("active");
   }
 
   /**
    * Closes the visibility manager panel and overlay
    */
   function closeVisibilityPanel() {
-    visibilityManagerPanel.classList.remove("active");
     modalOverlay.classList.remove("active");
+    visibilityManagerPanel.classList.remove("active");
   }
 
   /**
    * Closes the book detail modal and overlay
    */
   function closeBookDetailModal() {
-    closeBookDetail.classList.remove("active");
     bookDetailModalOverlay.classList.remove("active");
+    closeBookDetail.classList.remove("active");
     bookDetailModal.style.pointerEvents = "none";
-    bookDetailModal.style.transform = getBookModalAnchor() || "translateX(-50%) scale(0)";
-    // After transition, hide modal and clear content
-    setTimeout(() => {
-      emptyDivContent(bookDetailContent);
-      bookDetailModal.classList.remove("active");
-      bookDetailModal.style.pointerEvents = "none";
-    }, 500); // match your transition duration
+    bookDetailModal.style.transform = bookDetailModalAnchor || "translateX(-50%) scale(0)";
+    // Transition, hide modal, remove click events
+    bookDetailModal.classList.remove("active");
+    bookDetailModal.style.pointerEvents = "none";
   }
 
   // Close modal when close button is clicked
