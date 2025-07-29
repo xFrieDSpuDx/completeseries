@@ -41,7 +41,7 @@ body {
 
 /* ---------- ACCESSIBILITY FOCUS ---------- */
 a:focus,
-button:focus,
+button:focus:not(.filter-toggle-button),
 input:focus,
 select:focus,
 .audible-btn:focus {
@@ -76,6 +76,7 @@ form {
   flex-direction: column;
 }
 
+.filter-toggle-button,
 form input,
 form select,
 form button {
@@ -87,11 +88,23 @@ form button {
   width: 100%;
 }
 
+.filter-panel,
+.filter-toggle-button,
 form input,
 form select {
   background-color: var(--primary-bg);
   color: var(--text);
   border: 1px solid var(--border);
+}
+
+.filter-toggle-button.active {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.filter-panel {
+  border-top: 0;
+  border-radius: 0.375rem;
 }
 
 form select {
@@ -116,6 +129,7 @@ form select:focus {
   outline: none;
 }
 
+.filter-toggle-button:hover,
 form input:hover,
 form select:hover {
   border-color: var(--success);
@@ -125,11 +139,19 @@ form input::placeholder {
   color: #aaa;
 }
 
+.filter-panel.hidden {
+  display: none;
+}
+
 .checkbox-row {
   display: grid;
   grid-template-columns: 1em auto;
   gap: 0.5em;
   cursor: pointer;
+}
+
+.checkbox-row:hover {
+  background-color: var(--secondary-bg);
 }
 
 input[type="checkbox"] {
@@ -146,7 +168,7 @@ form button {
   margin-top: 1.25rem;
 }
 
-form button:hover {
+form button:hover:not(.filter-toggle-button) {
   background-color: var(--success-hover);
 }
 

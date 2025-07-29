@@ -14,12 +14,14 @@ export function initializeUIInteractions() {
   const booksModal = document.getElementById("booksModal");
   const visibilityManagerPanel = document.getElementById("visibilityManager");
   const openSettingsButton = document.getElementById("settingsToggle");
-  const closeVisibilityManagerButton = document.getElementById(
-    "closeVisibilityManager"
-  );
+  const closeVisibilityManagerButton = document.getElementById("closeVisibilityManager");
   const bookDetailModalOverlay = document.getElementById("bookDetailModalOverlay");
   const bookDetailModal = document.getElementById("bookDetailModal");
   const closeBookDetail = document.getElementById("closeBookDetail");
+  // Toggle visibility of the advanced filter panel
+  const advancedFilterToggle = document.getElementById("filterToggleButton");
+  const filterPanel = document.getElementById("filterPanel");
+  const iconSpan = document.getElementById("filterToggleIcon");
 
   /**
    * Closes the books modal and overlay
@@ -44,7 +46,8 @@ export function initializeUIInteractions() {
     bookDetailModalOverlay.classList.remove("active");
     closeBookDetail.classList.remove("active");
     bookDetailModal.style.pointerEvents = "none";
-    bookDetailModal.style.transform = bookDetailModalAnchor || "translateX(-50%) scale(0)";
+    bookDetailModal.style.transform =
+      bookDetailModalAnchor || "translateX(-50%) scale(0)";
     // Transition, hide modal, remove click events
     bookDetailModal.classList.remove("active");
     bookDetailModal.style.pointerEvents = "none";
@@ -80,11 +83,31 @@ export function initializeUIInteractions() {
     );
   }
 
+  // Add click event to the book modal close button
   if (closeBookDetail) {
     closeBookDetail.addEventListener("click", closeBookDetailModal);
   }
 
+  // Add click event to the book detail modal overlay
   if (bookDetailModalOverlay) {
     bookDetailModalOverlay.addEventListener("click", closeBookDetailModal);
+  }
+
+  // Ensure the required elements exist before attaching listeners
+  if (advancedFilterToggle && filterPanel && iconSpan) {
+    advancedFilterToggle.addEventListener("click", () => {
+      // Toggle active class for the button
+      advancedFilterToggle.classList.toggle("active");
+      // Determine current visibility state
+      const isVisible = filterPanel.style.display === "block";
+      // Toggle visibility
+      filterPanel.style.display = isVisible ? "none" : "block";
+      // Update icon arrow direction
+      iconSpan.textContent = isVisible ? "▼" : "▲";
+      // Update button text to reflect the state
+      advancedFilterToggle.querySelector("span").textContent = isVisible
+        ? "Show Filter Options"
+        : "Hide Filter Options";
+    });
   }
 }

@@ -12,6 +12,10 @@ export function getFormData() {
     region: document.getElementById("audibleRegion").value,
     onlyUnabridged: document.getElementById("filterUnabridged").checked,
     includeSubSeries: document.getElementById("includeSubSeries").checked,
+    ignoreMultiBooks: document.getElementById("ignoreMultiBooks").checked,
+    ignoreNoPositionBooks: document.getElementById("ignoreNoPositionBooks").checked,
+    ignoreSubPositionBooks: document.getElementById("ignoreSubPositionBooks").checked,
+    ignoreFutureDateBooks: document.getElementById("ignoreFutureDateBooks").checked,
   };
 }
 

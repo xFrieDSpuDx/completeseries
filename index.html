@@ -54,17 +54,38 @@
           <option value="br">Brazil</option>
         </select>
 
-        <div class="checkbox-row">
-          <input type="checkbox" id="filterUnabridged" checked />
-          <label for="filterUnabridged" class="label-checkbox"
-            >Only include unabridged books</label
-          >
-        </div>
-        <div class="checkbox-row">
-          <input type="checkbox" id="includeSubSeries" />
-          <label for="includeSubSeries" class="label-checkbox"
-            >Include results for book subseries</label
-          >
+        <!-- Filter Options Toggle -->
+        <button type="button" id="filterToggleButton" class="filter-toggle-button" style="display: flex; justify-content: space-between; width: 100%">
+          <span>Show Filter Options</span>
+          <span id="filterToggleIcon">▼</span>
+        </button>
+
+        <!-- Collapsible Filter Panel -->
+        <div id="filterPanel" class="filter-panel hidden">
+          <div class="checkbox-row">
+            <input type="checkbox" id="filterUnabridged" checked />
+            <label for="filterUnabridged" class="label-checkbox">Only include unabridged books</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="includeSubSeries" />
+            <label for="includeSubSeries" class="label-checkbox">Include results for book subseries</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="ignoreMultiBooks" />
+            <label for="ignoreMultiBooks" class="label-checkbox">Ignore multi-book audiobooks</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="ignoreNoPositionBooks" />
+            <label for="ignoreNoPositionBooks" class="label-checkbox">Ignore books with no position in a series</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="ignoreSubPositionBooks" />
+            <label for="ignoreSubPositionBooks" class="label-checkbox">Ignore books with a sub position in a series (e.g. #3.5)</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="ignoreFutureDateBooks" />
+            <label for="ignoreFutureDateBooks" class="label-checkbox">Ignore books that have not been released yet</label>
+          </div>
         </div>
 
         <button type="submit">Login</button>

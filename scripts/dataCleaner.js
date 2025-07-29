@@ -59,26 +59,79 @@ export function removeHiddenBooks(existingContent) {
  * @param {Array} seriesMetadata - Full metadata returned from Audible.
  * @returns {Array} - Array of book metadata objects missing from the library.
  */
-export function findMissingBooks(existingContent, seriesMetadata) {
-  const existingAsins = new Set(existingContent.map((book) => book.asin));
+export function findMissingBooks(existingContent, seriesMetadata, formData) {
+  const libraryASINs = new Set(existingContent.map(book => book.asin));
   const missingBooks = [];
 
   for (const series of seriesMetadata) {
-    for (const bookMetadata of series.response) {
-      const asin = bookMetadata.asin;
-      // Only add books that are viable, have an ASIN and are not duplicates of ones already added
-      if (
-        !existingAsins.has(asin) &&
-        isBookViable(bookMetadata) &&
-        !doesBookExistInArray(missingBooks, asin)
-      ) {
-        bookMetadata.seriesAsin = series.seriesAsin;
-        missingBooks.push(bookMetadata);
+    for (const book of series.response) {
+      const asin = book.asin;
+      const bookSeriesArray = book.series || [];
+      const releaseDate = book.releaseDate || new Date();
+
+      if (formData.ignoreNoPositionBooks && hasNoSeriesPosition(bookSeriesArray)) continue;
+      if (formData.ignoreMultiBooks && hasMultiplePositions(bookSeriesArray)) continue;
+      if (formData.ignoreSubPositionBooks && hasDecimalSeriesPosition(bookSeriesArray)) continue;
+      if (formData.ignoreFutureDateBooks && isReleaseInFuture(releaseDate)) continue;
+
+      const isViable = isBookViable(book);
+      const notAlreadyInLibrary = !libraryASINs.has(asin);
+      const notAlreadyInResults = !doesBookExistInArray(missingBooks, asin);
+
+      if (isViable && notAlreadyInLibrary && notAlreadyInResults) {
+        book.seriesAsin = series.seriesAsin;
+        missingBooks.push(book);
       }
     }
   }
 
   return missingBooks;
+}
+
+/**
+ * Determines whether a book has any associated series entry without a defined position.
+ *
+ * @param {Array<Object>} seriesArray - An array of series objects associated with a book.
+ * @returns {boolean} - True if any entry has a missing or undefined position ("N/A").
+ */
+function hasNoSeriesPosition(seriesArray) {
+  return seriesArray.some(entry => (entry.position || "N/A") === "N/A");
+}
+
+/**
+ * Determines whether a book belongs to a series entry that spans a range (e.g., "1-2").
+ *
+ * @param {Array<Object>} seriesArray - An array of series objects associated with a book.
+ *   Each object may contain a `position` field (e.g., "1", "1-2", "1.5").
+ * @returns {boolean} - True if any series entry has a hyphen in its position (e.g., multi-part volumes).
+ */
+function hasMultiplePositions(seriesArray) {
+  return seriesArray.some(entry => (entry.position || "N/A").includes('-'));
+}
+
+/**
+ * Checks whether a book belongs to a sub-position in a series (e.g., "1.5", "2.1").
+ *
+ * @param {Array<Object>} seriesArray - An array of series objects for a book.
+ * @returns {boolean} - True if any entry has a decimal-style position.
+ */
+function hasDecimalSeriesPosition(seriesArray) {
+  return seriesArray.some(entry => (entry.position || "N/A").includes('.'));
+}
+
+/**
+ * Checks if the given release date is today or a future date.
+ *
+ * @param {string|Date} releaseDateString - A date string (ISO format) or Date object.
+ *   If no release date is available, today's date should already be assigned by caller.
+ * @returns {boolean} - True if the release date is today or later.
+ */
+function isReleaseInFuture(releaseDateString) {
+  const releaseDate = new Date(releaseDateString);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  releaseDate.setHours(0, 0, 0, 0);
+  return today <= releaseDate;
 }
 
 /**

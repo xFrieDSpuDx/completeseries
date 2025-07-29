@@ -47,7 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // Remove existing content from the Audible return
       const missingBooks = findMissingBooks(
         existingContent.seriesAllASIN,
-        seriesMetadata
+        seriesMetadata,
+        formData
       );
       // Group books by series to make it easier to render
       const groupedMissingBooks = groupBooksBySeries(missingBooks, formData.includeSubSeries);
