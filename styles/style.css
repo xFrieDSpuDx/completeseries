@@ -541,6 +541,10 @@ body.modal-open {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     transform: translateX(0);
   }
+
+  #bookDetailModal.active {
+    transform: translateX(0);
+  }
 }
 
 /* ---------- MODAL CONTENT ---------- */

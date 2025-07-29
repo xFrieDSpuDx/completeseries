@@ -493,8 +493,13 @@ function openBookModal(metaData, originElement) {
 
   // Set initial transform: modal starts at tile center, scaled down
   modal.style.transition = "none";
-  modal.style.transform = `translate(calc(-50% + ${offsetX}px), ${offsetY}px) scale(0)`;
-  bookDetailModalAnchor = `translate(calc(-50% + ${offsetX}px), ${offsetY}px) scale(0)`;
+  if (window.innerWidth > 950) {
+    modal.style.transform = `translate(calc(-50% + ${offsetX}px), ${offsetY}px) scale(0)`;
+    bookDetailModalAnchor = `translate(calc(-50% + ${offsetX}px), ${offsetY}px) scale(0)`;
+  } else {
+    modal.style.transform = `translateX(0)`;
+    bookDetailModalAnchor = `translate(0, ${offsetY}px) scale(0)`;
+  }
   modal.style.opacity = "0";
   modal.style.pointerEvents = "auto";
   modal.classList.remove("active");
@@ -508,7 +513,11 @@ function openBookModal(metaData, originElement) {
   requestAnimationFrame(() => {
     modal.classList.add("active");
     overlay.classList.add("active");
-    modal.style.transform = "translateX(-50%) scale(1)";
+
+    if (window.innerWidth > 950) {
+      modal.style.transform = "translateX(-50%) scale(1)";
+    }
+
     modal.style.opacity = "0.95";
   });
 }
