@@ -1,37 +1,72 @@
-# Complete My Series
-Find audiobooks missing from a series you own. This works for Audible series only.
 
-I host a version of this at https://completeseries.lily-pad.uk if you don't want to roll out your own web service.
+# 📘 Complete My Series
 
-This is an initial draft of the code, very poorly written and horribly laid out. It will need a full refactor to be a viable long term product.
+**Identify missing audiobooks from the series you own**  
+*Designed for use with Audible series and AudiobookShelf.*
 
-## Use
-On the form page enter your AudiobookShelf server URL, username and password. These are required to get a list of audiobooks and series from your AudiobookShelf server.
-By default it's expected that if you own a book in a series with a title you don't want any repeated titles. Unticking this option will allow duplicate names in a book series to be brought through.
-It is assumed you only want to see missing unabridged titles.
+Live demo: [completeseries.lily-pad.uk](https://completeseries.lily-pad.uk)
 
-Once logged in the service makes calls to https://audimeta.de to get information about the series and books within them. It achieves this by finding the first book you have in each series and makes a request to https://audimeta.de to get the full book information. From here the exact series ASIN (unique id) is grabbed and then a further request is made to get all of the books in the series.
+---
 
-Once all of the books are found a unique array is made that contains only books missing from your series collection.
+## 🚀 Overview
 
-These missing books are then displayed on a results page. Clicking the series icon (first book icon in the series you are missing) it will open a modal to show all of the missing books. Clicking a book will open a detail modal showing key book details and exposing a button that when clicked takes you to the books Audible page to allow you to buy it.
+**Complete My Series** helps you find audiobooks missing from your library's series collections. It integrates with your AudiobookShelf server and uses data from [audimeta.de](https://audimeta.de) to determine which titles you're missing from each Audible series.
 
-Clicking the eye icon will mask the book or series and add it to the modal on the left (accessed via the burger menu) and will remove it from all subsequent requests. E.g. I own a sherlock holms book but have no interest in any more (and there are over 100) so hiding this reduces the bandwidth and doesn't clutter up the page. 
-Individual books can also be removed from the returned results.
-The list of hidden books and series is stored in a cookie that is read when the page opens.
-Any changes to the hidden / unhidden books will be visible when you login again and reload the results page.
+---
 
-### Home page
-![alt text](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HomePage.png)
-### Results page
-![alt text](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/ResultsPage.png)
-### Book modal
-![alt text](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/BooksModal.png)
-### Book Detail modal
-![alt text](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/BookDetails.png)
-### Hide books
-![alt text](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HideBooks.png)
-### Hide Series
-![alt text](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HideSeries.png)
-### Hidden books and series panel
-![alt text](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HiddenBooksAndSeries.png)
+## 🔧 Features
+
+- 🔐 Connects securely to your AudiobookShelf server  
+- 🔎 Automatically identifies missing books in Audible series  
+- 📚 Supports filtering for unique titles only (no duplicates)  
+- 🎭 Hide unwanted books or series to reduce clutter  
+- 💬 Full metadata view via modals, with direct links to Audible  
+- 🌍 Region support (UK, US, CA, AU, FR, DE, JP, IT, IN, ES, BR)
+
+---
+
+## 🧪 How to Use
+
+1. **Enter your AudiobookShelf credentials**  
+   - URL, username, and password are required to retrieve your audiobook and series list.
+
+2. **Choose your settings**  
+   - Default behavior: shows only unique, unabridged titles you're missing.  
+   - Uncheck "Ignore matching titles" to allow duplicates with the same name.
+
+3. **Discover missing books**  
+   - The app fetches your library, finds the first book in each series, then uses that to get the full series metadata from `audimeta.de`.
+
+4. **Review and buy**  
+   - Click a series tile to see all missing titles.  
+   - Click a book to see more info and a purchase link on Audible.
+
+5. **Hide content you don't want**  
+   - Use the 👁️ icon to hide series or books permanently.  
+   - Hidden items are tracked and can be managed from the sidebar (burger menu).
+
+---
+
+## 🖼️ Screenshots
+
+| Feature | Screenshot |
+|--------|------------|
+| 🏠 Home Page | ![HomePage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HomePage.png) |
+| 📊 Results Page | ![ResultsPage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/ResultsPage.png) |
+| 📚 Book Modal | ![BooksModal](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/BooksModal.png) |
+| 📖 Book Details | ![BookDetails](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/BookDetails.png) |
+| 🙈 Hide Individual Book | ![HideBooks](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HideBooks.png) |
+| 🚫 Hide Entire Series | ![HideSeries](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HideSeries.png) |
+| 👁️ Hidden Books & Series Modal | ![HiddenBooksAndSeries](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HiddenBooksAndSeries.png) |
+
+---
+
+## 📦 Deployment
+
+You can host your own version or use the one at [https://completeseries.lily-pad.uk](https://completeseries.lily-pad.uk). The project is fully client-side except for login and proxy components which rely on PHP.
+
+---
+
+## 📄 License
+
+MIT – Use it, improve it, share it.
