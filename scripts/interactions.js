@@ -19,7 +19,6 @@ export function initializeUIInteractions() {
   );
   const bookDetailModalOverlay = document.getElementById("bookDetailModalOverlay");
   const bookDetailModal = document.getElementById("bookDetailModal");
-  const bookDetailContent = document.getElementById("bookDetailModalContent");
   const closeBookDetail = document.getElementById("closeBookDetail");
 
   /**
