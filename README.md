@@ -63,7 +63,7 @@ Live demo: [completeseries.lily-pad.uk](https://completeseries.lily-pad.uk)
 
 ## 📦 Deployment
 
-You can host your own version or use the one at [https://completeseries.lily-pad.uk](https://completeseries.lily-pad.uk). The project is fully client-side except for login and proxy components which rely on PHP.
+You can host your own version or use the one at [https://completeseries.lily-pad.uk](https://completeseries.lily-pad.uk). The project is as client-side as possible, however AudiobookShelf login and audimeta proxy components rely on PHP to stop CORS issues.
 
 ---
 
