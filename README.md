@@ -6,6 +6,13 @@
 
 Live demo: [completeseries.lily-pad.uk](https://completeseries.lily-pad.uk)
 
+⚠️ Security & Server Use
+This project uses PHP to make server-side requests — specifically for authenticating with your AudiobookShelf server and proxying metadata queries to external APIs.
+
+⚠️ A word of caution:
+In many PHP-based projects, usernames, passwords, or URLs can be logged, either accidentally or intentionally. That is not the case here. This project's PHP scripts do not store or log any credentials or personal data.
+You can inspect the full source code in this repository to verify that yourself. If you have any concerns about privacy or want full control, it's strongly recommended to self-host this project on your own server.
+
 ---
 
 ## 🚀 Overview
