@@ -62,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error(err);
       toggleElementVisibility("form-container", true);
       setMessage(err.message || "Something went wrong. Please try again.");
+      setRateMessage("");
     } finally {
       hideSpinner();
     }
