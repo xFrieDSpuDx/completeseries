@@ -67,10 +67,6 @@
             <label for="filterUnabridged" class="label-checkbox">Only include unabridged books</label>
           </div>
           <div class="checkbox-row">
-            <input type="checkbox" id="includeSubSeries" />
-            <label for="includeSubSeries" class="label-checkbox">Include results for book subseries</label>
-          </div>
-          <div class="checkbox-row">
             <input type="checkbox" id="ignoreMultiBooks" />
             <label for="ignoreMultiBooks" class="label-checkbox">Ignore multi-book audiobooks</label>
           </div>
@@ -80,14 +76,34 @@
           </div>
           <div class="checkbox-row">
             <input type="checkbox" id="ignoreSubPositionBooks" />
-            <label for="ignoreSubPositionBooks" class="label-checkbox">Ignore books with a sub position in a series (e.g. #3.5)</label>
+            <label for="ignoreSubPositionBooks" class="label-checkbox">Ignore books with a sub position (e.g. #3.5)</label>
           </div>
           <div class="checkbox-row">
-            <input type="checkbox" id="ignoreFutureDateBooks" />
+            <input type="checkbox" id="ignoreFutureDateBooks" checked />
             <label for="ignoreFutureDateBooks" class="label-checkbox">Ignore books that have not been released yet</label>
           </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="ignoreTitleSubtitle" checked />
+            <label for="ignoreTitleSubtitle" class="label-checkbox">Ignore books with title and subtitle matches</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="ignoreSameSeriesPosition" checked />
+            <label for="ignoreSameSeriesPosition" class="label-checkbox">Ignore books with the same series position</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="ignoreTitleSubtitleInMissingArray" />
+            <label for="ignoreTitleSubtitleInMissingArray" class="label-checkbox">Only show first found version of Title and Subtitle</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="ignoreSameSeriesPositionInMissingArray" />
+            <label for="ignoreSameSeriesPositionInMissingArray" class="label-checkbox">Only show first found series position</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="includeSubSeries" />
+            <label for="includeSubSeries" class="label-checkbox">Include results for book subseries</label>
+          </div>
         </div>
-
+  
         <button type="submit">Login</button>
       </form>
     </div>

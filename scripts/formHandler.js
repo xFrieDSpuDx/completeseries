@@ -16,6 +16,10 @@ export function getFormData() {
     ignoreNoPositionBooks: document.getElementById("ignoreNoPositionBooks").checked,
     ignoreSubPositionBooks: document.getElementById("ignoreSubPositionBooks").checked,
     ignoreFutureDateBooks: document.getElementById("ignoreFutureDateBooks").checked,
+    ignoreTitleSubtitle: document.getElementById("ignoreTitleSubtitle").checked,
+    ignoreSameSeriesPosition: document.getElementById("ignoreSameSeriesPosition").checked,
+    ignoreTitleSubtitleInMissingArray: document.getElementById("ignoreTitleSubtitleInMissingArray").checked,
+    ignoreSameSeriesPositionInMissingArray: document.getElementById("ignoreSameSeriesPositionInMissingArray").checked,
   };
 }
 

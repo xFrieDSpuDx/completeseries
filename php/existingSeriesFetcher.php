@@ -141,10 +141,18 @@ do {
         // Store all books' metadata in seriesAllASIN
         foreach ($books as $book) {
             $meta = $book['media']['metadata'] ?? [];
+            $bookSeriesName = $meta['seriesName'] ?? 'Unknown Series';
+            // Get position from string
+            $bookHashPosition = strpos($meta['seriesName'], '#');
+            $bookSeriesPosition = ($bookHashPosition !== false)
+                ? trim(substr($bookSeriesName, $bookHashPosition + 1))
+                : "N/A";
             $seriesAllASIN[] = [
                 'series' => $seriesName,
                 'title' => $meta['title'] ?? 'Unknown Title',
-                'asin' => $meta['asin'] ?? 'Unknown ASIN'
+                'asin' => $meta['asin'] ?? 'Unknown ASIN',
+                'subtitle' => $meta['subtitle'] ?? 'No Subtitle',
+                'seriesPosition' => $bookSeriesPosition
             ];
         }
     }

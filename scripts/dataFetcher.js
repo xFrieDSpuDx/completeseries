@@ -1,5 +1,5 @@
 // dataFetcher.js
-
+import { fetchAudimetaMetadata } from './fetchAudimetaMetadata.js';
 import { sanitiseAudiobookShelfURL } from "./dataCleaner.js";
 
 /**
@@ -43,33 +43,22 @@ export async function fetchExistingContent(credentials) {
 }
 
 /**
- * Retrieves metadata from Audible for either a single book or an entire series.
+ * Retrieves metadata for a specific Audible item (book or series) directly from audimeta.de.
  *
- * @param {string} itemASIN - The ASIN (Amazon ID) for the book or series.
- * @param {string} region - Audible region code (e.g., 'uk', 'us', 'de').
- * @param {string} itemType - Either "book" or "series", depending on the request type.
- *
- * @returns {Promise<Object|Array>} - JSON metadata from AudibleMeta API for the item.
- *
- * @throws {Error} - If the fetch request fails (e.g., bad ASIN, region mismatch).
+ * @param {string} itemASIN - The Audible ASIN identifier
+ * @param {string} region - Audible region code (e.g., "uk", "us", "de")
+ * @param {string} itemType - Either "book" or "series"
+ * @returns {Promise<Object>} - Metadata response from audimeta.de
+ * @throws {Error} - If the request fails or response is invalid
  */
 export async function fetchAudibleMetadata(itemASIN, region, itemType) {
-  const response = await fetch("php/audimeta_proxy.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+  try {
+    return await fetchAudimetaMetadata({
       asin: itemASIN,
-      type: itemType,
       region: region,
-    }),
-  });
-
-  // Handle network or API failures
-  if (!response.ok) {
-    throw new Error(`Failed to fetch metadata for ASIN: ${itemASIN}`);
+      type: itemType
+    });
+  } catch (error) {
+    throw new Error(`Failed to fetch metadata for ASIN ${itemASIN}: ${error.message}`);
   }
-
-  return await response.json();
 }

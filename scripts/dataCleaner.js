@@ -68,17 +68,21 @@ export function findMissingBooks(existingContent, seriesMetadata, formData) {
       const asin = book.asin;
       const bookSeriesArray = book.series || [];
       const releaseDate = book.releaseDate || new Date();
+      const title = book.title || "N/A";
+      const subtitle = book.subtitle || null;
 
+      if (!isBookViable(book)) continue;
+      if (libraryASINs.has(asin)) continue;
       if (formData.ignoreNoPositionBooks && hasNoSeriesPosition(bookSeriesArray)) continue;
       if (formData.ignoreMultiBooks && hasMultiplePositions(bookSeriesArray)) continue;
       if (formData.ignoreSubPositionBooks && hasDecimalSeriesPosition(bookSeriesArray)) continue;
       if (formData.ignoreFutureDateBooks && isReleaseInFuture(releaseDate)) continue;
+      if (formData.ignoreTitleSubtitle && doesTitleSubtileMatch(title, subtitle, bookSeriesArray, existingContent)) continue;
+      if (formData.ignoreSameSeriesPosition && hasSameSeriesPosition(bookSeriesArray, existingContent)) continue;
+      if (formData.ignoreTitleSubtitleInMissingArray && doesTitleSubtileMatchMissingExists(title, subtitle, bookSeriesArray, missingBooks)) continue;
+      if (formData.ignoreSameSeriesPositionInMissingArray && hasSameSeriesPositionMissingExists(bookSeriesArray, missingBooks)) continue;
 
-      const isViable = isBookViable(book);
-      const notAlreadyInLibrary = !libraryASINs.has(asin);
-      const notAlreadyInResults = !doesBookExistInArray(missingBooks, asin);
-
-      if (isViable && notAlreadyInLibrary && notAlreadyInResults) {
+      if (!doesBookExistInArray(missingBooks, asin)) {
         book.seriesAsin = series.seriesAsin;
         missingBooks.push(book);
       }
@@ -132,6 +136,88 @@ function isReleaseInFuture(releaseDateString) {
   today.setHours(0, 0, 0, 0);
   releaseDate.setHours(0, 0, 0, 0);
   return today <= releaseDate;
+}
+
+/**
+ * Determines whether a book has the same title and subtitle as an existing book in the library.
+ *
+ * @param {string} title - The title of the book to check.
+ * @param {string} subtitle - The subtitle of the book to check.
+ * @param {Array<Object>} existingContent - Array of existing book objects.
+ * @returns {boolean} - True if any entry has a missing or undefined position ("N/A").
+ */
+function doesTitleSubtileMatch(title, subtitle, bookSeriesArray, existingContent) {
+  for (const existingBook of existingContent) {
+    for (const seriesEntry of bookSeriesArray) {
+      if ((existingBook.title === title && (existingBook.subtitle === subtitle || existingBook.subtitle === "No Subtitle")) && existingBook.name === seriesEntry.name) {
+        return true; // Found a match
+      }
+    }
+  }
+
+  return false; // No match found
+}
+
+/**
+ * Determines whether a book has the same title and subtitle as a book in the missing book object.
+ *
+ * @param {string} title - The title of the book to check.
+ * @param {string} subtitle - The subtitle of the book to check.
+ * @param {Array<Object>} missingBooks - Array of missing book objects.
+ * @returns {boolean} - True if any entry has a missing or undefined position ("N/A").
+ */
+function doesTitleSubtileMatchMissingExists(title, subtitle, bookSeriesArray, missingBooks) {
+  for (const existingMissingBook of missingBooks) {
+    for (const seriesEntry of bookSeriesArray) {
+      for (const existingMissingBookSeries of existingMissingBook.series) {
+        if ((existingMissingBook.title === title && (existingMissingBook.subtitle === subtitle || existingMissingBook.subtitle === "No Subtitle")) && existingMissingBookSeries.name === seriesEntry.name) {
+          return true; // Found a match
+        }
+      }
+    }
+  }
+
+  return false; // No match found
+}
+
+/**
+ * Determines whether a book has the same title and subtitle as an existing book in the library.
+ *
+ * @param {Array<Object>} bookSeriesArray - An array of series objects associated with a book.
+ * @param {Array<Object>} existingContent - Array of existing book objects.
+ * @returns {boolean} - True if any entry has a missing or undefined position ("N/A").
+ */
+function hasSameSeriesPosition(bookSeriesArray, existingContent) {
+  for (const existingBook of existingContent) {
+    for (const seriesEntry of bookSeriesArray) {
+      if (existingBook.seriesPosition === seriesEntry.position && existingBook.series === seriesEntry.name) {
+        return true; // Found a match
+      }
+    }
+  }
+
+  return false; // No match found
+}
+
+/**
+ * Determines whether a book has the same title and subtitle as a book in the missing book object.
+ *
+ * @param {Array<Object>} bookSeriesArray - An array of series objects associated with a book.
+ * @param {Array<Object>} missingBooks - Array of missing book objects.
+ * @returns {boolean} - True if any entry has a missing or undefined position ("N/A").
+ */
+function hasSameSeriesPositionMissingExists(bookSeriesArray, missingBooks) {
+  for (const existingMissingBook of missingBooks) {
+    for (const seriesEntry of bookSeriesArray) {
+      for (const existingMissingBookSeries of existingMissingBook.series) {
+        if (existingMissingBookSeries.position === seriesEntry.position && existingMissingBookSeries.name === seriesEntry.name) {
+          return true; // Found a match
+        }
+      }
+    }
+  }
+
+  return false; // No match found
 }
 
 /**
