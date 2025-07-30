@@ -1,52 +1,58 @@
 /**
- * Fetches metadata from audimeta.de for a book or a series.
+ * Fetches metadata from audimeta.de for a specific Audible book or series.
+ * Includes response headers such as rate limits and cache status.
  *
- * @param {Object} params - The input object containing:
- * @property {string} type - Either "book" or "series"
- * @property {string} asin - The Audible ASIN identifier
- * @property {string} region - Audible region code (e.g. "uk", "us", "de")
+ * @param {Object} params - Input parameters for the request.
+ * @param {string} params.type - Either "book" or "series" (defaults to "book").
+ * @param {string} params.asin - Audible ASIN identifier (must be provided).
+ * @param {string} params.region - Audible region code, e.g., "uk", "us", "de" (defaults to "uk").
  *
- * @returns {Promise<Object>} - JSON metadata from audimeta.de
- * @throws {Error} - If input is invalid or the request fails
+ * @returns {Promise<Object>} - An object containing:
+ *   - audiMetaResponse: Parsed JSON data from audimeta.de.
+ *   - responseHeaders: Metadata from the response headers including rate limits and cache status.
+ *
+ * @throws {Error} If required fields are missing or the fetch request fails.
  */
 export async function fetchAudimetaMetadata(params) {
-  // Destructure and apply default values
+  // Destructure input with defaults
   const { type = "book", asin = "", region = "uk" } = params;
 
-  // Basic input validation
+  // Validate required fields
   if (!type || !asin || !region) {
     throw new Error("Missing required fields: type, asin, or region.");
   }
 
-  // Sanitize and normalize input
+  // Clean up input values
   const trimmedASIN = asin.trim();
   const regionCode = region.trim().toLowerCase();
 
-  // Construct the API endpoint based on type
-  let apiUrl;
-  if (type === "book") {
-    apiUrl = `https://audimeta.de/book/${trimmedASIN}?cache=true&region=${regionCode}`;
-  } else {
-    apiUrl = `https://audimeta.de/series/${trimmedASIN}/books?region=${regionCode}&cache=true`;
-  }
+  // Build the API URL based on type
+  const apiUrl =
+    type === "book"
+      ? `https://audimeta.de/book/${trimmedASIN}?cache=true&region=${regionCode}`
+      : `https://audimeta.de/series/${trimmedASIN}/books?region=${regionCode}&cache=true`;
 
-  // Fetch metadata from audimeta.de
+  // Perform the fetch request
   const response = await fetch(apiUrl, {
     method: "GET",
     headers: {
       Accept: "application/json",
-      "User-Agent": "AudibleMetaBot/1.0 (+https://github.com/xFrieDSpuDx/completeseries)",
     },
   });
 
-  // If the request fails, provide clear context in the error
+  // Handle non-OK responses gracefully
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `audimeta.de request failed (${response.status}): ${errorText}`
-    );
+    throw new Error(`audimeta.de request failed (${response.status}): ${errorText}`);
   }
 
-  // Parse and return the response JSON
-  return await response.json();
+  // Extract and return both data and headers
+  const audiMetaResponse = await response.json();
+  const responseHeaders = {
+    requestLimit: response.headers.get("x-ratelimit-limit"),
+    requestRemaining: response.headers.get("x-ratelimit-remaining"),
+    cached: response.headers.get("x-cached"),
+  };
+
+  return { audiMetaResponse, responseHeaders };
 }

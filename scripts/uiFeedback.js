@@ -9,6 +9,13 @@ export function setMessage(text) {
 }
 
 /**
+ * Updates the UI rate limit message and displays it to the user.
+ * @param {number} waitTime - The message to display.
+ */
+export function setRateMessage(text) {
+  document.getElementById("rateLimitText").textContent = text;
+}
+/**
  * Displays the loading spinner.
  */
 export function showSpinner() {
