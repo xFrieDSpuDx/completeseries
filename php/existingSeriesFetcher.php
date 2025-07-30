@@ -47,6 +47,7 @@ $loginPayload = json_encode([
 $loginCurl = curl_init($loginUrl);
 curl_setopt_array($loginCurl, [
     CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_CONNECTTIMEOUT => 3,
     CURLOPT_POST => true,
     CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
     CURLOPT_POSTFIELDS => $loginPayload
