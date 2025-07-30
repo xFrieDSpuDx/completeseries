@@ -1,6 +1,6 @@
 // dataFetcher.js
 import { fetchAudimetaMetadata } from './fetchAudimetaMetadata.js';
-import { sanitiseAudiobookShelfURL } from "./dataCleaner.js";
+import { sanitiseAudiobookShelfURL, isInternalAudiobookShelfURL } from "./dataCleaner.js";
 
 /**
  * Authenticates with the AudiobookShelf PHP backend using user credentials,
@@ -38,8 +38,18 @@ export async function fetchExistingContent(credentials) {
     throw new Error("Login failed. Please check your credentials and try again.");
   }
 
+  // Parse the response as a JavaScript object to check for handled errors
+  const responseData = await response.json();
+  // Check if there was no response to the AudiobookShelf server login request (likely an invalid URL)
+  if (responseData.responseCode === 0) {
+    if (isInternalAudiobookShelfURL(credentials.serverUrl)) {
+      document.getElementById("urlError").textContent = "Server IP is an internal address. Ensure it is accessbile from this site";
+    }
+    throw new Error(responseData.message || "No response from the AudiobookShelf server. Please check the URL and try again.");
+  }
+  
   // Return the parsed response as a JavaScript object
-  return await response.json();
+  return responseData;
 }
 
 /**

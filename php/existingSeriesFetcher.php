@@ -54,6 +54,7 @@ curl_setopt_array($loginCurl, [
 
 $loginResponse = curl_exec($loginCurl);
 $loginStatus = curl_getinfo($loginCurl, CURLINFO_HTTP_CODE);
+$curlError = curl_error($loginCurl);
 curl_close($loginCurl);
 
 // Handle failed login
@@ -61,8 +62,9 @@ if ($loginStatus < 200 || $loginStatus >= 300) {
     http_response_code($loginStatus);
     echo json_encode([
         'status' => 'error',
-        'message' => 'Login failed',
-        'details' => $loginResponse
+        'message' => $curlError ?: 'Login failed',
+        'details' => $loginResponse,
+        'responseCode' => $loginStatus
     ]);
     exit;
 }
