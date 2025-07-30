@@ -19,6 +19,40 @@ export function sanitiseAudiobookShelfURL(audiobookShelfURL) {
 }
 
 /**
+ * Checks if a given IP address is a private/internal IPv4 address.
+ * @param {string} ipAddress - IP address to check.
+ * @returns {boolean} - True if the IP is private/internal.
+ */
+function isPrivateIP(ipAddress) {
+  return (
+    /^10\.(\d{1,3}\.){2}\d{1,3}$/.test(ipAddress) ||                          // 10.x.x.x
+    /^192\.168\.(\d{1,3})\.\d{1,3}$/.test(ipAddress) ||                      // 192.168.x.x
+    /^172\.(1[6-9]|2\d|3[0-1])\.(\d{1,3})\.\d{1,3}$/.test(ipAddress) ||      // 172.16.x.x - 172.31.x.x
+    /^127\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.test(ipAddress)                 // loopback
+  );
+}
+
+/**
+ * Determines whether the host in a sanitized URL is a private/internal IP address.
+ * Skips domain names and only checks if the host is a valid IP address.
+ *
+ * @param {string} sanitizedUrl - The URL to inspect (already cleaned)
+ * @returns {boolean} - True if it's a private/internal IP, false otherwise
+ */
+export function isInternalAudiobookShelfURL(sanitizedUrl) {
+  try {
+    const { hostname } = new URL(sanitizedUrl);
+
+    // If hostname is an IP address, test if it's private
+    const isIp = /^[\d.]+$/.test(hostname);
+    return isIp ? isPrivateIP(hostname) : false;
+  } catch (err) {
+    console.warn("Invalid URL format:", sanitizedUrl);
+    return false;
+  }
+}
+
+/**
  * Filters out series that the user has previously hidden.
  *
  * @param {Object} existingContent - Object containing `seriesFirstASIN`.
