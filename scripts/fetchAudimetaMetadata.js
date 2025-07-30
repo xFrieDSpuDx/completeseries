@@ -32,6 +32,7 @@ export async function fetchAudimetaMetadata(params) {
 
   // Fetch metadata from audimeta.de
   const response = await fetch(apiUrl, {
+    method: "GET",
     headers: {
       Accept: "application/json",
       "User-Agent": "AudibleMetaBot/1.0 (+https://github.com/xFrieDSpuDx/completeseries)",
