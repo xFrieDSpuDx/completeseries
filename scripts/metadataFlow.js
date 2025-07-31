@@ -1,12 +1,13 @@
 // metadataCollector.js
-import { fetchAudibleMetadata } from "./dataFetcher.js";
+import { fetchAudibleMetadata, findFromStorage } from "./dataFetcher.js";
 import { setMessage, setRateMessage } from "./uiFeedback.js";
 import { removeHiddenBooks } from "./dataCleaner.js";
 import { isCurrentlyHidden } from "./visibility.js";
+import { storeMetadataToLocalStorage } from "./localStorage.js";
 
 // Rate limit configuration
 const rateLimitResetTime = 60000; // Time in milliseconds before rate limit resets
-let processStartTime;             // Tracks when the batch process started
+let processStartTime; // Tracks when the batch process started
 
 /**
  * Fetches metadata for a list of Audible book ASINs.
@@ -38,21 +39,39 @@ export async function collectBookMetadata(
     }
 
     try {
-      setMessage(`Fetching series unique ID: ${processedCount + 1} / ${totalSeries}`);
+      let metadata = findFromStorage("asin", bookASIN, "existingFirstBookASINs");
 
-      const fetchResponse = await fetchAudibleMetadata(bookASIN, audibleRegion, "book");
-      const metadata = fetchResponse.audiMetaResponse;
-      const responseHeaders = fetchResponse.responseHeaders;
-
-      const remainingRequestsEstimate = calculateRemainingRequests(
-        totalSeries,
-        processedCount,
-        "book"
+      setMessage(
+        `Fetching series unique ID: ${processedCount + 1} / ${totalSeries}`
       );
 
-      await checkForRateLimitDelay(responseHeaders, remainingRequestsEstimate);
+      if (!metadata) {
+        // If metadata is not found in local storage, fetch it from the API
+        const fetchResponse = await fetchAudibleMetadata(
+          bookASIN,
+          audibleRegion,
+          "book"
+        );
+        metadata = fetchResponse.audiMetaResponse;
+        const responseHeaders = fetchResponse.responseHeaders;
 
-      if (!metadata?.series) continue;
+        const remainingRequestsEstimate = calculateRemainingRequests(
+          totalSeries,
+          processedCount,
+          "book"
+        );
+
+        await checkForRateLimitDelay(
+          responseHeaders,
+          remainingRequestsEstimate
+        );
+
+        if (!metadata?.series) continue;
+
+        storeMetadataToLocalStorage(metadata, "existingFirstBookASINs");
+      }
+      // If metadata is not available, skip this book
+      if (!metadata || !metadata.series) continue;
 
       for (const bookSeries of metadata.series) {
         const isSeriesHidden = isCurrentlyHidden({
@@ -95,29 +114,47 @@ export async function collectSeriesMetadata(seriesAsins, audibleRegion) {
 
   for (const seriesAsin of seriesAsins) {
     try {
-      setMessage(`Fetching series metadata: ${processedCount + 1} / ${totalSeries}`);
+      let seriesMetadata = findFromStorage("seriesAsin", seriesAsin, "existingBookMetadata");
 
-      const fetchResponse = await fetchAudibleMetadata(seriesAsin, audibleRegion, "series");
-      const seriesResponse = fetchResponse.audiMetaResponse;
-      const responseHeaders = fetchResponse.responseHeaders;
-
-      const remainingRequestsEstimate = calculateRemainingRequests(
-        totalSeries,
-        processedCount,
-        "series"
+      setMessage(
+        `Fetching series metadata: ${processedCount + 1} / ${totalSeries}`
       );
 
-      await checkForRateLimitDelay(responseHeaders, remainingRequestsEstimate);
+      if (!seriesMetadata) {
+        // If metadata is not found in local storage, fetch it from the API
+        const fetchResponse = await fetchAudibleMetadata(
+          seriesAsin,
+          audibleRegion,
+          "series"
+        );
+        const seriesResponse = fetchResponse.audiMetaResponse;
+        const responseHeaders = fetchResponse.responseHeaders;
 
-      if (!Array.isArray(seriesResponse)) continue;
-      if (!removeHiddenBooks(seriesResponse)) continue;
+        const remainingRequestsEstimate = calculateRemainingRequests(
+          totalSeries,
+          processedCount,
+          "series"
+        );
 
-      seriesMetadataResults.push({
-        seriesAsin,
-        response: seriesResponse,
-      });
+        await checkForRateLimitDelay(responseHeaders, remainingRequestsEstimate);
+
+        if (!Array.isArray(seriesResponse)) continue;
+        if (!removeHiddenBooks(seriesResponse)) continue;
+
+        seriesMetadata = {
+          seriesAsin,
+          response: seriesResponse,
+        };
+
+        storeMetadataToLocalStorage(seriesMetadata, "existingBookMetadata");
+      }
+
+      seriesMetadataResults.push(seriesMetadata);
     } catch (error) {
-      console.warn(`Error fetching series metadata for ASIN ${seriesAsin}:`, error);
+      console.warn(
+        `Error fetching series metadata for ASIN ${seriesAsin}:`,
+        error
+      );
     }
 
     processedCount++;
@@ -147,13 +184,20 @@ function calculateRemainingRequests(total, processed, type) {
  * @param {Object} responseHeaders - The headers returned from the API response
  * @param {number} remainingRequestsEstimate - Approximate requests left in batch
  */
-async function checkForRateLimitDelay(responseHeaders, remainingRequestsEstimate) {
+async function checkForRateLimitDelay(
+  responseHeaders,
+  remainingRequestsEstimate
+) {
   if (responseHeaders.cached) return;
 
   const elapsed = Date.now() - processStartTime;
 
   if (Number(responseHeaders.requestRemaining) === 0) {
-    await calculateRateLimitDelay(elapsed, remainingRequestsEstimate, responseHeaders.requestLimit);
+    await calculateRateLimitDelay(
+      elapsed,
+      remainingRequestsEstimate,
+      responseHeaders.requestLimit
+    );
   }
 }
 
@@ -165,15 +209,22 @@ async function checkForRateLimitDelay(responseHeaders, remainingRequestsEstimate
  * @param {number} remainingRequestsEstimate - Number of requests remaining
  * @param {number|string} rateLimit - Max requests allowed in window
  */
-async function calculateRateLimitDelay(elapsed, remainingRequestsEstimate, rateLimit) {
+async function calculateRateLimitDelay(
+  elapsed,
+  remainingRequestsEstimate,
+  rateLimit
+) {
   const millisecondsUntilReset = Math.max(rateLimitResetTime - elapsed, 0);
   const waitTimeInSeconds = Math.ceil(millisecondsUntilReset / 1000);
   const resetWindowSeconds = Math.ceil(rateLimitResetTime / 1000);
 
-  const estimatedQuotaCycles = Math.floor((remainingRequestsEstimate / rateLimit) * resetWindowSeconds);
+  const estimatedQuotaCycles = Math.floor(
+    (remainingRequestsEstimate / rateLimit) * resetWindowSeconds
+  );
   const estimatedOverhead = (remainingRequestsEstimate % rateLimit) * 0.5;
 
-  const estimatedTimeLeft = waitTimeInSeconds + estimatedQuotaCycles + estimatedOverhead;
+  const estimatedTimeLeft =
+    waitTimeInSeconds + estimatedQuotaCycles + estimatedOverhead;
   const timeLeftMinutes = Math.ceil(estimatedTimeLeft / 60);
   const timeLeftSeconds = Math.ceil(estimatedTimeLeft % 60);
 

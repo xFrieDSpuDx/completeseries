@@ -30,14 +30,15 @@ export function hideSpinner() {
 }
 
 /**
- * Shows or hides an element by ID.
- * @param {string} elementId
- * @param {boolean} show
+ * Shows or hides an element by ID, with customizable display type.
+ * @param {string} elementId - The ID of the element to show/hide.
+ * @param {boolean} show - Whether to show (true) or hide (false) the element.
+ * @param {string} [displayType="flex"] - The display style to use when showing the element.
  */
-export function toggleElementVisibility(elementId, show) {
+export function toggleElementVisibility(elementId, show, displayType = "flex") {
   const targetElement = document.getElementById(elementId);
   if (targetElement) {
-    targetElement.style.display = show ? "flex" : "none";
+    targetElement.style.display = show ? displayType : "none";
   }
 }
 
@@ -49,6 +50,19 @@ export function toggleElementVisibility(elementId, show) {
  */
 export function toggleElementVisibilityFullEntity(element, show) {
   element.style.display = show ? "flex" : "none";
+}
+
+export function temporaryChangeElementText(targetElement, temporaryText, duration = 1500) {
+  if (!targetElement) return;
+
+  const originalText = targetElement.textContent;
+  targetElement.textContent = temporaryText;
+  targetElement.classList.add("temporary-text");
+
+  setTimeout(() => {
+    targetElement.textContent = originalText;
+    targetElement.classList.remove("temporary-text");
+  }, duration);
 }
 
 /**

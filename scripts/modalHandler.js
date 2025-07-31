@@ -18,7 +18,7 @@ export let bookDetailModalAnchor = null;
 function buildModalContent(bookData, info) {
   return `
     <div class="book-modal-header">
-      <a class="audible-btn" href="${bookData.link}" target="_blank" rel="noopener">View on Audible</a>
+      <a class="accent-button" href="${bookData.link}" target="_blank" rel="noopener">View on Audible</a>
     </div>
     <div class="book-modal-main">
       <div class="book-modal-image">

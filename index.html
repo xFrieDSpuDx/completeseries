@@ -54,56 +54,6 @@
           <option value="br">Brazil</option>
         </select>
 
-        <!-- Filter Options Toggle -->
-        <button type="button" id="filterToggleButton" class="filter-toggle-button" style="display: flex; justify-content: space-between; width: 100%">
-          <span>Show Filter Options</span>
-          <span id="filterToggleIcon">▼</span>
-        </button>
-
-        <!-- Collapsible Filter Panel -->
-        <div id="filterPanel" class="filter-panel hidden">
-          <div class="checkbox-row">
-            <input type="checkbox" id="filterUnabridged" checked />
-            <label for="filterUnabridged" class="label-checkbox">Only include unabridged books</label>
-          </div>
-          <div class="checkbox-row">
-            <input type="checkbox" id="ignoreMultiBooks" />
-            <label for="ignoreMultiBooks" class="label-checkbox">Ignore multi-book audiobooks</label>
-          </div>
-          <div class="checkbox-row">
-            <input type="checkbox" id="ignoreNoPositionBooks" />
-            <label for="ignoreNoPositionBooks" class="label-checkbox">Ignore books with no position in a series</label>
-          </div>
-          <div class="checkbox-row">
-            <input type="checkbox" id="ignoreSubPositionBooks" />
-            <label for="ignoreSubPositionBooks" class="label-checkbox">Ignore books with a sub position (e.g. #3.5)</label>
-          </div>
-          <div class="checkbox-row">
-            <input type="checkbox" id="ignoreFutureDateBooks" checked />
-            <label for="ignoreFutureDateBooks" class="label-checkbox">Ignore books that have not been released yet</label>
-          </div>
-          <div class="checkbox-row">
-            <input type="checkbox" id="ignoreTitleSubtitle" checked />
-            <label for="ignoreTitleSubtitle" class="label-checkbox">Ignore books with title and subtitle matches</label>
-          </div>
-          <div class="checkbox-row">
-            <input type="checkbox" id="ignoreSameSeriesPosition" checked />
-            <label for="ignoreSameSeriesPosition" class="label-checkbox">Ignore books with the same series position</label>
-          </div>
-          <div class="checkbox-row">
-            <input type="checkbox" id="ignoreTitleSubtitleInMissingArray" />
-            <label for="ignoreTitleSubtitleInMissingArray" class="label-checkbox">Only show first found version of Title and Subtitle</label>
-          </div>
-          <div class="checkbox-row">
-            <input type="checkbox" id="ignoreSameSeriesPositionInMissingArray" />
-            <label for="ignoreSameSeriesPositionInMissingArray" class="label-checkbox">Only show first found series position</label>
-          </div>
-          <div class="checkbox-row">
-            <input type="checkbox" id="includeSubSeries" />
-            <label for="includeSubSeries" class="label-checkbox">Include results for book subseries</label>
-          </div>
-        </div>
-  
         <button type="submit">Login</button>
       </form>
     </div>
@@ -115,18 +65,46 @@
     </div>
     <div id="seriesOutput"></div>
     <div class="books-modal-overlay" id="modalOverlay"></div>
-    <div class="books-modal" id="booksModal">
-      <button class="close-button-right" id="modalCloseBtn">&times;</button>
+    <div
+      id="booksModal"
+      class="books-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modalTitle"
+    >
+      <button
+        class="close-button-right"
+        id="modalCloseBtn"
+        aria-label="Close Modal"
+        aria-label="Close"
+        title="Close"
+      >
+        <img src="assets/close.svg" alt="" />
+      </button>
       <div id="modalContent"></div>
     </div>
     <div id="bookDetailModalOverlay" class="books-detail-modal-overlay"></div>
     <div id="bookDetailModal" class="book-detail-modal">
-      <button class="close-button-right" id="closeBookDetail">×</button>
+      <button
+        class="close-button-right"
+        id="closeBookDetail"
+        aria-label="Close"
+        title="Close"
+      >
+        <img src="assets/close.svg" alt="" />
+      </button>
       <div id="bookDetailModalContent" class="modal-content"></div>
     </div>
 
     <div id="visibilityManager">
-      <button class="close-button" id="closeVisibilityManager">✕</button>
+      <button
+        class="close-button"
+        id="closeVisibilityManager"
+        aria-label="Close"
+        title="Close"
+      >
+        <img src="assets/close.svg" alt="" />
+      </button>
       <div id="requestReloadDiv" class="request-reload">
         Onload hidden items now visible. Please reload to view change.
       </div>
@@ -138,7 +116,123 @@
     </div>
 
     <div id="burgerContainer">
-      <button id="settingsToggle" title="Show hidden items">☰</button>
+      <button
+        id="burgerToggle"
+        aria-label="Show hidden items"
+        title="Show hidden items"
+      >
+        <img src="assets/burger.svg" alt="" />
+      </button>
+    </div>
+
+    <div id="settingsManager">
+      <button
+        class="close-button"
+        id="closeSettingsManager"
+        aria-label="Close"
+        title="Close"
+      >
+        <img src="assets/close.svg" alt="" />
+      </button>
+      <button id="applyFilter" class="accent-button-inline-right" aria-label="Apply filter" title="Apple filter">Apply Filter</button>
+      <h3>Filters</h3>
+      <h4>Book Types</h4>
+      <div class="checkbox-row">
+        <input type="checkbox" id="filterUnabridged" checked />
+        <label for="filterUnabridged" class="label-checkbox"
+          >Only include unabridged books</label
+        >
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="ignoreMultiBooks" />
+        <label for="ignoreMultiBooks" class="label-checkbox"
+          >Ignore multi-book audiobooks</label
+        >
+      </div>
+      <h4>Series</h4>
+      <div class="checkbox-row">
+        <input type="checkbox" id="includeSubSeries" />
+        <label for="includeSubSeries" class="label-checkbox"
+          >Include results for book subseries</label
+        >
+      </div>
+      <h4>Series Position</h4>
+      <div class="checkbox-row">
+        <input type="checkbox" id="ignoreNoPositionBooks" />
+        <label for="ignoreNoPositionBooks" class="label-checkbox"
+          >Ignore books with no position in a series</label
+        >
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="ignoreSubPositionBooks" />
+        <label for="ignoreSubPositionBooks" class="label-checkbox"
+          >Ignore books with a sub position (e.g. #3.5)</label
+        >
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="ignoreSameSeriesPosition" checked />
+        <label for="ignoreSameSeriesPosition" class="label-checkbox"
+          >Ignore books with the same series position</label
+        >
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="ignoreSameSeriesPositionInMissingArray" />
+        <label
+          for="ignoreSameSeriesPositionInMissingArray"
+          class="label-checkbox"
+          >Only show first found series position</label
+        >
+      </div>
+      <h4>Name</h4>
+      <div class="checkbox-row">
+        <input type="checkbox" id="ignoreTitleSubtitle" checked />
+        <label for="ignoreTitleSubtitle" class="label-checkbox"
+          >Ignore books with title and subtitle matches</label
+        >
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="ignoreTitleSubtitleInMissingArray" />
+        <label for="ignoreTitleSubtitleInMissingArray" class="label-checkbox"
+          >Only show first found version of Title and Subtitle</label
+        >
+      </div>
+      <h4>Date</h4>
+      <div class="checkbox-row">
+        <input type="checkbox" id="ignoreFutureDateBooks" checked />
+        <label for="ignoreFutureDateBooks" class="label-checkbox"
+          >Ignore books that have not been released yet</label
+        >
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="ignorePastDateBooks" checked />
+        <label for="ignorePastDateBooks" class="label-checkbox"
+          >Ignore books that have already been released</label
+        >
+      </div>
+
+      <h3>Clear Local Storage Cache</h3>
+      <button id="clearSeriesList" class="accent-button">
+        Clear Series List
+      </button>
+      <button id="clearBooksList" class="accent-button">
+        Clear Book Metadata List
+      </button>
+      <button id="clearHiddenList" class="accent-button">
+        Clear Hidden Items
+      </button>
+      <button id="clearAllList" class="accent-button">
+        Clear All Saved Data
+      </button>
+    </div>
+
+    <div id="settingsContainer">
+      <button
+        id="settingsToggle"
+        aria-label="Settings"
+        title="Settings"
+      >
+        <img src="assets/cog.svg" alt="" />
+      </button>
     </div>
 
     <script type="module" src="scripts/main.js"></script>

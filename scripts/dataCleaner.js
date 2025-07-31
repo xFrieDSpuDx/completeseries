@@ -111,6 +111,7 @@ export function findMissingBooks(existingContent, seriesMetadata, formData) {
       if (formData.ignoreMultiBooks && hasMultiplePositions(bookSeriesArray)) continue;
       if (formData.ignoreSubPositionBooks && hasDecimalSeriesPosition(bookSeriesArray)) continue;
       if (formData.ignoreFutureDateBooks && isReleaseInFuture(releaseDate)) continue;
+      if (formData.ignorePastDateBooks && !isReleaseInFuture(releaseDate)) continue;
       if (formData.ignoreTitleSubtitle && doesTitleSubtileMatch(title, subtitle, bookSeriesArray, existingContent)) continue;
       if (formData.ignoreSameSeriesPosition && hasSameSeriesPosition(bookSeriesArray, existingContent)) continue;
       if (formData.ignoreTitleSubtitleInMissingArray && doesTitleSubtileMatchMissingExists(title, subtitle, bookSeriesArray, missingBooks)) continue;

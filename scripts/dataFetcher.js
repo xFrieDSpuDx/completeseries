@@ -1,6 +1,7 @@
 // dataFetcher.js
 import { fetchAudimetaMetadata } from './fetchAudimetaMetadata.js';
 import { sanitiseAudiobookShelfURL, isInternalAudiobookShelfURL } from "./dataCleaner.js";
+import { loadMetadataFromLocalStorage } from './localStorage.js';
 
 /**
  * Authenticates with the AudiobookShelf PHP backend using user credentials,
@@ -71,4 +72,28 @@ export async function fetchAudibleMetadata(itemASIN, region, itemType) {
   } catch (error) {
     throw new Error(`Failed to fetch metadata for ASIN ${itemASIN}: ${error.message}`);
   }
+}
+
+/**
+ * Searches localStorage for a specific item in a stored array by matching a key-value pair.
+ *
+ * @param {string} key - The object key to match (e.g., 'asin').
+ * @param {any} value - The value to search for.
+ * @param {string} storeIdentifier - The key used in localStorage to retrieve the array.
+ * @returns {Object|null} The matched item object if found, otherwise null.
+ */
+export function findFromStorage(key, value, storeIdentifier) {
+  // Load stored metadata array from localStorage
+  const existingFirstBookASINsArray = loadMetadataFromLocalStorage(storeIdentifier);
+
+  // Validate that the result is a proper array
+  if (!existingFirstBookASINsArray || !Array.isArray(existingFirstBookASINsArray)) {
+    return null;
+  }
+
+  // Attempt to find the first object where the specified key matches the given value
+  const matchingItem = existingFirstBookASINsArray.find(item => key in item && item[key] === value);
+
+  // Return the found item or null if no match
+  return matchingItem || null;
 }

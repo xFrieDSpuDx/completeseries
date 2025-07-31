@@ -16,6 +16,7 @@ export function getFormData() {
     ignoreNoPositionBooks: document.getElementById("ignoreNoPositionBooks").checked,
     ignoreSubPositionBooks: document.getElementById("ignoreSubPositionBooks").checked,
     ignoreFutureDateBooks: document.getElementById("ignoreFutureDateBooks").checked,
+    ignorePastDateBooks: document.getElementById("ignorePastDateBooks").checked,
     ignoreTitleSubtitle: document.getElementById("ignoreTitleSubtitle").checked,
     ignoreSameSeriesPosition: document.getElementById("ignoreSameSeriesPosition").checked,
     ignoreTitleSubtitleInMissingArray: document.getElementById("ignoreTitleSubtitleInMissingArray").checked,
