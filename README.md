@@ -46,17 +46,25 @@ You can inspect the full source code in this repository to verify that yourself.
    - Default behavior: shows only unique, unabridged titles you're missing.  
    - Uncheck "Ignore matching titles" to allow duplicates with the same name.
 
-3. **Discover missing books**  
-   - The app fetches your library, finds the first book in each series, then uses that to get the full series metadata from `audimeta.de`.
+3. **Choose your library**  
+   - If you have more than one library, pick the one(s) to search against and produce results.
+   - If you have a single library this screen will not be shown and the default library will be used. 
 
-4. **Review and buy**  
+4. **Discover missing books**  
+   - The app fetches your library, finds the first book in each series, then uses that to get the full series metadata from `audimeta.de`.
+   - If the series metadata has already been fetched from `audimeta.de` internal storage is used to improve performance and reduce API requests.
+
+5. **Review and buy**  
    - Click a series tile to see all missing titles.  
    - Click a book to see more info and a purchase link on Audible.
 
-5. **Hide content you don't want**  
+6. **Hide content you don't want**  
    - Use the 👁️ icon to hide series or books permanently.  
    - Hidden items are tracked and can be managed from the sidebar (burger menu).
 
+5. **Apply new filters**  
+   - Change the filters used and get an updated results page without logging in again
+   - Clear cached contents to force a new request
 ---
 
 ## 🖼️ Screenshots
@@ -65,7 +73,9 @@ You can inspect the full source code in this repository to verify that yourself.
 |--------|------------|
 | 🏠 Home Page | ![HomePage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HomepageFilterClosed.png) |
 | 🏠 Home Page Filters | ![HomePageFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HomepageFilterOpen.png) |
+| 📚 Library Selection | ![HomePageFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/LibrarySelect.png) |
 | 📊 Results Page | ![ResultsPage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/ResultsPage.png) |
+| 🧰 Filter Results Page | ![ResultsPage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/FilterOptionsAfterResults.png) |
 | 📚 Book Modal | ![BooksModal](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/BooksModal.png) |
 | 📖 Book Details | ![BookDetails](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/BookDetails.png) |
 | 🙈 Hide Individual Book | ![HideBooks](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HideBooks.png) |
