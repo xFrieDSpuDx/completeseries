@@ -85,7 +85,7 @@ if (!$libraryId || !$authToken) {
 }
 
 // -----------------------------------------------------------------------------
-// Step 3a: Fetch all libraries
+// Step 3: Fetch all libraries
 // -----------------------------------------------------------------------------
 
 $librariesUrl = "$serverUrl/api/libraries";
@@ -122,8 +122,20 @@ if (!is_array($librariesData)) {
     exit;
 }
 
+// -----------------------------------------------------------------------------
+// Step 4: Return audiobook libraries only
+// -----------------------------------------------------------------------------
+
 // Extract library list
 $librariesList = $librariesData['libraries'] ?? [];
+
+$booksOnlyLibrariesList = array_filter($librariesList, function($item) {
+    return isset($item['mediaType']) && $item['mediaType'] === 'book';
+});
+
+// Optionally reindex the array if needed
+$booksOnlyLibrariesList = array_values($booksOnlyLibrariesList);
+
 
 // -----------------------------------------------------------------------------
 // Step 5: Respond with structured result
@@ -132,5 +144,5 @@ $librariesList = $librariesData['libraries'] ?? [];
 echo json_encode([
     'status' => 'success',
     'authToken' => $authToken,
-    'librariesList' => $librariesList
+    'librariesList' => $booksOnlyLibrariesList
 ]);
