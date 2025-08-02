@@ -26,6 +26,35 @@ export function addDivElement(divAttributes, parentElement) {
 }
 
 /**
+ * Creates a checkbox input with a label, appends both to a container, and adds it to the parent.
+ *
+ * @param {Object} options
+ * @param {string} options.id - The ID of the checkbox.
+ * @param {string} options.labelText - The text content for the label.
+ * @param {boolean} [options.checked=false] - Whether the checkbox is initially checked.
+ * @param {HTMLElement} parentElement - The element to append the checkbox container to.
+ * @returns {HTMLInputElement} The created checkbox input element.
+ */
+export function addLabeledCheckbox({ id, labelText, checked = false }, parentElement) {
+   const container = document.createElement("label");
+  container.className = "library-toggle";
+  
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.id = id;
+  checkbox.checked = checked;
+
+  const span = document.createElement("span");
+  span.textContent = labelText;
+
+  container.appendChild(checkbox);
+  container.appendChild(span);
+  parentElement.appendChild(container);
+
+  return checkbox;
+}
+
+/**
  * Creates an <img> element with the given attributes and appends it to a parent element.
  *
  * @param {Object} imageObject - Attributes to assign to the image (e.g. src, alt, className).

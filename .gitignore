@@ -1,3 +1,4 @@
 .DS_Store
 .vscode/launch.json
 scripts/existingSeriesFetcher.js
+assets/.DS_Store

@@ -2,6 +2,7 @@
 
 import { getHiddenItems, isCurrentlyHiddenByAsin } from "./visibility.js";
 import { getFormData } from "./formHandler.js";
+import { selectedLibraries, libraryArrayObject } from "./main.js";
 
 /**
  * Normalizes the AudiobookShelf URL to ensure it starts with https://
@@ -363,4 +364,44 @@ export function sortBySeriesThenTitle(metadataItems) {
 
     return firstTitle.localeCompare(secondTitle);
   });
+}
+
+/**
+ * Updates the global `selectedLibraries.librariesList` array based on which
+ * checkboxes are selected inside the given container.
+ *
+ * @param {HTMLElement} libraryCheckboxContainer - The container element holding library checkboxes.
+ */
+export function updatedSelectedLibraries(libraryCheckboxContainer) {
+  const submitButton = document.getElementById("selectLibrarySubmit");
+  // Clear the current selection
+  selectedLibraries.librariesList.length = 0;
+
+  // Get all checkbox inputs inside the container
+  const libraryCheckboxes = libraryCheckboxContainer.querySelectorAll('input[type="checkbox"]');
+
+  // Map each checkbox to an object capturing its id, checked status, and value
+  const checkboxStates = Array.from(libraryCheckboxes).map(checkbox => ({
+    id: checkbox.id,
+    checked: checkbox.checked,
+    value: checkbox.value || null
+  }));
+
+  // For each checked box, find and push the corresponding library object from the global list
+  for (const checkbox of checkboxStates) {
+    if (checkbox.checked) {
+      const matchedLibrary = libraryArrayObject.librariesList.find(
+        library => library.id === checkbox.id
+      );
+      if (matchedLibrary) {
+        selectedLibraries.librariesList.push(matchedLibrary);
+      }
+    }
+  }
+
+  if (selectedLibraries.librariesList.length === 0) {
+    submitButton.disabled = true;
+  } else {
+    submitButton.disabled = false;
+  }
 }

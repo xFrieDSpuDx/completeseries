@@ -6,11 +6,16 @@ import { clearLocalStorageByIdentifier, clearLocalStorage } from "./localStorage
 import { getFormData, validateForm } from "./formHandler.js";
 import { temporaryChangeElementText } from "./uiFeedback.js";
 import {
-  fetchAndDisplayResults,
-  existingContent,
+  fetchExistingLibraryData,
   resetUserInterfaceAndStartLoadingProcess,
+  selectedLibraries
 } from "./main.js";
+import { updatedSelectedLibraries } from "./dataCleaner.js";
 
+// Containers
+const settingsManagerFilterOptios = document.getElementById("filterOptions");
+const librariesListContainer = document.getElementById("availableLibraries");
+export const applyFilterButton = document.getElementById("applyFilter");
 /**
  * Initializes all interactive UI event listeners.
  * Handles modal behavior, panel toggles, clearing localStorage, and form filtering.
@@ -38,8 +43,6 @@ export function initializeUIInteractions() {
   const clearBooksList = document.getElementById("clearBooksList");
   const clearHiddenList = document.getElementById("clearHiddenList");
   const clearAllList = document.getElementById("clearAllList");
-
-  const applyFilterButton = document.getElementById("applyFilter");
 
   // -------------------------
   // MODAL AND PANEL CLOSERS
@@ -158,7 +161,7 @@ export function initializeUIInteractions() {
 
       closeSettingsPanel();
       resetUserInterfaceAndStartLoadingProcess();
-      fetchAndDisplayResults(existingContent, formData, true);
+      fetchExistingLibraryData(formData, selectedLibraries);
     });
   }
 
@@ -173,9 +176,27 @@ export function initializeUIInteractions() {
     }
   }
 
-  // Attach to all checkbox elements
-  document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
-    checkbox.addEventListener("change", filterChangeDetected);
+  // Attach to all filter checkbox elements
+  settingsManagerFilterOptios.querySelectorAll('input[type="checkbox"]').forEach((filterCheckbox) => {
+    filterCheckbox.addEventListener("change", filterChangeDetected);
+  });
+}
+
+/**
+ * Adds a change event listener to all library checkboxes in the container.
+ * 
+ * On change:
+ * - Updates the `selectedLibraries` object with the current checkbox states.
+ * - Activates the "Apply Filter" button by adding the `active` class.
+ *
+ * @param {HTMLElement} libraryCheckboxContainer - The container holding the checkbox elements.
+ */
+export function libraryCheckboxWatcher(libraryCheckboxContainer) {
+  librariesListContainer.querySelectorAll('input[type="checkbox"]').forEach((libraryCheckbox) => {
+    libraryCheckbox.addEventListener("change", () => {
+      updatedSelectedLibraries(libraryCheckboxContainer);
+      applyFilterButton.classList.add("active");
+    });
   });
 }
 
