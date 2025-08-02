@@ -34,7 +34,7 @@ export function setHiddenItems(items) {
 }
 
 /**
- * Hides an item (series or book) by adding it to the cookie.
+ * Hides an item (series or book) by adding it to the local storage.
  * Updates the hidden items menu afterward.
  *
  * @param {Object} item - The item to hide.
@@ -49,7 +49,7 @@ export function hideItem(item) {
 }
 
 /**
- * Unhides an item by removing it from the cookie.
+ * Unhides an item by removing it from the local storage.
  *
  * @param {Object} item - The item to unhide.
  */
@@ -117,7 +117,7 @@ export function isCurrentlyHidden(item) {
 /**
  * Checks whether a given ASIN is currently marked as hidden.
  *
- * This function scans the list of hidden items (retrieved from the cookie)
+ * This function scans the list of hidden items (retrieved from the local storage)
  * and returns `true` if an item with the provided ASIN exists.
  *
  * @param {string} asin - The ASIN to check.

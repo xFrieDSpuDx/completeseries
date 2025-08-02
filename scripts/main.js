@@ -1,16 +1,17 @@
 // main.js
 
 // Imports
-import { getFormData, validateForm, clearErrors } from "./formHandler.js";
+import { getFormData, validateLibraryForm, validateForm, clearErrors } from "./formHandler.js";
 import {
   setMessage,
-  setRateMessage,
+  clearMessage,
+  clearRateMessage,
   showSpinner,
   hideSpinner,
   toggleElementVisibility,
 } from "./uiFeedback.js";
 import { collectBookMetadata, collectSeriesMetadata } from "./metadataFlow.js";
-import { fetchExistingContent } from "./dataFetcher.js";
+import { fetchExistingContent, fetchAudiobookShelfLibraries } from "./dataFetcher.js";
 import {
   removeHiddenSeries,
   findMissingBooks,
@@ -22,25 +23,37 @@ import {
   initializeUIInteractions,
   disableClickEventsOnLoad,
   enableClickEventsOnLoadEnd,
+  libraryCheckboxWatcher,
+  applyFilterButton
 } from "./interactions.js";
-import { emptyDivContent } from "./elementFactory.js";
+import { emptyDivContent, addLabeledCheckbox } from "./elementFactory.js";
 
 // Stores current data fetched from AudiobookShelf
 export let existingContent;
+export let selectedLibraries = {
+  authToken: "",
+  librariesList: [],
+};
+export let libraryArrayObject = {};
 
 /**
  * Initializes core UI and form behavior after DOM is ready
  */
 document.addEventListener("DOMContentLoaded", () => {
+  // Set up UI event listeners and populate hidden series menu
   initializeUIInteractions();
   populateHiddenItemsMenu();
 
   const loginForm = document.getElementById("loginForm");
-  if (!loginForm) return;
+  const libraryForm = document.getElementById("libraryForm");
+  const libraryList = document.getElementById("availableLibraries");
+  const settingsLibraries = document.getElementById("availableLibrariesSettings");
 
-  // Handle form submission
-  loginForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
+  if (!loginForm || !libraryForm || !libraryList) return;
+
+  // --- Handle login form submission ---
+  loginForm.addEventListener("submit", async function (loginFormEvent) {
+    loginFormEvent.preventDefault();
     clearErrors();
 
     const formData = getFormData();
@@ -51,21 +64,84 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       setMessage("Logging in…");
 
-      // Fetch user's existing library data
-      const existing = await collectExistingSeriesFromAudiobookShelf(formData);
+      // Fetch all libraries from AudiobookShelf
+      libraryArrayObject = await fetchAudiobookShelfLibraries(formData);
 
-      // Store for global use (e.g. refreshes)
-      await fetchAndDisplayResults(existing, formData);
-    } catch (err) {
-      console.error(err);
-      toggleElementVisibility("form-container", true);
-      setMessage(err.message || "Something went wrong. Please try again.");
-      setRateMessage("");
+      if (!libraryArrayObject?.librariesList?.length) {
+        errorHandler({ message: "No libraries found. Please check your AudiobookShelf setup." });
+        return;
+      }
+
+      if (libraryArrayObject.librariesList.length === 1) {
+        // Auto-process single-library users
+        fetchExistingLibraryData(formData, libraryArrayObject);
+      } else {
+        // Default to all libraries selected
+        selectedLibraries.librariesList = structuredClone(libraryArrayObject.librariesList);
+        selectedLibraries.authToken = libraryArrayObject.authToken;
+
+        // Build UI checkboxes for each library
+        populateLibraryCheckboxes(libraryArrayObject.librariesList, libraryList);
+      }
+    } catch (error) {
+      errorHandler(error);
     } finally {
       hideSpinner();
     }
   });
+
+  // --- Handle library checkbox form submission ---
+  libraryForm.addEventListener("submit", async function (libraryFormEvent) {
+    libraryFormEvent.preventDefault();
+    clearErrors();
+
+    const formData = getFormData();
+    if (!validateForm(formData)) return;
+
+    if (!validateLibraryForm(selectedLibraries.librariesList)) return;
+
+    toggleElementVisibility("library-form-container", false);
+    resetUserInterfaceAndStartLoadingProcess();
+
+    // Move library check boxes
+    settingsLibraries.appendChild(libraryList);
+
+    fetchExistingLibraryData(formData, selectedLibraries);
+  });
 });
+
+
+/**
+ * Coordinates the process of fetching the user's existing AudiobookShelf library data.
+ * - Resets the UI and displays loading state
+ * - Fetches all series and books for the selected libraries
+ * - Validates content and displays results or an error message
+ *
+ * @param {Object} formData - The form submission data (URL, username, password, region, etc.)
+ * @param {Object} selectedLibraries - Object containing the selected library IDs and auth token
+ */
+export async function fetchExistingLibraryData(formData, selectedLibraries) {
+  resetUserInterfaceAndStartLoadingProcess();
+
+  try {
+    setMessage("Fetching libraries and series...");
+
+    // Fetch user's existing library data
+    existingContent = await collectExistingSeriesFromAudiobookShelf(formData, selectedLibraries);
+
+    if (!existingContent || !existingContent.seriesFirstASIN) {
+      errorHandler({ message: "No series found in the selected library." });
+      return;
+    }
+
+    // Store for global use (e.g. refreshes)
+    await fetchAndDisplayResults(existingContent, formData);
+  } catch (error) {
+    errorHandler(error);
+  } finally {
+    hideSpinner();
+  }
+}
 
 /**
  * Resets interface state before starting a new metadata fetch.
@@ -79,9 +155,7 @@ export function resetUserInterfaceAndStartLoadingProcess() {
   emptyDivContent(seriesOutputDiv);
 
   // Hide form and show feedback
-  toggleElementVisibility("form-container", false);
-  showSpinner();
-  toggleElementVisibility("message", true, "block");
+  showLoadingState();
 }
 
 /**
@@ -113,13 +187,38 @@ export async function fetchAndDisplayResults(existingContent, formData, refreshF
  * @param {Object} formData - Auth and config input from form
  * @returns {Promise<Object>} - Filtered content from AudiobookShelf
  */
-async function collectExistingSeriesFromAudiobookShelf(formData) {
-  existingContent = await fetchExistingContent(formData);
+async function collectExistingSeriesFromAudiobookShelf(formData, libraryArrayObject) {
+  existingContent = await fetchExistingContent(formData, libraryArrayObject);
 
   setMessage("Login successful. Fetching book and series information...");
 
   // Remove hidden series before further processing
   return await removeHiddenSeries(existingContent);
+}
+
+/**
+ * Dynamically generates checkboxes for each available library.
+ *
+ * @param {Array<Object>} librariesList - List of libraries from the server
+ * @param {HTMLElement} parentContainer - The container where checkboxes will be appended
+ */
+function populateLibraryCheckboxes(librariesList, parentContainer) {
+  clearMessage();
+  emptyDivContent(parentContainer);
+  toggleElementVisibility("library-form-container", true);
+
+  librariesList.forEach((library) => {
+    addLabeledCheckbox(
+      {
+        id: library.id,
+        labelText: library.name,
+        checked: true, // default to all selected
+      },
+      parentContainer
+    );
+  });
+
+  libraryCheckboxWatcher(parentContainer); // Sync changes to selectedLibraries
 }
 
 /**
@@ -172,5 +271,31 @@ function uiUpdateAndDrawResults(groupedMissingBooks) {
   toggleElementVisibility("message", false);
   hideSpinner();
 
+  applyFilterButton.classList.remove("active");
   enableClickEventsOnLoadEnd();
+}
+
+/**
+ * Updates the UI to reflect a loading state.
+ * - Hides the form container
+ * - Displays the loading spinner
+ * - Ensures the message element is visible (used for progress updates)
+ */
+function showLoadingState() {
+  toggleElementVisibility("form-container", false);
+  showSpinner();
+  toggleElementVisibility("message", true, "block");
+}
+
+/**
+ * Run this script when an error occurs during data fetching or processing.
+ * @param {*} error Error details from failed operations
+ */
+function errorHandler(error) {
+  console.error(error);
+  toggleElementVisibility("form-container", true);
+  toggleElementVisibility("library-form-container", false);
+  setMessage(error.message || "Something went wrong. Please try again.");
+  clearRateMessage();
+  throw new Error(error.message || "An unexpected error occurred. Please try again.");
 }

@@ -9,12 +9,29 @@ export function setMessage(text) {
 }
 
 /**
+ * Clears any status or feedback message currently displayed in the UI.
+ * Typically used to reset or hide previous messages from #statusText.
+ */
+export function clearMessage() {
+  document.getElementById("statusText").textContent = "";
+}
+
+/**
  * Updates the UI rate limit message and displays it to the user.
  * @param {number} waitTime - The message to display.
  */
 export function setRateMessage(text) {
   document.getElementById("rateLimitText").textContent = text;
 }
+
+/**
+ * Clears the rate limit message currently displayed in the UI.
+ * Typically used to reset or hide previous messages from #rateLimitText.
+ */
+export function clearRateMessage() {
+  document.getElementById("rateLimitText").textContent = "";
+}
+
 /**
  * Displays the loading spinner.
  */

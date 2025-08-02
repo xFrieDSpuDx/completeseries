@@ -9,18 +9,20 @@ import { loadMetadataFromLocalStorage } from './localStorage.js';
  *
  * @param {Object} credentials - An object with:
  *   @property {string} serverUrl - The AudiobookShelf server URL.
- *   @property {string} username - The user's login name.
- *   @property {string} password - The user's password.
- *
+ * @param {Object} audiobookShelfLoginResponse - The response object from the AudiobookShelf login,
+ *   which contains the authentication token and libraries list.
+ *   @property {string} audiobookShelfLoginResponse.authToken - The authentication token.
+ *   @property {Array} audiobookShelfLoginResponse.librariesList - List of libraries available
  * @returns {Promise<Object>} - Parsed JSON response from the server,
  * containing authentication token and library data.
  *
  * @throws {Error} - If the login request fails (e.g., incorrect credentials or network error).
  */
-export async function fetchExistingContent(credentials) {
+export async function fetchExistingContent(credentials, audiobookShelfLoginResponse) {
   // Ensure the server URL is well-formed
   credentials.serverUrl = sanitiseAudiobookShelfURL(credentials.serverUrl);
-
+  const audiobookShelfLibraries = audiobookShelfLoginResponse.librariesList;
+  const authToken = audiobookShelfLoginResponse.authToken;
   // Send credentials to the backend login handler
   const response = await fetch("php/existingSeriesFetcher.php", {
     method: "POST",
@@ -29,8 +31,51 @@ export async function fetchExistingContent(credentials) {
     },
     body: JSON.stringify({
       url: credentials.serverUrl,
+      libraries: audiobookShelfLibraries,
+      authToken: authToken
+    }),
+  });
+
+  // Throw an error if the login attempt failed
+  if (!response.ok) {
+    throw new Error("Failed to get existing content from AudiobookShelf.");
+  }
+
+  // Parse the response as a JavaScript object to check for handled errors
+  const responseData = await response.json();
+
+  // Return the parsed response as a JavaScript object
+  return responseData;
+}
+
+/**
+ * Authenticates with the AudiobookShelf PHP backend using user credentials,
+ * and retrieves the initial list of series and books.
+ *
+ * @param {Object} credentials - An object with:
+ *   @property {string} serverUrl - The AudiobookShelf server URL.
+ *   @property {string} username - The user's login name.
+ *   @property {string} password - The user's password.
+ *
+ * @returns {Promise<Object>} - Parsed JSON response from the server,
+ * containing authentication token and library data.
+ *
+ * @throws {Error} - If the login request fails (e.g., incorrect credentials or network error).
+ */
+export async function fetchAudiobookShelfLibraries(credentials) {
+  // Ensure the server URL is well-formed
+  credentials.serverUrl = sanitiseAudiobookShelfURL(credentials.serverUrl);
+
+  // Send credentials to the backend login handler
+  const response = await fetch("php/getLibraries.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      url: credentials.serverUrl,
       username: credentials.username,
-      password: credentials.password,
+      password: credentials.password
     }),
   });
 

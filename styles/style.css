@@ -76,6 +76,11 @@ form {
   flex-direction: column;
 }
 
+form h2 {
+  margin-top: 0;
+}
+
+.library-toggle span,
 form input,
 form select,
 form button {
@@ -87,6 +92,7 @@ form button {
   width: 100%;
 }
 
+.library-toggle span,
 .filter-panel,
 form input,
 form select {
@@ -118,6 +124,7 @@ form select {
   transition: border-color 0.2s ease;
 }
 
+.library-toggle input[type="checkbox"]:checked + span,
 form input:focus,
 form select:focus {
   border-color: var(--success);
@@ -127,6 +134,10 @@ form select:focus {
 form input:hover,
 form select:hover {
   border-color: var(--success);
+}
+
+.library-toggle span:hover {
+  cursor: pointer;
 }
 
 form input::placeholder {
@@ -162,8 +173,20 @@ form button {
   margin-top: 1.25rem;
 }
 
+form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--primary-bg);
+  color: var(--secondary-bg);
+}
+
 form button:hover {
   background-color: var(--success-hover);
+}
+
+form button:disabled:hover {
+  background-color: var(--primary-bg);
+  color: var(--secondary-bg);
 }
 
 label {
@@ -177,6 +200,42 @@ label {
 .label-checkbox {
   padding-left: 0.9375rem;
   cursor: pointer;
+}
+
+.library-toggle {
+  margin-bottom: 0.5rem;
+  line-height: 1rem;
+}
+
+.library-toggle input[type="checkbox"] {
+  display: none;
+}
+
+.library-toggle span {
+  display: block;
+  padding-left: 3rem;
+  position: relative;
+  text-align: left;
+  transition: background-color 0.2s ease;
+} 
+
+.library-toggle span::before {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.7;
+  background-image: url("/assets/close.svg");
+}
+
+.library-toggle input[type="checkbox"]:checked + span::before {
+  background-image: url("/assets/tick.svg"); /* Your Tick icon */
+  opacity: 1;
 }
 
 .error-message {

@@ -9,6 +9,7 @@
   <body>
     <div id="form-container" class="form-container">
       <form id="loginForm" novalidate>
+        <h2>Login to AudiobookShelf</h2>
         <label for="serverUrl">AudiobookShelf Server URL</label>
         <input
           type="text"
@@ -57,6 +58,16 @@
         <button type="submit">Login</button>
       </form>
     </div>
+
+    <div id="library-form-container" class="form-container" style="display: none">
+      <form id="libraryForm" novalidate>
+        <h2>Select the libraries to scan</h2>
+        <!-- Options will be populated dynamically -->
+        <div id="availableLibraries" class="library-list"></div>  
+        <button id="selectLibrarySubmit" type="submit">Continue with selected</button>
+        <div class="error-message" id="libraryError"></div>
+      </form> 
+    </div>  
 
     <div id="message" class="message">
       <span id="spinner" class="spinner" style="display: none"></span>
@@ -135,80 +146,84 @@
         <img src="assets/close.svg" alt="" />
       </button>
       <button id="applyFilter" class="accent-button-inline-right" aria-label="Apply filter" title="Apple filter">Apply Filter</button>
-      <h3>Filters</h3>
-      <h4>Book Types</h4>
-      <div class="checkbox-row">
-        <input type="checkbox" id="filterUnabridged" checked />
-        <label for="filterUnabridged" class="label-checkbox"
-          >Only include unabridged books</label
-        >
-      </div>
-      <div class="checkbox-row">
-        <input type="checkbox" id="ignoreMultiBooks" />
-        <label for="ignoreMultiBooks" class="label-checkbox"
-          >Ignore multi-book audiobooks</label
-        >
-      </div>
-      <h4>Series</h4>
-      <div class="checkbox-row">
-        <input type="checkbox" id="includeSubSeries" />
-        <label for="includeSubSeries" class="label-checkbox"
-          >Include results for book subseries</label
-        >
-      </div>
-      <h4>Series Position</h4>
-      <div class="checkbox-row">
-        <input type="checkbox" id="ignoreNoPositionBooks" />
-        <label for="ignoreNoPositionBooks" class="label-checkbox"
-          >Ignore books with no position in a series</label
-        >
-      </div>
-      <div class="checkbox-row">
-        <input type="checkbox" id="ignoreSubPositionBooks" />
-        <label for="ignoreSubPositionBooks" class="label-checkbox"
-          >Ignore books with a sub position (e.g. #3.5)</label
-        >
-      </div>
-      <div class="checkbox-row">
-        <input type="checkbox" id="ignoreSameSeriesPosition" checked />
-        <label for="ignoreSameSeriesPosition" class="label-checkbox"
-          >Ignore books with the same series position</label
-        >
-      </div>
-      <div class="checkbox-row">
-        <input type="checkbox" id="ignoreSameSeriesPositionInMissingArray" />
-        <label
-          for="ignoreSameSeriesPositionInMissingArray"
-          class="label-checkbox"
-          >Only show first found series position</label
-        >
-      </div>
-      <h4>Name</h4>
-      <div class="checkbox-row">
-        <input type="checkbox" id="ignoreTitleSubtitle" checked />
-        <label for="ignoreTitleSubtitle" class="label-checkbox"
-          >Ignore books with title and subtitle matches</label
-        >
-      </div>
-      <div class="checkbox-row">
-        <input type="checkbox" id="ignoreTitleSubtitleInMissingArray" />
-        <label for="ignoreTitleSubtitleInMissingArray" class="label-checkbox"
-          >Only show first found version of Title and Subtitle</label
-        >
-      </div>
-      <h4>Date</h4>
-      <div class="checkbox-row">
-        <input type="checkbox" id="ignoreFutureDateBooks" />
-        <label for="ignoreFutureDateBooks" class="label-checkbox"
-          >Ignore books that have not been released yet</label
-        >
-      </div>
-      <div class="checkbox-row">
-        <input type="checkbox" id="ignorePastDateBooks" />
-        <label for="ignorePastDateBooks" class="label-checkbox"
-          >Ignore books that have already been released</label
-        >
-      </div>
+      <div id="filterOptions">
+        <h3>Filters</h3>
+        <h4>Book Types</h4>
+        <div class="checkbox-row">
+          <input type="checkbox" id="filterUnabridged" checked />
+          <label for="filterUnabridged" class="label-checkbox"
+            >Only include unabridged books</label
+          >
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="ignoreMultiBooks" />
+          <label for="ignoreMultiBooks" class="label-checkbox"
+            >Ignore multi-book audiobooks</label
+          >
+        </div>
+        <h4>Series</h4>
+        <div class="checkbox-row">
+          <input type="checkbox" id="includeSubSeries" />
+          <label for="includeSubSeries" class="label-checkbox"
+            >Include results for book subseries</label
+          >
+        </div>
+        <h4>Series Position</h4>
+        <div class="checkbox-row">
+          <input type="checkbox" id="ignoreNoPositionBooks" />
+          <label for="ignoreNoPositionBooks" class="label-checkbox"
+            >Ignore books with no position in a series</label
+          >
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="ignoreSubPositionBooks" />
+          <label for="ignoreSubPositionBooks" class="label-checkbox"
+            >Ignore books with a sub position (e.g. #3.5)</label
+          >
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="ignoreSameSeriesPosition" checked />
+          <label for="ignoreSameSeriesPosition" class="label-checkbox"
+            >Ignore books with the same series position</label
+          >
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="ignoreSameSeriesPositionInMissingArray" />
+          <label
+            for="ignoreSameSeriesPositionInMissingArray"
+            class="label-checkbox"
+            >Only show first found series position</label
+          >
+        </div>
+        <h4>Name</h4>
+        <div class="checkbox-row">
+          <input type="checkbox" id="ignoreTitleSubtitle" checked />
+          <label for="ignoreTitleSubtitle" class="label-checkbox"
+            >Ignore books with title and subtitle matches</label
+          >
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="ignoreTitleSubtitleInMissingArray" />
+          <label for="ignoreTitleSubtitleInMissingArray" class="label-checkbox"
+            >Only show first found version of Title and Subtitle</label
+          >
+        </div>
+        <h4>Date</h4>
+        <div class="checkbox-row">
+          <input type="checkbox" id="ignoreFutureDateBooks" />
+          <label for="ignoreFutureDateBooks" class="label-checkbox"
+            >Ignore books that have not been released yet</label
+          >
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="ignorePastDateBooks" />
+          <label for="ignorePastDateBooks" class="label-checkbox"
+            >Ignore books that have already been released</label
+          >
+        </div>
+      </div> 
+      <h3>Select the libraries to scan</h3>
+      <div id="availableLibrariesSettings" class="library-list"></div> 
 
       <h3>Clear Local Storage Cache</h3>
       <button id="clearSeriesList" class="accent-button">

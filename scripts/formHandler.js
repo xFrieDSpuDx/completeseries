@@ -49,6 +49,17 @@ export function validateForm(data) {
 }
 
 /**
+ * Validates that the library form has at least one selected library.
+ *
+ * @param {Array} libraryList - The list of selected libraries.
+ * @returns {boolean} True if at least one library is selected, otherwise false.
+ */
+export function validateLibraryForm(libraryList) {
+  return libraryList.length > 0;
+}
+
+
+/**
  * Clears all error messages in the login form.
  */
 export function clearErrors() {
