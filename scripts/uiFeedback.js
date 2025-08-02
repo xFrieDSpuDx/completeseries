@@ -118,3 +118,10 @@ export function adjustModalWidth(tileCount) {
     modal.style.width = `${finalWidth}px`;
   }
 }
+
+/**
+ * Shows the library filter section in the settings menu when more than one library is available
+ */
+export function showLibraryFilterInSettings() {
+  document.getElementById("libraryFilter").style.display = "block";
+}

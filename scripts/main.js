@@ -9,6 +9,7 @@ import {
   showSpinner,
   hideSpinner,
   toggleElementVisibility,
+  showLibraryFilterInSettings
 } from "./uiFeedback.js";
 import { collectBookMetadata, collectSeriesMetadata } from "./metadataFlow.js";
 import { fetchExistingContent, fetchAudiobookShelfLibraries } from "./dataFetcher.js";
@@ -105,7 +106,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Move library check boxes
     settingsLibraries.appendChild(libraryList);
-
+    // Show library filter in settings
+    showLibraryFilterInSettings();
+    
     fetchExistingLibraryData(formData, selectedLibraries);
   });
 });
