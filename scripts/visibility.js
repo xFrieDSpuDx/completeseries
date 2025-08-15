@@ -2,6 +2,7 @@
 
 import { populateHiddenItemsMenu } from "./tileVisibilityUpdater.js";
 import { sortBySeriesThenTitle } from "./dataCleaner.js";
+import { applyFilterButton } from "./interactions.js";
 
 // Local storage key value
 const VISIBILITY_KEY = "hiddenItems";
@@ -92,8 +93,10 @@ export function toggleHiddenItemVisibilityMenu(eyeIcon) {
 
   if (eyeIcon.classList.contains("eyeClosed")) {
     requestReload.classList.remove("active");
+    applyFilterButton.classList.remove("active");
   } else {
     requestReload.classList.add("active");
+    applyFilterButton.classList.add("active");
   }
 }
 

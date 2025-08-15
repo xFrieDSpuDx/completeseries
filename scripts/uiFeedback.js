@@ -82,6 +82,22 @@ export function temporaryChangeElementText(targetElement, temporaryText, duratio
   }, duration);
 }
 
+/***
+ * Shows the debug buttons
+ */
+export function showDebugButtons() {
+  document.getElementById("openDebugModalBtn").classList.add("active");
+  document.getElementById("clearDebugBtn").classList.add("active");
+}
+
+/***
+ * Hide the debug buttons
+ */
+export function hideDebugButtons() {
+  document.getElementById("openDebugModalBtn").classList.remove("active");
+  document.getElementById("clearDebugBtn").classList.remove("active");
+}
+
 /**
  * Shows the book modal and adds the overlay
  */

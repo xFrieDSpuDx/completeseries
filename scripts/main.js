@@ -9,7 +9,8 @@ import {
   showSpinner,
   hideSpinner,
   toggleElementVisibility,
-  showLibraryFilterInSettings
+  showLibraryFilterInSettings,
+  showDebugButtons
 } from "./uiFeedback.js";
 import { collectBookMetadata, collectSeriesMetadata } from "./metadataFlow.js";
 import { fetchExistingContent, fetchAudiobookShelfLibraries } from "./dataFetcher.js";
@@ -24,10 +25,13 @@ import {
   initializeUIInteractions,
   disableClickEventsOnLoad,
   enableClickEventsOnLoadEnd,
-  libraryCheckboxWatcher,
-  applyFilterButton
+  libraryCheckboxWatcher
 } from "./interactions.js";
 import { emptyDivContent, addLabeledCheckbox } from "./elementFactory.js";
+
+import { bindDebugViewerControls } from "./interactions.js";
+import { initDebugModal } from "./debugView.js";
+import { isDebugEnabled, getDebugLogs } from "./debug.js";
 
 // Stores current data fetched from AudiobookShelf
 export let existingContent;
@@ -44,6 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Set up UI event listeners and populate hidden series menu
   initializeUIInteractions();
   populateHiddenItemsMenu();
+
+  const debugModalElement = document.getElementById("debugModal");
+  bindDebugViewerControls(debugModalElement);
 
   const loginForm = document.getElementById("loginForm");
   const libraryForm = document.getElementById("libraryForm");
@@ -73,14 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      // Store all libraries found
+      selectedLibraries.librariesList = structuredClone(libraryArrayObject.librariesList);
+      selectedLibraries.authToken = libraryArrayObject.authToken;
+      
       if (libraryArrayObject.librariesList.length === 1) {
         // Auto-process single-library users
         fetchExistingLibraryData(formData, libraryArrayObject);
       } else {
-        // Default to all libraries selected
-        selectedLibraries.librariesList = structuredClone(libraryArrayObject.librariesList);
-        selectedLibraries.authToken = libraryArrayObject.authToken;
-
         // Build UI checkboxes for each library
         populateLibraryCheckboxes(libraryArrayObject.librariesList, libraryList);
       }
@@ -240,7 +247,7 @@ async function fetchAllMetadataForBooks(existingContent, formData) {
   );
 
   // Use those ASINs to get full series details
-  return await collectSeriesMetadata(seriesASINs, formData.region);
+  return await collectSeriesMetadata(seriesASINs, formData.region, existingContent);
 }
 
 /**
@@ -273,9 +280,10 @@ function uiUpdateAndDrawResults(groupedMissingBooks) {
   toggleElementVisibility("form-container", false);
   toggleElementVisibility("message", false);
   hideSpinner();
-
-  applyFilterButton.classList.remove("active");
   enableClickEventsOnLoadEnd();
+
+  // After run completes (and logs have been written), re-render:
+  populateDebugViewerIfResultsExist();
 }
 
 /**
@@ -301,4 +309,27 @@ function errorHandler(error) {
   setMessage(error.message || "Something went wrong. Please try again.");
   clearRateMessage();
   throw new Error(error.message || "An unexpected error occurred. Please try again.");
+}
+
+/**
+ * Populate the Debug Viewer once logs exist.
+ *
+ * Early-exits if debugging is disabled or if there are no logs to display.
+ * Side effects:
+ *  - Initializes the debug modal UI.
+ *  - Reveals the debug-related buttons/controls.
+ *
+ * @returns {void}
+ */
+function populateDebugViewerIfResultsExist() {
+  // Abort if debug features are not enabled.
+  if (!isDebugEnabled()) return;
+
+  // Ensure we actually have logs before initializing the viewer.
+  const debugLogs = getDebugLogs();
+  if (!Array.isArray(debugLogs) || debugLogs.length === 0) return;
+
+  // Initialize the modal and show related UI controls.
+  initDebugModal();
+  showDebugButtons();
 }
