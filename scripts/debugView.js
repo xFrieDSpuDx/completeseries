@@ -432,8 +432,6 @@ function renderTableForRecords(containerElement, records) {
       detailRowElement.appendChild(spanDetailsTd);
     })();
   }
-
-  mobileInterface();
 }
 
 /**
@@ -457,30 +455,6 @@ function getColumnWidthValue() {
   
   // fallback for smaller screens
   return 6;
-}
-
-/**
- * Initializes click-to-toggle behavior for collapsible sections.
- * 
- * Behavior:
- * - Finds all elements with `.collapsible` class.
- * - For each section, finds its `.collapsible-header`.
- * - Clicking the header toggles the `.open` class on the parent `.collapsible`.
- * - The `.open` class is typically used in CSS to expand/collapse `.collapsible-content`.
- */
-function mobileInterface() {
-  // Find all collapsible sections on the page
-  document.querySelectorAll(".collapsible").forEach(section => {
-    
-    // Locate the header inside each section
-    const header = section.querySelector(".collapsible-header");
-    if (!header) return; // Skip if no header is found
-
-    // When the header is clicked, toggle the "open" class on the section
-    header.addEventListener("click", () => {
-      section.classList.toggle("open");
-    });
-  });
 }
 
 /**
