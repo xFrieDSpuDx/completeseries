@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Book Series Tracker</title>
-    <link rel="stylesheet" href="styles/style.css?v=0.02" />
+    <link rel="stylesheet" href="styles/style.css?v=0.03" />
   </head>
   <body>
     <div id="form-container" class="form-container">
@@ -117,7 +117,7 @@
         <img src="assets/close.svg" alt="" />
       </button>
       <div id="requestReloadDiv" class="request-reload">
-        Onload hidden items now visible. Please reload to view change.
+        Onload hidden items now visible. Please re-run filter to view change.
       </div>
       <div>Hidden books and series</div>
       <h3>Series</h3>
@@ -240,6 +240,17 @@
       <button id="clearAllList" class="accent-button">
         Clear All Saved Data
       </button>
+
+      <h3>Debug</h3>
+      <div class="checkbox-row">
+        <input type="checkbox" id="enableDebugChecks" />
+        <label for="enableDebugChecks" class="label-checkbox">
+          Debug checks (log why items were filtered)
+        </label>
+      </div>
+      <!-- Trigger button -->
+      <button id="openDebugModalBtn" class="accent-button default-hidden">Open Debug Viewer</button>
+      <button id="clearDebugBtn" class="accent-button default-hidden">Clear Debug Values</button>
     </div>
 
     <div id="settingsContainer">
@@ -250,6 +261,73 @@
       >
         <img src="assets/cog.svg" alt="" />
       </button>
+    </div>
+
+    <!-- Fullscreen Debug Modal -->
+    <div id="debugModal" class="dbg-modal dbg-theme">
+      <div id="debugModalOverlay"class="dbg-modal__overlay"></div>
+      <div class="dbg-modal__panel" role="dialog" aria-modal="true" aria-labelledby="dbgModalTitle">
+        <header class="dbg-modal__header">
+          <h2 id="dbgModalTitle">Debug Session Viewer</h2>
+          <button
+        class="close-button-right close-button-debug"
+        aria-label="Close debug viewer"
+        title="Close debug viewer"
+        data-close="true"
+        type="button"
+        id="closeDebugModal"
+      >
+        <img src="assets/close.svg" alt="" />
+      </button>
+        </header>
+
+        <section class="dbg-modal__controls">
+          <div class="dbg-row">
+            <label>Session:
+              <select id="dbgSession">
+                <option value="">(All)</option>
+                <!-- sessions injected -->
+              </select>
+            </label>
+
+            <label>Outcome:
+              <select id="dbgOutcome">
+                <option value="any">(Any)</option>
+                <!-- outcomes injected -->
+              </select>
+            </label>
+
+            <label>Group by:
+              <select id="dbgGroupBy">
+                <option value="none">None</option>
+                <option value="check">Check</option>
+                <option value="outcome">Outcome</option>
+                <option value="series">Series</option>
+                <option value="title">Title</option>
+                <option value="region">Region</option>
+                <option value="available">Available</option>
+              </select>
+            </label>
+
+            <label class="grow">Search:
+              <input id="dbgSearch" type="text" placeholder="ASIN, Title or Series">
+            </label>
+
+            <div class="grow"></div>
+            <button id="dbgDownloadJson" class="accent-button-inline-right active debug-accent-button" type="button">JSON</button>
+            <button id="dbgDownloadCsv"  class="accent-button-inline-right active debug-accent-button" type="button">CSV</button>
+          </div>
+
+          <div class="dbg-row">
+            <span>Checks:</span>
+            <div id="dbgCheckList" class="dbg-chiplist"><!-- chips injected --></div>
+          </div>
+        </section>
+
+        <section id="dbgContent" class="dbg-modal__content" aria-live="polite">
+          <!-- table rendered here -->
+        </section>
+      </div>
     </div>
 
     <script type="module" src="scripts/main.js"></script>

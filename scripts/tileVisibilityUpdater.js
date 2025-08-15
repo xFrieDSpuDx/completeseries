@@ -64,12 +64,17 @@ export function toggleTileMask(eyeIcon, maskParent) {
  * @returns {Object} A normalized hidden item object with type, series, ASIN, and title.
  */
 export function hideItemObjectBuilder(bookMetadata, seriesTitle, itemType) {
-  return {
+  let objectToHide =  {
     type: itemType,
     series: seriesTitle,
-    asin: bookMetadata.seriesAsin,
+    // Use book ASIN for book items, series ASIN for series items
+    asin: itemType === "series"
+      ? (bookMetadata.seriesAsin ?? bookMetadata.asin)   // series toggle gets series ASIN
+      : (bookMetadata.asin ?? bookMetadata.seriesAsin),  // book toggle gets book ASIN
     title: bookMetadata.title,
   };
+
+  return objectToHide;
 }
 
 /**

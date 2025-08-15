@@ -1,7 +1,6 @@
 // metadataCollector.js
 import { fetchAudibleMetadata, findFromStorage } from "./dataFetcher.js";
 import { setMessage, setRateMessage } from "./uiFeedback.js";
-import { removeHiddenBooks } from "./dataCleaner.js";
 import { isCurrentlyHidden } from "./visibility.js";
 import { storeMetadataToLocalStorage } from "./localStorage.js";
 
@@ -105,7 +104,7 @@ export async function collectBookMetadata(
  * @param {string} audibleRegion - Audible region code (e.g., 'uk')
  * @returns {Promise<Array<Object>>} Array of { seriesAsin, response } entries
  */
-export async function collectSeriesMetadata(seriesAsins, audibleRegion) {
+export async function collectSeriesMetadata(seriesAsins, audibleRegion, existingContent) {
   const seriesMetadataResults = [];
   const totalSeries = seriesAsins.length;
   let processedCount = 0;
@@ -139,7 +138,8 @@ export async function collectSeriesMetadata(seriesAsins, audibleRegion) {
         await checkForRateLimitDelay(responseHeaders, remainingRequestsEstimate);
 
         if (!Array.isArray(seriesResponse)) continue;
-        if (!removeHiddenBooks(seriesResponse)) continue;
+
+        if (!existingContent) continue;
 
         seriesMetadata = {
           seriesAsin,
