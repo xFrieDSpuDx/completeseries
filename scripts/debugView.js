@@ -401,25 +401,86 @@ function renderTableForRecords(containerElement, records) {
     const rowElement = addTableRow(tbodyElement);
 
     // Cells in the same order as headerLabels
-    addCell(String(record.sessionIndex ?? ""), rowElement);                         // Index
-    addCell(record.sessionId ?? "", rowElement);                                    // Session
-    addCell(record.checkLabel || record.check || "", rowElement);                   // Check
-    addCell(record.outcome ?? "", rowElement);                                      // Outcome
-    addCell(record.asin ?? "", rowElement);                                         // ASIN
-    addCell(formatSeriesNames(record), rowElement);                                 // Series
-    addCell(record.title ?? "", rowElement);                                        // Title
-    addCell(record.region ?? "", rowElement);                                       // Region
-    addCell(record.isAvailable != null ? String(!!record.isAvailable) : "", rowElement); // Available
+    addCell(String(record.sessionIndex ?? ""), rowElement).setAttribute('data-label', headerLabels[0]);                         // Index
+    addCell(record.sessionId ?? "", rowElement).setAttribute('data-label', headerLabels[1]);                                    // Session
+    addCell(record.checkLabel || record.check || "", rowElement).setAttribute('data-label', headerLabels[2]);                   // Check
+    addCell(record.outcome ?? "", rowElement).setAttribute('data-label', headerLabels[3]);                                      // Outcome
+    addCell(record.asin ?? "", rowElement).setAttribute('data-label', headerLabels[4]);                                         // ASIN
+    addCell(formatSeriesNames(record), rowElement).setAttribute('data-label', headerLabels[5]);                                 // Series
+    addCell(record.title ?? "", rowElement).setAttribute('data-label', headerLabels[6]);                                        // Title
+    addCell(record.region ?? "", rowElement).setAttribute('data-label', headerLabels[7]);                                       // Region
+    addCell(record.isAvailable != null ? String(!!record.isAvailable) : "", rowElement).setAttribute('data-label', headerLabels[8]); // Available
 
     // Details cell with quickFacts/details toggle (kept as-is)
     (function renderDetailsCell() {
+      // Add detail row
+      const detailRowElement = addTableRow(tbodyElement);
+      detailRowElement.hidden = true;
       const detailsCell = document.createElement("td");
+      detailsCell.setAttribute('data-label', headerLabels[9]);
       const uniqueId = `${record.sessionId || "s"}_${record.sessionIndex ?? 0}`;
-      const detailsElement = buildQuickFactsElement(record, uniqueId);
+      const detailsObject = buildQuickFactsElement(record, uniqueId, detailRowElement);
+      const detailsElement = detailsObject.detailsWrapper;
+      const detailsPanel = detailsObject.detailsPanel;
       detailsCell.appendChild(detailsElement);
       rowElement.appendChild(detailsCell);
+
+      // Add full width table row for details panel
+      const spanDetailsTd = document.createElement('td');
+      spanDetailsTd.colSpan = getColumnWidthValue();
+      spanDetailsTd.appendChild(detailsPanel);
+      detailRowElement.appendChild(spanDetailsTd);
     })();
   }
+
+  mobileInterface();
+}
+
+/**
+ * Determines the preferred column width (in `ch` units) based on the current viewport width.
+ * 
+ * Breakpoints:
+ * - > 100rem:     Column width = 10ch   (large desktops / wide screens)
+ * - 75rem–100rem: Column width = 8ch    (medium desktops / laptops)
+ * - ≤ 59.375rem:  Column width = 6ch    (tablets / smaller devices)
+ * - Fallback:     Column width = 6ch
+ * 
+ * @returns {number} The numeric width in `ch` units (to be used with CSS, e.g. "10ch").
+ */
+function getColumnWidthValue() {
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize || "16"); // root font-size in px
+  const windowRem = window.innerWidth / rem;
+
+  if (windowRem > 100) return 10;
+  if (windowRem >= 75) return 8;
+  if (windowRem <= 59.375) return 6;
+  
+  // fallback for smaller screens
+  return 6;
+}
+
+/**
+ * Initializes click-to-toggle behavior for collapsible sections.
+ * 
+ * Behavior:
+ * - Finds all elements with `.collapsible` class.
+ * - For each section, finds its `.collapsible-header`.
+ * - Clicking the header toggles the `.open` class on the parent `.collapsible`.
+ * - The `.open` class is typically used in CSS to expand/collapse `.collapsible-content`.
+ */
+function mobileInterface() {
+  // Find all collapsible sections on the page
+  document.querySelectorAll(".collapsible").forEach(section => {
+    
+    // Locate the header inside each section
+    const header = section.querySelector(".collapsible-header");
+    if (!header) return; // Skip if no header is found
+
+    // When the header is clicked, toggle the "open" class on the section
+    header.addEventListener("click", () => {
+      section.classList.toggle("open");
+    });
+  });
 }
 
 /**
@@ -517,7 +578,7 @@ function formatSeriesNames(record) {
  * @param {string} uniqueId - Used to link the toggle to the panel via aria-controls.
  * @returns {HTMLDivElement} The wrapper element containing the toggle and collapsible panel.
  */
-function buildQuickFactsElement(record, uniqueId) {
+function buildQuickFactsElement(record, uniqueId, detailRowElement) {
   const detailsWrapper = document.createElement("div");
   detailsWrapper.className = "dbg-details-wrapper";
 
@@ -535,7 +596,6 @@ function buildQuickFactsElement(record, uniqueId) {
   const detailsPanel = document.createElement("div");
   detailsPanel.id = `dbgDetails_${uniqueId}`;
   detailsPanel.className = "dbg-details-panel";
-  detailsPanel.style.display = "none";
 
   // Build content
   const detailsData = record && (record.quickFacts || record.details || null);
@@ -563,14 +623,14 @@ function buildQuickFactsElement(record, uniqueId) {
   }
 
   detailsPanel.appendChild(contentElement);
-  detailsWrapper.appendChild(detailsPanel);
+  //detailsWrapper.appendChild(detailsPanel);
 
   // Toggle behavior
   toggleLink.addEventListener("click", () => {
-    const isOpen = detailsPanel.style.display !== "none";
-    detailsPanel.style.display = isOpen ? "none" : "block";
-    toggleLink.setAttribute("aria-expanded", String(!isOpen));
-    toggleLink.textContent = isOpen ? "Show details ▶" : "Hide details ▼";
+    const isHidden= detailRowElement.hidden;
+    detailRowElement.hidden = !isHidden;
+    toggleLink.setAttribute("aria-expanded", String(isHidden));
+    toggleLink.textContent = !isHidden ? "Show details ▶" : "Hide details ▼";
   });
 
   // Keyboard accessibility: toggle on Enter/Space
@@ -581,7 +641,7 @@ function buildQuickFactsElement(record, uniqueId) {
     }
   });
 
-  return detailsWrapper;
+  return {detailsWrapper: detailsWrapper, detailsPanel: detailsPanel};
 }
 
 /**
