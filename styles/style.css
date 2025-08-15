@@ -234,7 +234,7 @@ label {
 }
 
 .library-toggle input[type="checkbox"]:checked + span::before {
-  background-image: url("/assets/tick.svg"); /* Your Tick icon */
+  background-image: url("/assets/tick.svg");
   opacity: 1;
 }
 
@@ -940,7 +940,6 @@ button.accent-button-inline-right.active {
 }
 
 .dbg-modal select {
-  /* match your select styling */
   appearance: none;
   padding-right: 2.2rem;
   background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20fill%3D%27white%27%20viewBox%3D%270%200%2024%2024%27%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%3E%3Cpath%20d%3D%27M7%2010l5%205%205-5z%27/%3E%3C/svg%3E");
@@ -968,7 +967,7 @@ button.accent-button-inline-right.active {
   background: var(--success);
   color: #fff;
   cursor: pointer;
-  border: none; /* match your form buttons */
+  border: none;
 }
 .dbg-modal button:hover:not(.accent-button-inline-right, .close-button-right) {
   background: var(--success-hover);

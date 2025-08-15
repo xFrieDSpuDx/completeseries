@@ -816,7 +816,6 @@ function normalizeDate(value) {
 /**
  * Starts a debug session if the UI flag is enabled.
  * This reads the checkbox directly to avoid coupling findMissingBooks to DOM details.
- * If you later expose a `isDebugEnabled()` in debug.js, we can delegate to that instead.
  */
 /**
  * Ensuredebugsession.
@@ -1144,10 +1143,6 @@ export function groupBooksBySeries(missingBooks, includeSubSeries) {
  * - Relies on modern JS engines’ stable sort (order of equal items is preserved).
  * - If `series` is missing or falsy, it is treated as an empty string.
  *
- * Consider (optional, not implemented here):
- * - Using `localeCompare(undefined, { sensitivity: "base" })` for locale-aware sorting.
- * - Stripping leading articles ("The", "A", "An") if you want library-style ordering.
- *
  * @param {SeriesRecord[]} seriesArray - Array of series records to sort.
  * @returns {SeriesRecord[]} - New array sorted alphabetically by `series` (case-insensitive).
  */
@@ -1177,10 +1172,6 @@ function sortSeriesAlphabetically(groupedBySeries) {
  * - Case-insensitive comparison on both fields; locale-specific ordering is NOT applied.
  * - Relies on modern JS engines’ stable sort (order of equal items is preserved).
  * - If `series` or `title` is missing/falsy, it is treated as an empty string.
- *
- * Consider (optional, not implemented here):
- * - Using `localeCompare(undefined, { sensitivity: "base" })` for locale-aware sorting.
- * - Normalizing titles (e.g., stripping leading articles) if you want library-style ordering.
  *
  * @param {BookRecord[]} metadataItems - Array of items with at least `series` and `title` strings.
  * @returns {BookRecord[]} - New array sorted by `series` then `title` (both case-insensitive).

@@ -275,7 +275,6 @@ export function initializeUIInteractions() {
    *
    * Notes:
    * - Uses `Node.hasChildNodes()`, which counts **any** child nodes (including text nodes).
-   *   If you only want element children, prefer: `container?.children.length > 0`.
    *
    * @returns {boolean} `true` if the container exists and has at least one child node; otherwise `false`.
    */
