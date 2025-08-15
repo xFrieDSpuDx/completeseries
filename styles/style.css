@@ -743,6 +743,10 @@ button.accent-button-inline-right.active {
   display: none;
 }
 
+.collapsible .collapsible-arrow {
+  display: none;
+}
+
 /* ---------- CONSOLIDATED MEDIA QUERIES ---------- */
 @media (max-width: 59.375rem) {
   /* 950px */
@@ -1038,40 +1042,31 @@ button.accent-button-inline-right.active {
   overflow: auto;
 }
 
-/* Column sizing (kept sane; tweak as needed) */
-.dbg-table th:nth-child(1),
+/* Column sizing */
 .dbg-table td:nth-child(1) {
   width: 9ch;
 } /* # */
-.dbg-table th:nth-child(2),
 .dbg-table td:nth-child(2) {
   width: 20ch;
 } /* Session */
-.dbg-table th:nth-child(3),
 .dbg-table td:nth-child(3) {
   width: 30ch;
 } /* Check */
-.dbg-table th:nth-child(4),
 .dbg-table td:nth-child(4) {
   width: 14ch;
 } /* Outcome */
-.dbg-table th:nth-child(5),
 .dbg-table td:nth-child(5) {
   width: 16ch;
 } /* ASIN */
-.dbg-table th:nth-child(6),
 .dbg-table td:nth-child(6) {
   width: 50ch;
 } /* Series */
-.dbg-table th:nth-child(7),
 .dbg-table td:nth-child(7) {
   width: 50ch;
 } /* Title */
-.dbg-table th:nth-child(8),
 .dbg-table td:nth-child(8) {
   width: 13ch;
 } /* Region */
-.dbg-table th:nth-child(9),
 .dbg-table td:nth-child(9) {
   width: 13ch;
 } /* Available */
@@ -1102,8 +1097,8 @@ button.accent-button-inline-right.active {
   margin-top: 0;
 }
 
-/* Small screens */
-@media (max-width: 700px) {
+/* Medium screens */
+@media (max-width: 100rem) {
   .dbg-modal .dbg-modal__header {
     padding: 0.6rem 0.8rem;
   }
@@ -1116,13 +1111,33 @@ button.accent-button-inline-right.active {
   .dbg-table {
     font-size: 0.9rem;
   }
-  .dbg-table th:nth-child(6),
+  .dbg-table td:nth-child(1) {
+    width: 5rem;
+  }
+  .dbg-table th:nth-child(2),
+  .dbg-table th:nth-child(5),
+  .dbg-table td:nth-child(2),
+  .dbg-table td:nth-child(5) {
+    display: none;
+  }
   .dbg-table td:nth-child(6) {
     width: 22rem;
   }
-  .dbg-table th:nth-child(9),
+  .dbg-table td:nth-child(7) {
+    width: 22rem;
+  }
   .dbg-table td:nth-child(9) {
-    width: 26rem;
+    width: 11rem;
+  }
+}
+
+/* Small screens */
+@media (max-width: 75rem) {
+  .dbg-table th:nth-child(8),
+  .dbg-table th:nth-child(9),
+  .dbg-table td:nth-child(8),
+  .dbg-table td:nth-child(9) {
+    display: none;
   }
 }
 
@@ -1178,4 +1193,100 @@ button.accent-button-inline-right.active {
   font-size: 0.7em;
   margin-left: 2px;
   opacity: 0.8;
+}
+
+@media (max-width: 59.375rem) {
+  .dbg-table thead { display: none; }
+
+  .dbg-table tbody tr > td::before {
+    content: attr(data-label) ":";
+    margin-right: .5rem;
+  }
+
+  .dbg-table tbody tr {
+    border-bottom: 1px solid var(--border, rgba(255,255,255,.15));
+    margin-bottom: .5rem;
+  }
+
+  .dbg-table tbody tr > td {
+    display: flex;
+    gap: .5rem;
+    justify-content: space-between;
+    padding: .4rem .8rem;
+  }
+
+  .dbg-table tbody tr > td::before {
+    content: attr(data-label) ":";
+    font-weight: 600;
+    opacity: .8;
+    margin-right: .75rem;
+  }
+
+  /* Make the full-width details row behave */
+  .dbg-details-row { display: block; }
+  .dbg-details-row > td { display: block; padding: 0; }
+  .dbg-details-panel { padding: .6rem .8rem; }
+
+  /* re-enable columns */
+  .dbg-table th:nth-child(2),
+  .dbg-table th:nth-child(5),
+  .dbg-table td:nth-child(2),
+  .dbg-table td:nth-child(5),
+  .dbg-table th:nth-child(8),
+  .dbg-table th:nth-child(9),
+  .dbg-table td:nth-child(8),
+  .dbg-table td:nth-child(9) {
+    display: none;
+  }
+
+  /* Column sizing */
+  .dbg-table td:nth-child(1),
+  .dbg-table td:nth-child(2),
+  .dbg-table td:nth-child(3),
+  .dbg-table td:nth-child(4),
+  .dbg-table td:nth-child(5),
+  .dbg-table td:nth-child(6),
+  .dbg-table td:nth-child(7),
+  .dbg-table td:nth-child(8),
+  .dbg-table td:nth-child(9)  {
+    width: 100%;
+  } /* All columns */
+
+  .dbg-details-wrapper {
+    color: var(--accent);
+  }
+
+  .dbg-table td:nth-child(10) {
+    border-bottom: solid 1px;
+  }
+
+  .dbg-details-panel {
+    border-bottom: solid;
+  }
+
+  .collapsible-header {
+    cursor: pointer;
+  }
+
+  .collapsible-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  /* Show arrow */
+  .collapsible .collapsible-arrow {
+    display: inline-block;
+    margin-left: 0.5rem;
+    color: var(--accent);
+  }
+  /* Rotate arrow when open */
+  .collapsible.open .collapsible-arrow {
+    transform: rotate(180deg);
+  }
+
+  .collapsible.open .collapsible-content {
+    max-height: 100%; /* large enough to fit content */
+    opacity: 1;
+  }
 }
