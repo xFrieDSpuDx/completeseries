@@ -65,6 +65,12 @@ You can inspect the full source code in this repository to verify that yourself.
 5. **Apply new filters**  
    - Change the filters used and get an updated results page without logging in again
    - Clear cached contents to force a new request
+
+6. **Debug Modal**
+   - The Debug Modal provides a detailed, real-time view of your library’s data and applied filters, helping with troubleshooting and understanding the app’s logic.
+   - Group results
+   - Filter results
+   - Download results as JSON or CSV
 ---
 
 ## 🖼️ Screenshots
@@ -73,14 +79,16 @@ You can inspect the full source code in this repository to verify that yourself.
 |--------|------------|
 | 🏠 Home Page | ![HomePage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HomepageFilterClosed.png) |
 | 🏠 Home Page Filters | ![HomePageFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HomepageFilterOpen.png) |
-| 📚 Library Selection | ![HomePageFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/LibrarySelect.png) |
+| 📚 Library Selection | ![LibrarySelection](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/LibrarySelect.png) |
 | 📊 Results Page | ![ResultsPage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/ResultsPage.png) |
-| 🧰 Filter Results Page | ![ResultsPage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/FilterOptionsAfterResults.png) |
+| 🧰 Filter Results Page | ![FilterResultsPage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/FilterOptionsAfterResults.png) |
 | 📚 Book Modal | ![BooksModal](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/BooksModal.png) |
 | 📖 Book Details | ![BookDetails](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/BookDetails.png) |
 | 🙈 Hide Individual Book | ![HideBooks](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HideBooks.png) |
 | 🚫 Hide Entire Series | ![HideSeries](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HideSeries.png) |
 | 👁️ Hidden Books & Series Modal | ![HiddenBooksAndSeries](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HiddenBooksAndSeries.png) |
+| 🐞 Debug Modal (No Filters) | ![DebugModalNoFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/Debug.png) |
+| 🐞 Debug Modal (Filters & Grouping) | ![DebugModalWithFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/DebugFilterGroup.png) |
 
 ---
 
