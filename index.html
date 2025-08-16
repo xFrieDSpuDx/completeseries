@@ -222,11 +222,17 @@
           >
         </div>
       </div> 
-      <div id="libraryFilter" style="display:none">
+      <div id="libraryFilter" class="menuHideable">
         <h3>Select the libraries to scan</h3>
         <div id="availableLibrariesSettings" class="library-list"></div> 
       </div>
-
+      <div id="exportResults" class="menuHideable">
+        <h3>Export Results</h3>
+        <div class="button-pair">
+          <button id="exportMissingCsv" class="accent-button">Export Missing (CSV)</button>
+          <button id="exportMissingJson" class="accent-button">Export Missing (JSON)</button>
+        </div>
+      </div>
       <h3>Clear Local Storage Cache</h3>
       <button id="clearSeriesList" class="accent-button">
         Clear Series List
@@ -248,9 +254,10 @@
           Debug checks (log why items were filtered)
         </label>
       </div>
-      <!-- Trigger button -->
-      <button id="openDebugModalBtn" class="accent-button default-hidden">Open Debug Viewer</button>
-      <button id="clearDebugBtn" class="accent-button default-hidden">Clear Debug Values</button>
+      <div id="debugButtons" class="menuHideable">
+        <button id="openDebugModalBtn" class="accent-button default-hidden">Open Debug Viewer</button>
+        <button id="clearDebugBtn" class="accent-button default-hidden">Clear Debug Values</button>
+      </div>
     </div>
 
     <div id="settingsContainer">

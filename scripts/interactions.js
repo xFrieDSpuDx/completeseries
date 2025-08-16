@@ -8,12 +8,13 @@ import { temporaryChangeElementText } from "./uiFeedback.js";
 import {
   fetchExistingLibraryData,
   resetUserInterfaceAndStartLoadingProcess,
-  selectedLibraries
+  selectedLibraries,
+  groupedMissingBooks
 } from "./main.js";
 import { updatedSelectedLibraries } from "./dataCleaner.js";
 import { clearDebugLogsAndModal, debugStore } from "./debug.js";
 import { refreshDebugModal } from "./debugView.js";
-import { exportFilteredLogsAsJson, exportFilteredLogsAsCsv } from "./debugExports.js";
+import { exportFilteredLogsAsJson, exportFilteredLogsAsCsv, exportMissingAsCsv, exportMissingAsJson } from "./exportToFile.js";
 
 // Containers
 const settingsManagerFilterOptios = document.getElementById("filterOptions");
@@ -40,6 +41,10 @@ export function initializeUIInteractions() {
   const bookDetailModalOverlay = document.getElementById("bookDetailModalOverlay");
   const bookDetailModal = document.getElementById("bookDetailModal");
   const closeBookDetail = document.getElementById("closeBookDetail");
+
+  // --- Export Buttons --
+  const exportMissingCsv = document.getElementById("exportMissingCsv");
+  const exportMissingJson = document.getElementById("exportMissingJson");
 
   // --- Settings Buttons ---
   const clearSeriesList = document.getElementById("clearSeriesList");
@@ -177,6 +182,18 @@ export function initializeUIInteractions() {
       commitFilterBaseline();
     });
   }
+
+  // -------------------------
+  // EXPORT RESULTS
+  // -------------------------
+
+  exportMissingCsv.addEventListener("click", () => {
+    exportMissingAsCsv(groupedMissingBooks, "audible-missing");
+  });
+
+  exportMissingJson.addEventListener("click", () => {
+    exportMissingAsJson(groupedMissingBooks, "audible-missing");
+  });
 
   // -----------------------------------------------------------------------------
   // Checkbox filter "Apply" button visibility manager
@@ -376,16 +393,18 @@ export function enableClickEventsOnLoadEnd() {
  * @param {HTMLElement} debugModalElement - The modal element (#debugModal).
  * @returns {void}
  */
-export function bindDebugViewerControls(debugModalElement) {
+export function bindDebugViewerControls() {
+  const debugModalElement = document.getElementById("debugModal");
+
   if (!debugModalElement) return;
 
-  const sessionSelect = debugModalElement.querySelector("#dbgSession");
-  const outcomeSelect = debugModalElement.querySelector("#dbgOutcome");
-  const groupBySelect = debugModalElement.querySelector("#dbgGroupBy"); // included for future grouping use
-  const searchInput = debugModalElement.querySelector("#dbgSearch");
-  const chipListContainer = debugModalElement.querySelector("#dbgCheckList");
-  const downloadJsonButton = debugModalElement.querySelector("#dbgDownloadJson");
-  const downloadCsvButton = debugModalElement.querySelector("#dbgDownloadCsv");
+  const sessionSelect = document.getElementById("dbgSession");
+  const outcomeSelect = document.getElementById("dbgOutcome");
+  const groupBySelect = document.getElementById("dbgGroupBy");
+  const searchInput = document.getElementById("dbgSearch");
+  const chipListContainer = document.getElementById("dbgCheckList");
+  const downloadJsonButton = document.getElementById("dbgDownloadJson");
+  const downloadCsvButton = document.getElementById("dbgDownloadCsv");
   const debugOverlay = document.getElementById("debugModalOverlay");
   const openDebugButton = document.getElementById("openDebugModalBtn");
   const closeDebugButton = document.getElementById("closeDebugModal");

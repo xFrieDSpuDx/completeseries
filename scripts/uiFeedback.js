@@ -86,16 +86,21 @@ export function temporaryChangeElementText(targetElement, temporaryText, duratio
  * Shows the debug buttons
  */
 export function showDebugButtons() {
-  document.getElementById("openDebugModalBtn").classList.add("active");
-  document.getElementById("clearDebugBtn").classList.add("active");
+  document.getElementById("debugButtons").classList.add("active");
 }
 
 /***
  * Hide the debug buttons
  */
 export function hideDebugButtons() {
-  document.getElementById("openDebugModalBtn").classList.remove("active");
-  document.getElementById("clearDebugBtn").classList.remove("active");
+  document.getElementById("debugButtons").classList.remove("active");
+}
+
+/***
+ * Shows export buttons
+ */
+export function enableExportButtons() {
+  document.getElementById("exportResults").classList.add("active");
 }
 
 /**
@@ -139,5 +144,5 @@ export function adjustModalWidth(tileCount) {
  * Shows the library filter section in the settings menu when more than one library is available
  */
 export function showLibraryFilterInSettings() {
-  document.getElementById("libraryFilter").style.display = "block";
+  document.getElementById("libraryFilter").classList.add("active");
 }
