@@ -3,7 +3,7 @@
   --primary-bg: #1f1f1f;
   --secondary-bg: #2a2a2a;
   --accent: #ff9900;
-  --accent-hover: #e68a00;
+  --accent-hover: #cd7b00;
   --text: #fff;
   --muted: #ccc;
   --border: #444;
@@ -162,6 +162,7 @@ form input::placeholder {
 input[type="checkbox"] {
   width: 1.25rem;
   margin: 0.625rem;
+  accent-color: var(--success);
 }
 
 form button {
@@ -373,10 +374,14 @@ label {
   z-index: var(--overlay-detail-z);
 }
 
+.menuHideable {
+  display: none;
+}
+
+.menuHideable.active,
 .modal-overlay.active,
 .books-modal-overlay.active,
-.books-detail-modal-overlay.active,
-.default-hidden.active {
+.books-detail-modal-overlay.active {
   display: block;
 }
 
@@ -670,6 +675,16 @@ button.accent-button {
   margin-right: 0;
 }
 
+.button-pair {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.button-pair .accent-button {
+  width: 50%;
+  margin-right: 0;
+}
+
 button.accent-button.temporary-text {
   color: var(--text);
 }
@@ -685,7 +700,7 @@ button.accent-button-inline-right.active {
   opacity: 1;
 }
 
-.accent-button-inline-right:hover .accent-button:hover {
+.accent-button-inline-right:hover, .accent-button:hover {
   background: var(--accent-hover);
 }
 
@@ -737,10 +752,6 @@ button.accent-button-inline-right.active {
 .book-modal-summary {
   margin-top: 2rem;
   text-align: left;
-}
-
-.default-hidden {
-  display: none;
 }
 
 .collapsible .collapsible-arrow {
@@ -1171,9 +1182,6 @@ button.accent-button-inline-right.active {
   color: #222;
   border: none;
   margin-left: 0.75rem;
-}
-.dbg-summary .accent-button-inline-right:hover {
-  background: var(--accent-hover);
 }
 
 /* Make thead stick below the summary bar */

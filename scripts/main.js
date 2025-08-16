@@ -10,7 +10,8 @@ import {
   hideSpinner,
   toggleElementVisibility,
   showLibraryFilterInSettings,
-  showDebugButtons
+  showDebugButtons,
+  enableExportButtons
 } from "./uiFeedback.js";
 import { collectBookMetadata, collectSeriesMetadata } from "./metadataFlow.js";
 import { fetchExistingContent, fetchAudiobookShelfLibraries } from "./dataFetcher.js";
@@ -35,6 +36,7 @@ import { isDebugEnabled, getDebugLogs } from "./debug.js";
 
 // Stores current data fetched from AudiobookShelf
 export let existingContent;
+export let groupedMissingBooks;
 export let selectedLibraries = {
   authToken: "",
   librariesList: [],
@@ -49,8 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeUIInteractions();
   populateHiddenItemsMenu();
 
-  const debugModalElement = document.getElementById("debugModal");
-  bindDebugViewerControls(debugModalElement);
+  bindDebugViewerControls();
 
   const loginForm = document.getElementById("loginForm");
   const libraryForm = document.getElementById("libraryForm");
@@ -185,7 +186,7 @@ export async function fetchAndDisplayResults(existingContent, formData, refreshF
   const seriesMetadata = await fetchAllMetadataForBooks(existingContent, formData);
 
   // Clean and group missing books by series
-  const groupedMissingBooks = await groupMissingBooks(existingContent, seriesMetadata, formData);
+  groupedMissingBooks = await groupMissingBooks(existingContent, seriesMetadata, formData);
 
   // Render tiles and update UI
   uiUpdateAndDrawResults(groupedMissingBooks);
@@ -281,7 +282,7 @@ function uiUpdateAndDrawResults(groupedMissingBooks) {
   toggleElementVisibility("message", false);
   hideSpinner();
   enableClickEventsOnLoadEnd();
-
+  enableExportButtons();
   // After run completes (and logs have been written), re-render:
   populateDebugViewerIfResultsExist();
 }
