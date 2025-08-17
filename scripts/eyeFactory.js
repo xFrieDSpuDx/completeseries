@@ -23,9 +23,8 @@ export function addEyeIcon(
 
   handleEyeIconClick(eyeIcon, maskParent, hiddenItem, isInVisibilityMenu);
 
-  if (isHidden) {
+  if (isHidden)
     toggleTileMask(eyeIcon, maskParent);
-  }
 
   return eyeIcon;
 }

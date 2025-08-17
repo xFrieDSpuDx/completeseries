@@ -40,15 +40,15 @@ export function addTileWrapper(bookMetadata, parentElement) {
   tileContainerWrapper.addEventListener("click", (event) => {
     event.stopPropagation();
 
-    const isSeries = bookMetadata.hasOwnProperty("books");
+    const { books } = bookMetadata ?? {};
+    const isSeries = Array.isArray(books) && books.length > 0;
 
     if (isSeries) {
       generateBookTiles(bookMetadata);
       adjustModalWidth(bookMetadata.books.length);
       showBooksModal();
-    } else {
+    } else
       openBookModal(bookMetadata, tileContainerWrapper);
-    }
   });
 
   return tileContainerWrapper;

@@ -4,6 +4,7 @@
  *
  * @returns {string|null} The transform CSS string used for modal animation.
  */
+// eslint-disable-next-line prefer-const
 export let bookDetailModalAnchor = null;
 
 /**
@@ -12,26 +13,56 @@ export let bookDetailModalAnchor = null;
  * @param {Object} bookData - The book metadata object.
  * @returns {Object} An object with preformatted display strings for authors, genres, etc.
  */
-export function extractFormattedBookInfo(bookData) {
+export function extractFormattedBookInfo(bookData = {}) {
+  // Helpers kept local to avoid polluting scope
+  const toNames = (arr) =>
+    arr
+      .map((x) => (typeof x === 'string' ? x : x?.name ?? x))
+      .filter(Boolean);
+
+  const isNum = (n) => typeof n === 'number' && Number.isFinite(n);
+
+  const formatDate = (value) => {
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? 'Unknown' : d.toLocaleDateString();
+  };
+
+  const authors =
+    Array.isArray(bookData.authors) && bookData.authors.length
+      ? toNames(bookData.authors).join(', ')
+      : 'Unknown';
+
+  const genres =
+    Array.isArray(bookData.genres) && bookData.genres.length
+      ? toNames(bookData.genres).join(', ')
+      : 'Unknown';
+
+  const narrators =
+    Array.isArray(bookData.narrators) && bookData.narrators.length
+      ? toNames(bookData.narrators).join(', ')
+      : 'Unknown';
+
+  const publisher = bookData.publisher || 'Unknown';
+
+  const releaseDate = bookData.releaseDate ? formatDate(bookData.releaseDate) : 'Unknown';
+
+  const length = isNum(bookData.lengthMinutes)
+    ? `${Math.round(bookData.lengthMinutes / 60)} hrs`
+    : 'Unknown';
+
+  const rating = isNum(bookData.rating) ? bookData.rating.toFixed(2) : 'N/A';
+
+  const summary = bookData.summary || bookData.description || 'No description available.';
+
   return {
-    authors: bookData.authors?.length
-      ? bookData.authors.map(a => a.name).join(", ")
-      : "Unknown",
-    genres: bookData.genres?.length
-      ? bookData.genres.map(g => g.name || g).join(", ")
-      : "Unknown",
-    narrators: bookData.narrators?.length
-      ? bookData.narrators.map(n => n.name || n).join(", ")
-      : "Unknown",
-    publisher: bookData.publisher || "Unknown",
-    releaseDate: bookData.releaseDate
-      ? new Date(bookData.releaseDate).toLocaleDateString()
-      : "Unknown",
-    length: bookData.lengthMinutes
-      ? Math.round(bookData.lengthMinutes / 60) + " hrs"
-      : "Unknown",
-    rating: bookData.rating ? bookData.rating.toFixed(2) : "N/A",
-    summary: bookData.summary || bookData.description || "No description available."
+    authors,
+    genres,
+    narrators,
+    publisher,
+    releaseDate,
+    length,
+    rating,
+    summary,
   };
 }
 

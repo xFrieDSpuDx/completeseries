@@ -72,12 +72,9 @@ function makeTimestampForFilename() {
  * @returns {HTMLElement|null} The resolved element, or null if not found.
  */
 function resolveElement(elementOrSelector, fallbackSelector = "#debugModal") {
-  if (elementOrSelector && typeof elementOrSelector.querySelector === "function") {
-    return elementOrSelector; // Already an element
-  }
-  if (typeof elementOrSelector === "string") {
-    return document.querySelector(elementOrSelector);
-  }
+  if (elementOrSelector && typeof elementOrSelector.querySelector === "function") return elementOrSelector; // Already an element
+  if (typeof elementOrSelector === "string") return document.querySelector(elementOrSelector);
+
   return document.querySelector(fallbackSelector);
 }
 
@@ -361,9 +358,7 @@ export function flattenGroupedMissingBooksForExport(groupedEntries = []) {
     const booksInGroup = Array.isArray(groupedEntry?.books) ? groupedEntry.books : [];
 
     for (const book of booksInGroup) {
-      // Use your existing series string formatter for the book's own series array.
-      // Assumes a globally available function: formatSeriesNames(recordWithSeriesArray)
-      // If its signature differs, adapt the call accordingly.
+      // Use existing series string formatter for the book's own series array.
       const allSeriesForThisBook = (typeof formatSeriesNames === "function")
         ? formatSeriesNames(book) || "(none)" // expects { series: [...] } on the passed object
         : ""; // fallback to empty string if not available
@@ -437,7 +432,7 @@ export function exportMissingAsJson(groupedMissingBooks, baseName = "missing-boo
  *  genres, asin, sku, skuGroup, isbn, region, bookFormat
  *
  * - Uses `flattenGroupedMissingBooksForExport` to produce rows
- * - CSV quoting handled by your `createCsvSafeField`
+ * - CSV quoting handled by `createCsvSafeField`
  * - Filenames include a UTC timestamp from `makeTimestampForFilename()`
  * - Triggers a download via an object URL, then cleans up
  *
@@ -468,7 +463,7 @@ export function exportMissingAsCsv(groupedMissingBooks, baseName = "missing-book
     "bookFormat",
   ];
 
-  // Build header line using your CSV-safe quoting
+  // Build header line using CSV-safe quoting
   const headerLine = headerKeys.map(createCsvSafeField).join(",");
 
   // Build data lines in the exact same order as headers
@@ -476,7 +471,7 @@ export function exportMissingAsCsv(groupedMissingBooks, baseName = "missing-book
     headerKeys.map((key) => createCsvSafeField(row?.[key] ?? "")).join(",")
   );
 
-  // Join lines — your convention is "\n" endings and no BOM
+  // Join lines — convention is "\n" endings and no BOM
   const csvContent = [headerLine, ...dataLines].join("\n");
 
   // Create a filesystem-safe filename

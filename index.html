@@ -56,6 +56,38 @@
         </select>
 
         <button type="submit">Login</button>
+       
+        <details id="advancedSection" class="advanced">
+          <summary class="advanced__summary">
+            <span class="advanced__title">Advanced</span>
+            <svg class="advanced__chevron" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </summary>
+
+          <div class="advanced__content">
+            <div class="checkbox-row advanced-checkbox-row">
+              <input type="checkbox" id="usePhpProxy" />
+              <label for="usePhpProxy" class="label-checkbox label-advanced">
+                Use PHP proxy to login to AudiobookShelf
+              </label>
+              <!-- Tooltip wrapper -->
+              <span class="tooltip" tabindex="0" aria-describedby="proxyWarningTip">
+                <!-- Warning icon -->
+                <svg class="tooltip__icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 2L1 21h22L12 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                  <path d="M12 8v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="12" cy="17" r="1.25" fill="currentColor"/>
+                </svg>
+
+                <!-- Tooltip bubble -->
+                <span id="proxyWarningTip" role="tooltip" class="tooltip__bubble">
+                  Only use a proxy you control or trust. A proxy can read usernames, passwords, and tokens passed to it.
+                </span>
+              </span>
+            </div>
+          </div>
+        </details>
       </form>
     </div>
 

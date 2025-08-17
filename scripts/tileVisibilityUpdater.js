@@ -28,14 +28,13 @@ export function handleEyeIconClick(eyeIcon, maskParent, hiddenItem, isInVisibili
     const parentTile = getItemSeries(hiddenItem);
 
     if (isInVisibilityMenu && hiddenItem.type === "series") {
-      if (parentTile) {
+      if (parentTile)
         parentTile.querySelector(".eye-icon")?.click();
-      } else {
+      else 
         toggleHiddenItemVisibilityMenu(eyeIcon);
-      }
-    } else {
+    } else 
       updateSeriesMissingBookNumber(hiddenItem, isNowHidden);
-    }
+    
   });
 }
 
@@ -49,9 +48,8 @@ export function handleEyeIconClick(eyeIcon, maskParent, hiddenItem, isInVisibili
 export function toggleTileMask(eyeIcon, maskParent) {
   eyeIcon.classList.toggle("eyeClosed");
 
-  if (maskParent) {
+  if (maskParent) 
     maskParent.classList.toggle("series-mask");
-  }
 }
 
 /**
@@ -61,10 +59,10 @@ export function toggleTileMask(eyeIcon, maskParent) {
  * @param {Object} bookMetadata - Metadata for the book or series anchor item.
  * @param {string} seriesTitle - The title of the series the item belongs to.
  * @param {string} itemType - Either "book" or "series".
- * @returns {Object} A normalized hidden item object with type, series, ASIN, and title.
+ * @returns {Object} A normalised hidden item object with type, series, ASIN, and title.
  */
 export function hideItemObjectBuilder(bookMetadata, seriesTitle, itemType) {
-  let objectToHide =  {
+  const objectToHide =  {
     type: itemType,
     series: seriesTitle,
     // Use book ASIN for book items, series ASIN for series items
@@ -95,9 +93,8 @@ function adjustBadgeCount(badgeElement, delta) {
  * @param {boolean} isClosed - True if the book was just hidden, false if unhidden.
  */
 function updateSeriesMissingBookNumber(hideItemObject, isClosed) {
-  if (hideItemObject.type === "series") {
+  if (hideItemObject.type === "series")
     return; // Series-level items are not affected
-  }
 
   const parentTile = getItemSeries(hideItemObject);
   if (!parentTile) return;
@@ -109,9 +106,9 @@ function updateSeriesMissingBookNumber(hideItemObject, isClosed) {
     adjustBadgeCount(badgeElement, +1);
     toggleElementVisibilityFullEntity(parentTile.parentElement, true);
   } else {
-    if (currentCount === 1) {
+    if (currentCount === 1) 
       toggleElementVisibilityFullEntity(parentTile.parentElement, false);
-    }
+    
     adjustBadgeCount(badgeElement, -1);
   }
 }

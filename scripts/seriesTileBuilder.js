@@ -21,9 +21,8 @@ export function renderSeriesAndBookTiles(groupedMissingBooks) {
   const tileGridContainer = addSeriesGridContainer(outputContainer);
 
   // Render a tile for each series
-  for (const seriesData of groupedMissingBooks) {
+  for (const seriesData of groupedMissingBooks)
     generateSeriesTiles(seriesData, tileGridContainer);
-  }
 }
 
 /**

@@ -103,9 +103,8 @@ export function addOptionElement(selectElement, { value, text, selected = false 
 export function setSelectOptions(selectElement, options, preserveSelection = true) {
   const previousValue = preserveSelection ? selectElement.value : "";
   selectElement.innerHTML = "";
-  for (const opt of options) {
-    addOptionElement(selectElement, { value: opt.value, text: opt.text, selected: false });
-  }
+  for (const opt of options) addOptionElement(selectElement, { value: opt.value, text: opt.text, selected: false });
+  
   // restore if still present
   const hasPrev = Array.from(selectElement.options).some(o => o.value === previousValue);
   selectElement.value = hasPrev ? previousValue : (selectElement.options[0]?.value ?? "");

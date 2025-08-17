@@ -10,6 +10,7 @@ export function getFormData() {
     username: document.getElementById("username").value.trim(),
     password: document.getElementById("password").value,
     region: document.getElementById("audibleRegion").value,
+    usePhpProxy: document.getElementById("usePhpProxy").checked,
     onlyUnabridged: document.getElementById("filterUnabridged").checked,
     includeSubSeries: document.getElementById("includeSubSeries").checked,
     ignoreMultiBooks: document.getElementById("ignoreMultiBooks").checked,

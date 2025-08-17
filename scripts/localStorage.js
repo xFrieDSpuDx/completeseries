@@ -5,17 +5,17 @@
  * @param {string} metadata - The string to store (e.g., an ASIN).
  * @param {string} storeIdentifier - The localStorage key under which data is stored.
  */
-export function storeMetadataToLocalStorage(metadata, storeIdentifier) {
+export async function storeMetadataToLocalStorage(metadata, storeIdentifier) {
   // 1. Read existing values from localStorage
   const existingData = localStorage.getItem(storeIdentifier);
 
   // 2. Parse existing data or initialize an empty array
+  // eslint-disable-next-line prefer-const
   let updatedDataArray = existingData ? JSON.parse(existingData) : [];
 
   // 3. Avoid duplicates
-  if (!updatedDataArray.includes(metadata)) {
+  if (!updatedDataArray.includes(metadata))
     updatedDataArray.push(metadata);
-  }
 
   // 4. Save the updated array back to localStorage
   localStorage.setItem(storeIdentifier, JSON.stringify(updatedDataArray));

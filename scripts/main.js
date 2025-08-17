@@ -37,6 +37,7 @@ import { isDebugEnabled, getDebugLogs } from "./debug.js";
 // Stores current data fetched from AudiobookShelf
 export let existingContent;
 export let groupedMissingBooks;
+// eslint-disable-next-line prefer-const
 export let selectedLibraries = {
   authToken: "",
   librariesList: [],
@@ -178,9 +179,8 @@ export function resetUserInterfaceAndStartLoadingProcess() {
  * @param {boolean} [refreshFilter=false] - Whether triggered by UI filter refresh
  */
 export async function fetchAndDisplayResults(existingContent, formData, refreshFilter = false) {
-  if (refreshFilter) {
+  if (refreshFilter) 
     setMessage("Refreshing filter results...");
-  }
 
   // Fetch book + series metadata
   const seriesMetadata = await fetchAllMetadataForBooks(existingContent, formData);

@@ -22,9 +22,7 @@ export function generateBookTiles(seriesData) {
 
   const tileGridContainer = addSeriesGridContainer(modalBooksContainer);
 
-  for (const bookData of seriesData.books) {
-    renderBookTile(bookData, tileGridContainer, seriesTitle);
-  }
+  for (const bookData of seriesData.books) renderBookTile(bookData, tileGridContainer, seriesTitle);
 }
 
 /**

@@ -75,11 +75,10 @@ export function unhideItem(item) {
  * @param {HTMLElement} eyeIcon - The icon element indicating hidden state.
  */
 export function toggleHiddenItem(item, eyeIcon) {
-  if (eyeIcon.classList.contains("eyeClosed")) {
+  if (eyeIcon.classList.contains("eyeClosed")) 
     unhideItem(item);
-  } else {
+  else 
     hideItem(item);
-  }
 }
 
 /**
