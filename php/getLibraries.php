@@ -2,33 +2,33 @@
 // existingSeriesFetcher.php
 
 // Set response type to JSON
-header('Content-Type: application/json');
+header("Content-Type: application/json");
 
 // -----------------------------------------------------------------------------
 // Step 1: Read and validate input from client
 // -----------------------------------------------------------------------------
 
-$rawInput = file_get_contents('php://input');
+$rawInput = file_get_contents("php://input");
 $input = json_decode($rawInput, true);
 
 // Validate that input is a valid JSON object
 if (!is_array($input)) {
     http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Invalid JSON input']);
+    echo json_encode(["status" => "error", "message" => "Invalid JSON input"]);
     exit;
 }
 
 // Extract and sanitize required fields
-$serverUrl = rtrim($input['url'] ?? '', '/');
-$username = trim($input['username'] ?? '');
-$password = trim($input['password'] ?? '');
+$serverUrl = rtrim($input["url"] ?? "", "/");
+$username = trim($input["username"] ?? "");
+$password = trim($input["password"] ?? "");
 
 // Ensure required fields are present
 if (!$serverUrl || !$username || !$password) {
     http_response_code(400);
     echo json_encode([
-        'status' => 'error',
-        'message' => 'Missing required fields: url, username, or password'
+        "status" => "error",
+        "message" => "Missing required fields: url, username, or password"
     ]);
     exit;
 }
@@ -39,8 +39,8 @@ if (!$serverUrl || !$username || !$password) {
 
 $loginUrl = "$serverUrl/login";
 $loginPayload = json_encode([
-    'username' => $username,
-    'password' => $password
+    "username" => $username,
+    "password" => $password
 ]);
 
 // Initialize cURL for login request
@@ -49,7 +49,7 @@ curl_setopt_array($loginCurl, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_CONNECTTIMEOUT => 3,
     CURLOPT_POST => true,
-    CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+    CURLOPT_HTTPHEADER => ["Content-Type: application/json"],
     CURLOPT_POSTFIELDS => $loginPayload
 ]);
 
@@ -62,24 +62,24 @@ curl_close($loginCurl);
 if ($loginStatus < 200 || $loginStatus >= 300) {
     http_response_code($loginStatus);
     echo json_encode([
-        'status' => 'error',
-        'message' => $curlError ?: 'Login failed',
-        'details' => $loginResponse,
-        'responseCode' => $loginStatus
+        "status" => "error",
+        "message" => $curlError ?: "Login failed",
+        "details" => $loginResponse,
+        "responseCode" => $loginStatus
     ]);
     exit;
 }
 
 // Parse login response for token and library ID
 $loginData = json_decode($loginResponse, true);
-$libraryId = $loginData['userDefaultLibraryId'] ?? null;
-$authToken = $loginData['user']['token'] ?? null;
+$libraryId = $loginData["userDefaultLibraryId"] ?? null;
+$authToken = $loginData["user"]["token"] ?? null;
 
 if (!$libraryId || !$authToken) {
     http_response_code(500);
     echo json_encode([
-        'status' => 'error',
-        'message' => 'Missing library ID or token in login response'
+        "status" => "error",
+        "message" => "Missing library ID or token in login response"
     ]);
     exit;
 }
@@ -104,9 +104,9 @@ curl_close($librariesCurl);
 if ($librariesStatus < 200 || $librariesStatus >= 300) {
     http_response_code($librariesStatus);
     echo json_encode([
-        'status' => 'error',
-        'message' => "Failed to fetch libraries",
-        'details' => $librariesResponse
+        "status" => "error",
+        "message" => "Failed to fetch libraries",
+        "details" => $librariesResponse
     ]);
     exit;
 }
@@ -116,8 +116,8 @@ $librariesData = json_decode($librariesResponse, true);
 if (!is_array($librariesData)) {
     http_response_code(500);
     echo json_encode([
-        'status' => 'error',
-        'message' => 'Invalid JSON structure in libraries response'
+        "status" => "error",
+        "message" => "Invalid JSON structure in libraries response"
     ]);
     exit;
 }
@@ -127,10 +127,10 @@ if (!is_array($librariesData)) {
 // -----------------------------------------------------------------------------
 
 // Extract library list
-$librariesList = $librariesData['libraries'] ?? [];
+$librariesList = $librariesData["libraries"] ?? [];
 
 $booksOnlyLibrariesList = array_filter($librariesList, function($item) {
-    return isset($item['mediaType']) && $item['mediaType'] === 'book';
+    return isset($item["mediaType"]) && $item["mediaType"] === "book";
 });
 
 // Optionally reindex the array if needed
@@ -142,7 +142,7 @@ $booksOnlyLibrariesList = array_values($booksOnlyLibrariesList);
 // -----------------------------------------------------------------------------
 
 echo json_encode([
-    'status' => 'success',
-    'authToken' => $authToken,
-    'librariesList' => $booksOnlyLibrariesList
+    "status" => "success",
+    "authToken" => $authToken,
+    "librariesList" => $booksOnlyLibrariesList
 ]);

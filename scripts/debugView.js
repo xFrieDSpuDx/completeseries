@@ -22,21 +22,21 @@ let __dbgSort = { key: null, dir: "asc" }; // dir: "asc" | "desc"
  * @param {string} headerLabel - The display text from the table header.
  * @returns {"Index"|"Session"|"Check"|"Outcome"|"ASIN"|"Series"|"Title"|"Region"|"Available"|"Details"|null}
  */
-function normalizeHeaderToSortKey(headerLabel) {
-  const normalizedLabel = String(headerLabel ?? "")
+function normaliseHeaderToSortKey(headerLabel) {
+  const normalisedLabel = String(headerLabel ?? "")
     .trim()
     .toLowerCase();
 
-  if (normalizedLabel === "index") return "Index";
-  if (normalizedLabel === "session") return "Session";
-  if (normalizedLabel === "check") return "Check";
-  if (normalizedLabel === "outcome") return "Outcome";
-  if (normalizedLabel === "asin") return "ASIN";
-  if (normalizedLabel === "series") return "Series";
-  if (normalizedLabel === "title") return "Title";
-  if (normalizedLabel === "region") return "Region";
-  if (normalizedLabel === "available") return "Available";
-  if (normalizedLabel === "details") return "Details";
+  if (normalisedLabel === "index") return "Index";
+  if (normalisedLabel === "session") return "Session";
+  if (normalisedLabel === "check") return "Check";
+  if (normalisedLabel === "outcome") return "Outcome";
+  if (normalisedLabel === "asin") return "ASIN";
+  if (normalisedLabel === "series") return "Series";
+  if (normalisedLabel === "title") return "Title";
+  if (normalisedLabel === "region") return "Region";
+  if (normalisedLabel === "available") return "Available";
+  if (normalisedLabel === "details") return "Details";
 
   return null;
 }
@@ -51,7 +51,7 @@ function normalizeHeaderToSortKey(headerLabel) {
  *
  * @param {Object} record - The debug log record to extract a sortable value from.
  * @param {"Index"|"Session"|"Check"|"Outcome"|"ASIN"|"Series"|"Title"|"Region"|"Available"|"Details"|string} sortKey
- *   The canonical sort key (as produced by `normalizeHeaderToSortKey`).
+ *   The canonical sort key (as produced by `normaliseHeaderToSortKey`).
  * @returns {string|number|null} The value to compare during sorting.
  */
 function valueForSort(record, sortKey) {
@@ -110,7 +110,7 @@ function cmpVals(firstValue, secondValue, direction) {
  * - Clicking the same key toggles asc/desc.
  * - Clicking a new key starts in asc order.
  *
- * @param {string} sortKey - Canonical key from `normalizeHeaderToSortKey`.
+ * @param {string} sortKey - Canonical key from `normaliseHeaderToSortKey`.
  * @returns {void}
  */
 function setDebugSort(sortKey) {
@@ -236,7 +236,7 @@ function hydrateControls(debugModalElement) {
 /**
  * Read the current filter values from the Debug Modal controls.
  *
- * Returns a normalized object with selected session, outcome, grouping mode,
+ * Returns a normalised object with selected session, outcome, grouping mode,
  * free-text query, and the set of selected check IDs.
  *
  * @param {HTMLElement} debugModalElement - Root element for the debug modal.
@@ -375,7 +375,7 @@ function renderTableForRecords(containerElement, records) {
     const headerCellElement = addHeaderCell(headerLabel, headerRowElement);
 
     // Enable click-to-sort for recognized headers
-    const sortKey = normalizeHeaderToSortKey(headerLabel);
+    const sortKey = normaliseHeaderToSortKey(headerLabel);
     if (sortKey) {
       headerCellElement.classList.add("dbg-sortable");
       headerCellElement.style.cursor = "pointer";
@@ -401,15 +401,15 @@ function renderTableForRecords(containerElement, records) {
     const rowElement = addTableRow(tbodyElement);
 
     // Cells in the same order as headerLabels
-    addCell(String(record.sessionIndex ?? ""), rowElement).setAttribute('data-label', headerLabels[0]);                         // Index
-    addCell(record.sessionId ?? "", rowElement).setAttribute('data-label', headerLabels[1]);                                    // Session
-    addCell(record.checkLabel || record.check || "", rowElement).setAttribute('data-label', headerLabels[2]);                   // Check
-    addCell(record.outcome ?? "", rowElement).setAttribute('data-label', headerLabels[3]);                                      // Outcome
-    addCell(record.asin ?? "", rowElement).setAttribute('data-label', headerLabels[4]);                                         // ASIN
-    addCell(formatSeriesNames(record), rowElement).setAttribute('data-label', headerLabels[5]);                                 // Series
-    addCell(record.title ?? "", rowElement).setAttribute('data-label', headerLabels[6]);                                        // Title
-    addCell(record.region ?? "", rowElement).setAttribute('data-label', headerLabels[7]);                                       // Region
-    addCell(record.isAvailable != null ? String(!!record.isAvailable) : "", rowElement).setAttribute('data-label', headerLabels[8]); // Available
+    addCell(String(record.sessionIndex ?? ""), rowElement).setAttribute("data-label", headerLabels[0]);                         // Index
+    addCell(record.sessionId ?? "", rowElement).setAttribute("data-label", headerLabels[1]);                                    // Session
+    addCell(record.checkLabel || record.check || "", rowElement).setAttribute("data-label", headerLabels[2]);                   // Check
+    addCell(record.outcome ?? "", rowElement).setAttribute("data-label", headerLabels[3]);                                      // Outcome
+    addCell(record.asin ?? "", rowElement).setAttribute("data-label", headerLabels[4]);                                         // ASIN
+    addCell(formatSeriesNames(record), rowElement).setAttribute("data-label", headerLabels[5]);                                 // Series
+    addCell(record.title ?? "", rowElement).setAttribute("data-label", headerLabels[6]);                                        // Title
+    addCell(record.region ?? "", rowElement).setAttribute("data-label", headerLabels[7]);                                       // Region
+    addCell(record.isAvailable != null ? String(!!record.isAvailable) : "", rowElement).setAttribute("data-label", headerLabels[8]); // Available
 
     // Details cell with quickFacts/details toggle (kept as-is)
     (function renderDetailsCell() {
@@ -417,7 +417,7 @@ function renderTableForRecords(containerElement, records) {
       const detailRowElement = addTableRow(tbodyElement);
       detailRowElement.hidden = true;
       const detailsCell = document.createElement("td");
-      detailsCell.setAttribute('data-label', headerLabels[9]);
+      detailsCell.setAttribute("data-label", headerLabels[9]);
       const uniqueId = `${record.sessionId || "s"}_${record.sessionIndex ?? 0}`;
       const detailsObject = buildQuickFactsElement(record, uniqueId, detailRowElement);
       const detailsElement = detailsObject.detailsWrapper;
@@ -426,7 +426,7 @@ function renderTableForRecords(containerElement, records) {
       rowElement.appendChild(detailsCell);
 
       // Add full width table row for details panel
-      const spanDetailsTd = document.createElement('td');
+      const spanDetailsTd = document.createElement("td");
       spanDetailsTd.colSpan = getColumnWidthValue();
       spanDetailsTd.appendChild(detailsPanel);
       detailRowElement.appendChild(spanDetailsTd);

@@ -61,7 +61,7 @@ export function toggleTileMask(eyeIcon, maskParent) {
  * @param {Object} bookMetadata - Metadata for the book or series anchor item.
  * @param {string} seriesTitle - The title of the series the item belongs to.
  * @param {string} itemType - Either "book" or "series".
- * @returns {Object} A normalized hidden item object with type, series, ASIN, and title.
+ * @returns {Object} A normalised hidden item object with type, series, ASIN, and title.
  */
 export function hideItemObjectBuilder(bookMetadata, seriesTitle, itemType) {
   let objectToHide =  {

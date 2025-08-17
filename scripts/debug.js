@@ -742,7 +742,7 @@ export function debugLogIgnoreSameSeriesPositionExisting({
 }) {
   if (!isDebugEnabled()) return;
 
-  const normalizeSeriesArray = (inputArray) => {
+  const normaliseSeriesArray = (inputArray) => {
     const list = Array.isArray(inputArray) ? inputArray : [];
     return list.map((seriesEntry) => {
       const nameOriginal = seriesEntry?.name ?? "N/A";
@@ -752,11 +752,11 @@ export function debugLogIgnoreSameSeriesPositionExisting({
     });
   };
 
-  const bookSeriesNormalized = normalizeSeriesArray(bookSeriesArray);
+  const bookSeriesnormalised = normaliseSeriesArray(bookSeriesArray);
 
   // Build lookup for the current book: seriesNameLower -> Set(positionStr)
   const bookIndex = new Map();
-  for (const seriesInfo of bookSeriesNormalized) {
+  for (const seriesInfo of bookSeriesnormalised) {
     if (!bookIndex.has(seriesInfo.nameLower)) {
       bookIndex.set(seriesInfo.nameLower, new Set());
     }
@@ -769,9 +769,9 @@ export function debugLogIgnoreSameSeriesPositionExisting({
 
   if (Array.isArray(existingContent)) {
     for (const existingItem of existingContent) {
-      const existingSeriesNormalized = normalizeSeriesArray(existingItem?.series);
+      const existingSeriesnormalised = normaliseSeriesArray(existingItem?.series);
 
-      const matchedForItem = existingSeriesNormalized.filter((existingSeriesInfo) => {
+      const matchedForItem = existingSeriesnormalised.filter((existingSeriesInfo) => {
         const positionsForName = bookIndex.get(existingSeriesInfo.nameLower);
         return positionsForName ? positionsForName.has(existingSeriesInfo.positionStr) : false;
       });
@@ -802,7 +802,7 @@ export function debugLogIgnoreSameSeriesPositionExisting({
     }
   }
 
-  const positionsList = bookSeriesNormalized.map((info) => info.positionStr);
+  const positionsList = bookSeriesnormalised.map((info) => info.positionStr);
   const overlappingPairs = Array.from(overlappingPairsMap.values());
 
   const descriptionText =
@@ -973,7 +973,7 @@ export function debugLogIgnoreSameSeriesPositionMissing({
 }) {
   if (!isDebugEnabled()) return;
 
-  const normalizeSeriesArray = (inputArray) => {
+  const normaliseSeriesArray = (inputArray) => {
     const list = Array.isArray(inputArray) ? inputArray : [];
     return list.map((seriesEntry) => {
       const nameOriginal = seriesEntry?.name ?? "N/A";
@@ -983,11 +983,11 @@ export function debugLogIgnoreSameSeriesPositionMissing({
     });
   };
 
-  const bookSeriesNormalized = normalizeSeriesArray(bookSeriesArray);
+  const bookSeriesnormalised = normaliseSeriesArray(bookSeriesArray);
 
   // Build lookup for the current book: seriesNameLower -> Set(positionStr)
   const bookIndex = new Map();
-  for (const seriesInfo of bookSeriesNormalized) {
+  for (const seriesInfo of bookSeriesnormalised) {
     if (!bookIndex.has(seriesInfo.nameLower)) {
       bookIndex.set(seriesInfo.nameLower, new Set());
     }
@@ -1000,9 +1000,9 @@ export function debugLogIgnoreSameSeriesPositionMissing({
 
   if (Array.isArray(missingBooks)) {
     for (const missingItem of missingBooks) {
-      const missingSeriesNormalized = normalizeSeriesArray(missingItem?.series);
+      const missingSeriesnormalised = normaliseSeriesArray(missingItem?.series);
 
-      const matchedForItem = missingSeriesNormalized.filter((missingSeriesInfo) => {
+      const matchedForItem = missingSeriesnormalised.filter((missingSeriesInfo) => {
         const positionsForName = bookIndex.get(missingSeriesInfo.nameLower);
         return positionsForName ? positionsForName.has(missingSeriesInfo.positionStr) : false;
       });
@@ -1033,7 +1033,7 @@ export function debugLogIgnoreSameSeriesPositionMissing({
     }
   }
 
-  const positionsList = bookSeriesNormalized.map((info) => info.positionStr);
+  const positionsList = bookSeriesnormalised.map((info) => info.positionStr);
   const overlappingPairs = Array.from(overlappingPairsMap.values());
 
   const descriptionText =

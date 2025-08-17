@@ -1,100 +1,208 @@
 // dataFetcher.js
-import { fetchAudimetaMetadata } from './fetchAudimetaMetadata.js';
+import { fetchAudimetaMetadata } from "./fetchAudimetaMetadata.js";
 import { sanitiseAudiobookShelfURL, isInternalAudiobookShelfURL } from "./dataCleaner.js";
-import { loadMetadataFromLocalStorage } from './localStorage.js';
+import { loadMetadataFromLocalStorage } from "./localStorage.js";
+import { fetchAudiobookShelfLibrariesCall } from "./fetchLibraries.js";
+import { fetchExistingSeriesLibraries } from "./fetchExistingSeries.js";
+import { fetchWithDiagnosis } from "./fetchDiagnostics.js";
 
 /**
- * Authenticates with the AudiobookShelf PHP backend using user credentials,
- * and retrieves the initial list of series and books.
+ * Fetch existing content using an existing AudiobookShelf login.
+ * Path A (JS): call JS fetcher with token (no re-login).
+ * Path B (PHP): post token + libraries to php/existingSeriesFetcher.php.
  *
- * @param {Object} credentials - An object with:
- *   @property {string} serverUrl - The AudiobookShelf server URL.
- * @param {Object} audiobookShelfLoginResponse - The response object from the AudiobookShelf login,
- *   which contains the authentication token and libraries list.
- *   @property {string} audiobookShelfLoginResponse.authToken - The authentication token.
- *   @property {Array} audiobookShelfLoginResponse.librariesList - List of libraries available
- * @returns {Promise<Object>} - Parsed JSON response from the server,
- * containing authentication token and library data.
+ * @param {Object} formData
+ * @param {string} formData.serverUrl
+ * @param {boolean} [formData.usePhpProxy]
  *
- * @throws {Error} - If the login request fails (e.g., incorrect credentials or network error).
+ * @param {Object} audiobookShelfLoginResponse
+ * @param {string} audiobookShelfLoginResponse.authToken
+ * @param {Array}  audiobookShelfLoginResponse.librariesList
+ *
+ * @returns {Promise<Object>}
+ * @throws {Error}
  */
-export async function fetchExistingContent(credentials, audiobookShelfLoginResponse) {
-  // Ensure the server URL is well-formed
-  credentials.serverUrl = sanitiseAudiobookShelfURL(credentials.serverUrl);
-  const audiobookShelfLibraries = audiobookShelfLoginResponse.librariesList;
-  const authToken = audiobookShelfLoginResponse.authToken;
-  // Send credentials to the backend login handler
-  const response = await fetch("php/existingSeriesFetcher.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      url: credentials.serverUrl,
-      libraries: audiobookShelfLibraries,
-      authToken: authToken
-    }),
-  });
+export async function fetchExistingContent(formData, audiobookShelfLoginResponse) {
+  const { serverUrl, usePhpProxy = false } = formData || {};
+  const genericError = "Error retrieving existing content from AudiobookShelf server.";
 
-  // Throw an error if the login attempt failed
-  if (!response.ok) {
-    throw new Error("Failed to get existing content from AudiobookShelf.");
+  // normalise once, don’t mutate inputs
+  const normalisedServerUrl = sanitiseAudiobookShelfURL(serverUrl);
+
+    // Safely read prior login payload
+  const {
+    authToken = null,
+    librariesList: audiobookShelfLibraries = null
+  } = audiobookShelfLoginResponse || {};
+
+  if (!authToken) {
+    throw new Error("Missing auth token from prior login. Please sign in first.");
   }
 
-  // Parse the response as a JavaScript object to check for handled errors
-  const responseData = await response.json();
+  // ───────────────────────────────────────────────────────────────────────────
+  // A) Direct JS path (token-based)
+  // ───────────────────────────────────────────────────────────────────────────
+  if (!usePhpProxy) {
+    try {
+      return await fetchExistingSeriesLibraries({
+        serverUrl: normalisedServerUrl,
+        authToken,
+        libraries: audiobookShelfLibraries
+      });
+    } catch (error) {
+      throw new Error(error?.message || genericError, { cause: error });
+    }
+  }
 
-  // Return the parsed response as a JavaScript object
+  // ───────────────────────────────────────────────────────────────────────────
+  // B) PHP proxy path (send token + libraries to the backend fetcher)
+  // ───────────────────────────────────────────────────────────────────────────
+  let response;
+  try {
+    response = await fetch("php/existingSeriesFetcher.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      credentials: "same-origin",
+      body: JSON.stringify({
+        url: normalisedServerUrl,
+        libraries: audiobookShelfLibraries,
+        authToken
+      })
+    });
+  } catch (error) {
+    throw new Error("Could not contact PHP proxy.", { cause: error });
+  }
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    const err = new Error(genericError);
+    err.status = response.status;
+    err.details = text;
+    throw err;
+  }
+
+  let responseData;
+  try {
+    responseData = await response.json();
+  } catch (error) {
+    throw new Error("Unexpected response from PHP proxy (not JSON).", { cause: error });
+  }
+
+  // Optional: standardize on a success marker if your PHP returns it
+  if (responseData?.status && responseData.status !== "success") {
+    const err = new Error(responseData.message || genericError);
+    err.details = responseData;
+    throw err;
+  }
+
   return responseData;
 }
 
 /**
  * Authenticates with the AudiobookShelf PHP backend using user credentials,
  * and retrieves the initial list of series and books.
+ * - Uses fetchWithDiagnosis to detect unreachable URL or likely CORS only on the JS path.
  *
- * @param {Object} credentials - An object with:
+ * @param {Object} formData - An object with:
  *   @property {string} serverUrl - The AudiobookShelf server URL.
  *   @property {string} username - The user's login name.
  *   @property {string} password - The user's password.
+ *   @property {boolean} usePhpProxy - Checkbox status of use PHP Proxy toggle
  *
- * @returns {Promise<Object>} - Parsed JSON response from the server,
- * containing authentication token and library data.
+ * @returns {Promise<Object>} Server response object (e.g., { status, authToken, librariesList })
  *
  * @throws {Error} - If the login request fails (e.g., incorrect credentials or network error).
  */
-export async function fetchAudiobookShelfLibraries(credentials) {
-  // Ensure the server URL is well-formed
-  credentials.serverUrl = sanitiseAudiobookShelfURL(credentials.serverUrl);
+export async function fetchAudiobookShelfLibraries(formData) {
+  const {
+    serverUrl,
+    username,
+    password,
+    usePhpProxy = false
+  } = formData || {};
 
-  // Send credentials to the backend login handler
-  const response = await fetch("php/getLibraries.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      url: credentials.serverUrl,
-      username: credentials.username,
-      password: credentials.password
-    }),
-  });
+  // normalise once, don’t mutate inputs
+  const normalisedServerUrl = sanitiseAudiobookShelfURL(serverUrl);
 
-  // Throw an error if the login attempt failed
-  if (!response.ok) {
-    throw new Error("Login failed. Please check your credentials and try again.");
-  }
-
-  // Parse the response as a JavaScript object to check for handled errors
-  const responseData = await response.json();
-  // Check if there was no response to the AudiobookShelf server login request (likely an invalid URL)
-  if (responseData.responseCode === 0) {
-    if (isInternalAudiobookShelfURL(credentials.serverUrl)) {
-      document.getElementById("urlError").textContent = "Server IP is an internal address. Ensure it is accessbile from this site";
+  // ───────────────────────────────────────────────────────────────────────────
+  // A) Direct JS path: run BOTH JS fetch calls (diagnosis, then real call)
+  // ───────────────────────────────────────────────────────────────────────────
+  if (!usePhpProxy) {
+    try {
+      // Probe the login endpoint
+      await fetchWithDiagnosis(`${normalisedServerUrl}/login`);
+    } catch (error) {
+      // Preserve root cause while shaping the message
+      throw new Error(error?.message || "Error contacting AudiobookShelf server.", { cause: error });
     }
-    throw new Error(responseData.message || "No response from the AudiobookShelf server. Please check the URL and try again.");
-  }
+
+    try {
+      // Real login + libraries fetch
+      return await fetchAudiobookShelfLibrariesCall({
+        serverUrl: normalisedServerUrl,
+        username,
+        password
+      });
+    } catch (error) {
+      throw new Error(error?.message || "Error retrieving libraries from AudiobookShelf server.", { cause: error });
+    }
+  }   
   
-  // Return the parsed response as a JavaScript object
+  // ───────────────────────────────────────────────────────────────────────────
+  // B) PHP proxy path
+  // ───────────────────────────────────────────────────────────────────────────
+  let response;
+
+  try {
+    response = await fetch("php/getLibraries.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({
+        url: normalisedServerUrl,
+        username,
+        password
+      })
+    });
+  } catch (error) {
+    // Network error reaching the proxy
+    throw new Error("Could not contact PHP proxy.", { cause: error });
+  }
+
+  if (!response.ok) {
+    // Server reached, but proxy returned non-2xx
+    const text = await response.text().catch(() => "");
+    const err = new Error("Login failed via PHP proxy. Please check your credentials and try again.");
+    err.details = text;
+    throw err;
+  }
+
+  let responseData;
+
+  try {
+    responseData = await response.json();
+  } catch (error) {
+    // Proxy responded with non-JSON (e.g., HTML error page)
+    throw new Error("Unexpected response from PHP proxy (not JSON).", { cause: error });
+  }
+
+  // Proxy convention for transport-level failure
+  if (responseData.responseCode === 0) {
+    const urlErrorElement = globalThis?.document?.getElementById?.("urlError") ?? null;
+
+    if (urlErrorElement && isInternalAudiobookShelfURL(normalisedServerUrl)) {
+      urlErrorElement.textContent = "Server IP is an internal address. Ensure it is accessible from this site.";
+      urlErrorElement.hidden = false;                 // in case the element is initially hidden
+      urlErrorElement.setAttribute("role", "alert");  // announce the change to screen readers
+      urlErrorElement.setAttribute("aria-live", "polite");
+      urlErrorElement.classList?.add("error");
+    }
+
+    throw new Error(responseData.message || "No response from the AudiobookShelf server via proxy.");
+  }
+
   return responseData;
 }
 

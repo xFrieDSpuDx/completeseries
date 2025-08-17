@@ -59,11 +59,11 @@ import { debugLogBookViability,
  */
 
 /**
- * Normalizes the AudiobookShelf URL to ensure it starts with https://
+ * normalises the AudiobookShelf URL to ensure it starts with https://
  * and has no trailing slashes.
  *
  * @param {string} audiobookShelfURL - The raw AudiobookShelf server URL input.
- * @returns {string} - A cleaned and normalized server URL.
+ * @returns {string} - A cleaned and normalised server URL.
  */
 /**
  * Sanitiseaudiobookshelfurl.
@@ -80,21 +80,21 @@ export function sanitiseAudiobookShelfURL(audiobookShelfURL) {
 }
 
 /**
-Normalize strings for robust equality/lookup:
-Unicode normalize (NFKD) to separate diacritics
+normalise strings for robust equality/lookup:
+Unicode normalise (NFKD) to separate diacritics
 Strip diacritics
 Collapse punctuation & whitespace to single spaces
 Trim and lowercase
 @param {string|null|undefined} input - Raw user or API text.
-@returns {string} - A normalized string (empty string for nullish inputs).
+@returns {string} - A normalised string (empty string for nullish inputs).
 */
 /**
- * Normalizetext.
+ * normalisetext.
  *
  * @param {any} input 
  * @returns {any}
  */
-function normalizeText(input) {
+function normaliseText(input) {
   return (input ?? "")
     .toString()
     .normalize("NFKD")
@@ -106,19 +106,19 @@ function normalizeText(input) {
 }
 
 /**
- * Normalize various input shapes into an array of book-like records.
+ * normalise various input shapes into an array of book-like records.
  * Supports:
  *  - an array of records
  *  - objects with .items / .results / .data arrays
  *  - plain object maps (falls back to Object.values)
  */
 /**
- * Normalizetoarray.
+ * normalisetoarray.
  *
  * @param {any} input 
  * @returns {any}
  */
-function normalizeToArray(input) {
+function normaliseToArray(input) {
   if (Array.isArray(input)) return input;
   if (!input || typeof input !== "object") return [];
 
@@ -259,7 +259,7 @@ export function findMissingBooks(existingContent, seriesMetadata, formData) {
         // derived values
         asin: bookRecord.asin,
         bookSeriesArray: Array.isArray(bookRecord.series) ? bookRecord.series : [],
-        releaseDate: normalizeDate(bookRecord.releaseDate || new Date()),
+        releaseDate: normaliseDate(bookRecord.releaseDate || new Date()),
         title: bookRecord.title || "N/A",
         subtitle: bookRecord.subtitle ?? null,
 
@@ -797,17 +797,17 @@ function toPositionsList(bookSeriesArray) {
 }
 
 /**
- * Normalizes any incoming date-like value to a valid Date. Falls back to "now" if invalid/empty.
+ * normalises any incoming date-like value to a valid Date. Falls back to "now" if invalid/empty.
  * @param {Date|string|number|null|undefined} value
  * @returns {Date}
  */
 /**
- * Normalizedate.
+ * normalisedate.
  *
  * @param {any} value 
  * @returns {any}
  */
-function normalizeDate(value) {
+function normaliseDate(value) {
   if (value instanceof Date && !isNaN(value.getTime())) return value;
   const parsed = new Date(value);
   return isNaN(parsed.getTime()) ? new Date() : parsed;
@@ -863,7 +863,7 @@ function hasNoSeriesPosition(seriesArray) {
  * @returns {any}
  */
 function hasMultiplePositions(seriesArray) {
-  return seriesArray.some(entry => (entry.position || "N/A").includes('-'));
+  return seriesArray.some(entry => (entry.position || "N/A").includes("-"));
 }
 
 /**
@@ -879,7 +879,7 @@ function hasMultiplePositions(seriesArray) {
  * @returns {any}
  */
 function hasDecimalSeriesPosition(seriesArray) {
-  return seriesArray.some(entry => (entry.position || "N/A").includes('.'));
+  return seriesArray.some(entry => (entry.position || "N/A").includes("."));
 }
 
 /**
@@ -922,17 +922,17 @@ function isReleaseInFuture(releaseDateString) {
  * @returns {any}
  */
 function doesTitleSubtitleMatch(title, subtitle, bookSeriesArray, existingContent) {
-  const nTitle = normalizeText(title);
-  const nSubtitle = normalizeText(subtitle);
+  const nTitle = normaliseText(title);
+  const nSubtitle = normaliseText(subtitle);
   const candidateSeries = new Set(
     (Array.isArray(bookSeriesArray) ? bookSeriesArray : [])
-      .map(seriesEntry => normalizeText(seriesEntry?.name ?? seriesEntry?.series ?? seriesEntry))
+      .map(seriesEntry => normaliseText(seriesEntry?.name ?? seriesEntry?.series ?? seriesEntry))
   );
 
   for (const existing of (Array.isArray(existingContent) ? existingContent : [])) {
-    const eTitle = normalizeText(existing?.title);
-    const eSubtitle = normalizeText(existing?.subtitle);
-    const eSeries = normalizeText(existing?.series);
+    const eTitle = normaliseText(existing?.title);
+    const eSubtitle = normaliseText(existing?.subtitle);
+    const eSeries = normaliseText(existing?.series);
 
     if (candidateSeries.has(eSeries) && eTitle === nTitle && eSubtitle === nSubtitle) {
       return true;
@@ -961,18 +961,18 @@ function doesTitleSubtitleMatch(title, subtitle, bookSeriesArray, existingConten
  * @returns {any}
  */
 function doesTitleSubtileMatchMissingExists(title, subtitle, bookSeriesArray, missingBooks) {
-  const nTitle = normalizeText(title);
-  const nSubtitle = normalizeText(subtitle);
+  const nTitle = normaliseText(title);
+  const nSubtitle = normaliseText(subtitle);
   const candidateSeries = new Set(
     (Array.isArray(bookSeriesArray) ? bookSeriesArray : [])
-      .map(seriesEntry => normalizeText(seriesEntry?.name ?? seriesEntry?.series ?? seriesEntry))
+      .map(seriesEntry => normaliseText(seriesEntry?.name ?? seriesEntry?.series ?? seriesEntry))
   );
 
   for (const missing of (Array.isArray(missingBooks) ? missingBooks : [])) {
     for (const selectedSeries of missing.series) {
-      const mTitle = normalizeText(missing?.title);
-      const mSubtitle = normalizeText(missing?.subtitle);
-      const mSeries = normalizeText(selectedSeries?.name);
+      const mTitle = normaliseText(missing?.title);
+      const mSubtitle = normaliseText(missing?.subtitle);
+      const mSeries = normaliseText(selectedSeries?.name);
 
       if (candidateSeries.has(mSeries) && mTitle === nTitle && mSubtitle === nSubtitle) {
         return true;
