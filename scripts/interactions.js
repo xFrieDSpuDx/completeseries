@@ -111,25 +111,20 @@ export function initializeUIInteractions() {
     });
   }
 
-  if (closeVisibilityManagerButton) {
+  if (closeVisibilityManagerButton) 
     closeVisibilityManagerButton.addEventListener("click", closeVisibilityPanel);
-  }
 
-  if (closeSettingsManagerButton) {
+  if (closeSettingsManagerButton) 
     closeSettingsManagerButton.addEventListener("click", closeSettingsPanel);
-  }
 
-  if (closeBookDetail) {
+  if (closeBookDetail) 
     closeBookDetail.addEventListener("click", closeBookDetailModal);
-  }
 
-  if (bookDetailModalOverlay) {
+  if (bookDetailModalOverlay) 
     bookDetailModalOverlay.addEventListener("click", closeBookDetailModal);
-  }
 
-  if (enableDebugChecks) {
-    enableDebugChecks.addEventListener("click", allowReloadForDebug)
-  }
+  if (enableDebugChecks) 
+    enableDebugChecks.addEventListener("click", allowReloadForDebug);
 
   // -------------------------
   // LOCAL STORAGE CONTROLS
@@ -250,9 +245,9 @@ export function initializeUIInteractions() {
     const bKeys = Object.keys(stateB);
     if (aKeys.length !== bKeys.length) return false;
 
-    for (const key of aKeys) {
+    for (const key of aKeys) 
       if (stateA[key] !== stateB[key]) return false;
-    }
+    
     return true;
   }
 
@@ -417,9 +412,8 @@ export function bindDebugViewerControls() {
   groupBySelect?.addEventListener("change", triggerRefresh);
   searchInput?.addEventListener("input", triggerRefresh);
 
-  chipListContainer?.addEventListener("change", (event) => {
-    const target = event.target;
-    if (target && target.matches('input[type="checkbox"]')) triggerRefresh();
+  chipListContainer?.addEventListener('change', ({ target }) => {
+    if (target instanceof HTMLInputElement && target.type === 'checkbox') triggerRefresh();
   });
 
   downloadJsonButton?.addEventListener("click", exportFilteredLogsAsJson);

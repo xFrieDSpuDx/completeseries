@@ -72,9 +72,11 @@ import { debugLogBookViability,
  * @returns {any}
  */
 export function sanitiseAudiobookShelfURL(audiobookShelfURL) {
-  if (!/^https?:\/\//i.test(audiobookShelfURL)) {
-    audiobookShelfURL = "https://" + audiobookShelfURL;
-  }
+  let url = audiobookShelfURL.trim();
+  if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(url))
+    url = `https://${url}`;
+  
+  audiobookShelfURL = url;
 
   return audiobookShelfURL.replace(/\/$/, ""); // Remove trailing slash
 }
@@ -103,39 +105,6 @@ function normaliseText(input) {
     .replace(/\s+/g, " ") // collapse whitespace
     .trim()
     .toLowerCase();
-}
-
-/**
- * normalise various input shapes into an array of book-like records.
- * Supports:
- *  - an array of records
- *  - objects with .items / .results / .data arrays
- *  - plain object maps (falls back to Object.values)
- */
-/**
- * normalisetoarray.
- *
- * @param {any} input 
- * @returns {any}
- */
-function normaliseToArray(input) {
-  if (Array.isArray(input)) return input;
-  if (!input || typeof input !== "object") return [];
-
-  // common wrappers
-  if (Array.isArray(input.items))   return input.items;
-  if (Array.isArray(input.results)) return input.results;
-  if (Array.isArray(input.data))    return input.data;
-
-  // fallback: if it's a map-like object, use its values
-  const values = Object.values(input);
-  // only use if it looks like a collection (avoid using Object.values on e.g. Date)
-  if (values.length && values.every(value => typeof value === "object" || typeof value === "string")) {
-    return values;
-  }
-
-  // last resort
-  return [];
 }
 
 /**
@@ -178,7 +147,7 @@ export function isInternalAudiobookShelfURL(sanitizedUrl) {
     // If hostname is an IP address, test if it's private
     const isIp = /^[\d.]+$/.test(hostname);
     return isIp ? isPrivateIP(hostname) : false;
-  } catch (err) {
+  } catch {
     console.warn("Invalid URL format:", sanitizedUrl);
     return false;
   }
@@ -297,9 +266,9 @@ export function findMissingBooks(existingContent, seriesMetadata, formData) {
  * @returns {any}
  */
 function runGatePipeline(context, gates) {
-  for (const gate of gates) {
+  for (const gate of gates)
     if (gate(context) === true) return true;
-  }
+
   return false;
 }
 
@@ -417,9 +386,8 @@ function gateOnlyUnabridged(context) {
   const filterUnabridgedEnabled =
     !!(formData?.filterUnabridged ?? formData?.onlyUnabridged);
 
-  if (!filterUnabridgedEnabled) {
-    return false; // filter is off → do not skip on this gate
-  }
+  if (!filterUnabridgedEnabled)
+    return false;
 
   // Determine if this book is unabridged using the canonical helper.
   const isUnabridged = isBookUnabridged(book);
@@ -827,9 +795,8 @@ function ensureDebugSession() {
     typeof window !== "undefined" &&
     document.getElementById("enableDebugChecks")?.checked === true;
 
-  if (debugEnabled && typeof startDebugSession === "function") {
+  if (debugEnabled && typeof startDebugSession === "function")
     startDebugSession({ label: "Find missing books" });
-  }
 }
 
 
@@ -934,9 +901,8 @@ function doesTitleSubtitleMatch(title, subtitle, bookSeriesArray, existingConten
     const eSubtitle = normaliseText(existing?.subtitle);
     const eSeries = normaliseText(existing?.series);
 
-    if (candidateSeries.has(eSeries) && eTitle === nTitle && eSubtitle === nSubtitle) {
+    if (candidateSeries.has(eSeries) && eTitle === nTitle && eSubtitle === nSubtitle)
       return true;
-    }
   }
   return false;
 }
@@ -974,9 +940,8 @@ function doesTitleSubtileMatchMissingExists(title, subtitle, bookSeriesArray, mi
       const mSubtitle = normaliseText(missing?.subtitle);
       const mSeries = normaliseText(selectedSeries?.name);
 
-      if (candidateSeries.has(mSeries) && mTitle === nTitle && mSubtitle === nSubtitle) {
+      if (candidateSeries.has(mSeries) && mTitle === nTitle && mSubtitle === nSubtitle)
         return true;
-      }
     }
   }
   return false;
@@ -999,9 +964,8 @@ function doesTitleSubtileMatchMissingExists(title, subtitle, bookSeriesArray, mi
 function hasSameSeriesPosition(bookSeriesArray, existingContent) {
   for (const existingBook of existingContent) {
     for (const seriesEntry of bookSeriesArray) {
-      if (existingBook.seriesPosition === seriesEntry.position && existingBook.series === seriesEntry.name) {
-        return true; // Found a match
-      }
+      if (existingBook.seriesPosition === seriesEntry.position && existingBook.series === seriesEntry.name)
+        return true;
     }
   }
 
@@ -1026,9 +990,8 @@ function hasSameSeriesPositionMissingExists(bookSeriesArray, missingBooks) {
   for (const existingMissingBook of missingBooks) {
     for (const seriesEntry of bookSeriesArray) {
       for (const existingMissingBookSeries of existingMissingBook.series) {
-        if (existingMissingBookSeries.position === seriesEntry.position && existingMissingBookSeries.name === seriesEntry.name) {
-          return true; // Found a match
-        }
+        if (existingMissingBookSeries.position === seriesEntry.position && existingMissingBookSeries.name === seriesEntry.name)
+          return true;
       }
     }
   }
@@ -1106,11 +1069,10 @@ export function groupBooksBySeries(missingBooks, includeSubSeries) {
     for (const selectedSeries of bookMetadata.series) {
       const seriesName = selectedSeries.name || "No Series";
 
-      let seriesHidden = isCurrentlyHiddenByAsin(selectedSeries.asin);
+      const seriesHidden = isCurrentlyHiddenByAsin(selectedSeries.asin);
 
-      if (seriesHidden === true) {
+      if (seriesHidden === true)
         continue;
-      }
 
       let existingGroup = groupedBySeries.find(
         (groupEntry) => groupEntry.series === seriesName
@@ -1126,9 +1088,8 @@ export function groupBooksBySeries(missingBooks, includeSubSeries) {
 
       existingGroup.books.push(bookMetadata);
 
-      if (!includeSubSeries) {
+      if (!includeSubSeries)
           break;
-        }
     }
   }
 
@@ -1189,9 +1150,8 @@ export function sortBySeriesThenTitle(metadataItems) {
     const firstTitle = (firstItem.title || "").toLowerCase();
     const secondTitle = (secondItem.title || "").toLowerCase();
 
-    if (firstSeries !== secondSeries) {
+    if (firstSeries !== secondSeries)
       return firstSeries.localeCompare(secondSeries);
-    }
 
     return firstTitle.localeCompare(secondTitle);
   });
@@ -1242,15 +1202,13 @@ export function updatedSelectedLibraries(libraryCheckboxContainer) {
       const matchedLibrary = libraryArrayObject.librariesList.find(
         library => library.id === checkbox.id
       );
-      if (matchedLibrary) {
+      if (matchedLibrary) 
         selectedLibraries.librariesList.push(matchedLibrary);
-      }
     }
   }
 
   // 4) UPDATE UI: enable/disable the submit button based on whether any libraries are selected (UI concern).
   // NOTE: If the submit button is not present, skip without throwing.
-  if (submitButton) {
+  if (submitButton)
     submitButton.disabled = selectedLibraries.librariesList.length === 0;
-  }
 }

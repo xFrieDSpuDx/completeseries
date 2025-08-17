@@ -1,4 +1,13 @@
 .DS_Store
-.vscode/launch.json
+.vscode
 scripts/existingSeriesFetcher.js
 assets/.DS_Store
+.prettierrc.json
+.vscode:settings.json
+.hintrc
+eslint.config.js
+eslint.config.mjs
+package-lock.json
+package.json
+node_modules
+php/.DS_Store

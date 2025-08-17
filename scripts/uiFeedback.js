@@ -54,9 +54,9 @@ export function hideSpinner() {
  */
 export function toggleElementVisibility(elementId, show, displayType = "flex") {
   const targetElement = document.getElementById(elementId);
-  if (targetElement) {
+  if (targetElement)
     targetElement.style.display = show ? displayType : "none";
-  }
+  
 }
 
 /**
@@ -107,7 +107,10 @@ export function enableExportButtons() {
  * Shows the book modal and adds the overlay
  */
 export function showBooksModal() {
+  // booksModal and modalOverlay focus passed to the click event
+  // eslint-disable-next-line no-undef
   booksModal.classList.add("active");
+  // eslint-disable-next-line no-undef
   modalOverlay.classList.add("active");
 }
 
@@ -135,9 +138,9 @@ export function adjustModalWidth(tileCount) {
 
   // Apply to modal
   const modal = document.getElementById("booksModal");
-  if (modal) {
+  if (modal)
     modal.style.width = `${finalWidth}px`;
-  }
+  
 }
 
 /**

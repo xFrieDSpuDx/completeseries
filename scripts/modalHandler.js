@@ -86,9 +86,8 @@ export function openBookModal(bookData, sourceTile) {
     modalOverlay.classList.add("active");
     modalElement.classList.add("active");
 
-    if (window.innerWidth > 950) {
+    if (window.innerWidth > 950)
       modalElement.style.transform = "translateX(-50%) scale(1)";
-    }
 
     modalElement.style.opacity = "0.95";
   });

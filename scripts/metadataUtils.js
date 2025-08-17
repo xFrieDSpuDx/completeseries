@@ -34,9 +34,8 @@ export function getItemSeries(hiddenItem) {
 
   seriesTiles.forEach((tile) => {
     const titleText = tile.querySelector(".series-title")?.textContent;
-    if (titleText === hiddenItem.series) {
+    if (titleText === hiddenItem.series)
       matchingTile = tile;
-    }
   });
 
   return matchingTile;

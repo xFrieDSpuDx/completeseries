@@ -35,9 +35,8 @@ export async function fetchExistingContent(formData, audiobookShelfLoginResponse
     librariesList: audiobookShelfLibraries = null
   } = audiobookShelfLoginResponse || {};
 
-  if (!authToken) {
+  if (!authToken)
     throw new Error("Missing auth token from prior login. Please sign in first.");
-  }
 
   // ───────────────────────────────────────────────────────────────────────────
   // A) Direct JS path (token-based)
@@ -219,6 +218,7 @@ export async function fetchAudibleMetadata(itemASIN, region, itemType) {
   try {
     return await fetchAudimetaMetadata({
       asin: itemASIN,
+      // eslint-disable-next-line object-shorthand
       region: region,
       type: itemType
     });
@@ -240,9 +240,8 @@ export function findFromStorage(key, value, storeIdentifier) {
   const existingFirstBookASINsArray = loadMetadataFromLocalStorage(storeIdentifier);
 
   // Validate that the result is a proper array
-  if (!existingFirstBookASINsArray || !Array.isArray(existingFirstBookASINsArray)) {
+  if (!existingFirstBookASINsArray || !Array.isArray(existingFirstBookASINsArray))
     return null;
-  }
 
   // Attempt to find the first object where the specified key matches the given value
   const matchingItem = existingFirstBookASINsArray.find(item => key in item && item[key] === value);

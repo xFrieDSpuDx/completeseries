@@ -46,24 +46,22 @@ export async function collectBookMetadata(
 
       if (!metadata) {
         // If metadata is not found in local storage, fetch it from the API
-        const fetchResponse = await fetchAudibleMetadata(
-          bookASIN,
-          audibleRegion,
-          "book"
-        );
-        metadata = fetchResponse.audiMetaResponse;
-        const responseHeaders = fetchResponse.responseHeaders;
+        const {
+          audiMetaResponse,
+          responseHeaders = {}
+        } = (await fetchAudibleMetadata(bookASIN, audibleRegion, 'book')) ?? {};
 
-        const remainingRequestsEstimate = calculateRemainingRequests(
-          totalSeries,
-          processedCount,
-          "book"
-        );
+        if (!audiMetaResponse || typeof audiMetaResponse !== 'object') {
+          const err = new Error('Audible metadata missing or malformed.');
+          err.details = { bookASIN, audibleRegion };
+          throw err;
+        }
 
-        await checkForRateLimitDelay(
-          responseHeaders,
-          remainingRequestsEstimate
-        );
+        metadata = audiMetaResponse;
+
+        const remainingRequestsEstimate = calculateRemainingRequests(totalSeries, processedCount, "book");
+
+        await checkForRateLimitDelay(responseHeaders, remainingRequestsEstimate);
 
         if (!metadata?.series) continue;
 
@@ -80,9 +78,8 @@ export async function collectBookMetadata(
 
         if (isSeriesHidden) continue;
 
-        if (!seriesAsins.includes(bookSeries.asin)) {
+        if (!seriesAsins.includes(bookSeries.asin))
           seriesAsins.push(bookSeries.asin);
-        }
 
         if (!includeSubSeries) break;
       }
@@ -121,13 +118,16 @@ export async function collectSeriesMetadata(seriesAsins, audibleRegion, existing
 
       if (!seriesMetadata) {
         // If metadata is not found in local storage, fetch it from the API
-        const fetchResponse = await fetchAudibleMetadata(
-          seriesAsin,
-          audibleRegion,
-          "series"
-        );
-        const seriesResponse = fetchResponse.audiMetaResponse;
-        const responseHeaders = fetchResponse.responseHeaders;
+        const {
+          audiMetaResponse,
+          responseHeaders = {}
+        } = (await fetchAudibleMetadata(seriesAsin, audibleRegion, 'series')) ?? {};
+
+        if (!audiMetaResponse || typeof audiMetaResponse !== 'object') {
+          const err = new Error('Audible metadata missing or malformed.');
+          err.details = { seriesAsin, audibleRegion };
+          throw err;
+        }
 
         const remainingRequestsEstimate = calculateRemainingRequests(
           totalSeries,
@@ -137,13 +137,13 @@ export async function collectSeriesMetadata(seriesAsins, audibleRegion, existing
 
         await checkForRateLimitDelay(responseHeaders, remainingRequestsEstimate);
 
-        if (!Array.isArray(seriesResponse)) continue;
+        if (!Array.isArray(audiMetaResponse)) continue;
 
         if (!existingContent) continue;
 
         seriesMetadata = {
           seriesAsin,
-          response: seriesResponse,
+          response: audiMetaResponse,
         };
 
         storeMetadataToLocalStorage(seriesMetadata, "existingBookMetadata");

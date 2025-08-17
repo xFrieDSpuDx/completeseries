@@ -18,9 +18,8 @@ export async function fetchAudimetaMetadata(params) {
   const { type = "book", asin = "", region = "uk" } = params;
 
   // Validate required fields
-  if (!type || !asin || !region) {
+  if (!type || !asin || !region)
     throw new Error("Missing required fields: type, asin, or region.");
-  }
 
   // Clean up input values
   const trimmedASIN = asin.trim();

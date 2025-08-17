@@ -72,12 +72,9 @@ function makeTimestampForFilename() {
  * @returns {HTMLElement|null} The resolved element, or null if not found.
  */
 function resolveElement(elementOrSelector, fallbackSelector = "#debugModal") {
-  if (elementOrSelector && typeof elementOrSelector.querySelector === "function") {
-    return elementOrSelector; // Already an element
-  }
-  if (typeof elementOrSelector === "string") {
-    return document.querySelector(elementOrSelector);
-  }
+  if (elementOrSelector && typeof elementOrSelector.querySelector === "function") return elementOrSelector; // Already an element
+  if (typeof elementOrSelector === "string") return document.querySelector(elementOrSelector);
+
   return document.querySelector(fallbackSelector);
 }
 

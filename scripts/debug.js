@@ -25,9 +25,9 @@ function generateSessionId() {
  * @returns {string} The current session id.
  */
 export function getCurrentDebugSessionId() {
-  if (!debugStore.currentSessionId) {
+  if (!debugStore.currentSessionId)
     startDebugSession(); // auto-start with no label
-  }
+  
   return debugStore.currentSessionId;
 }
 
@@ -45,9 +45,8 @@ export function startDebugSession(options = {}) {
   debugStore.currentSessionId = newSessionId;
   debugStore.sessionSequence = 0;
 
-  if (!Array.isArray(debugStore.sessions)) {
+  if (!Array.isArray(debugStore.sessions))
     debugStore.sessions = [];
-  }
 
   debugStore.sessions.push({
     sessionId: newSessionId,
@@ -68,9 +67,8 @@ export function startDebugSession(options = {}) {
 function pushDebugRecord(record) {
   const sessionId = getCurrentDebugSessionId();
 
-  if (typeof debugStore.sessionSequence !== "number") {
+  if (typeof debugStore.sessionSequence !== "number")
     debugStore.sessionSequence = 0;
-  }
 
   const recordWithSession = {
     sessionId,
@@ -107,7 +105,7 @@ export function clearDebugLogs() {
  */
 export function isDebugEnabled() {
   const debugCheckbox = document.getElementById("enableDebugChecks");
-  return Boolean(debugCheckbox && debugCheckbox.checked);
+  return Boolean(debugCheckbox);
 }
 
 /**
@@ -757,9 +755,9 @@ export function debugLogIgnoreSameSeriesPositionExisting({
   // Build lookup for the current book: seriesNameLower -> Set(positionStr)
   const bookIndex = new Map();
   for (const seriesInfo of bookSeriesnormalised) {
-    if (!bookIndex.has(seriesInfo.nameLower)) {
+    if (!bookIndex.has(seriesInfo.nameLower))
       bookIndex.set(seriesInfo.nameLower, new Set());
-    }
+    
     bookIndex.get(seriesInfo.nameLower).add(seriesInfo.positionStr);
   }
 
@@ -988,9 +986,9 @@ export function debugLogIgnoreSameSeriesPositionMissing({
   // Build lookup for the current book: seriesNameLower -> Set(positionStr)
   const bookIndex = new Map();
   for (const seriesInfo of bookSeriesnormalised) {
-    if (!bookIndex.has(seriesInfo.nameLower)) {
+    if (!bookIndex.has(seriesInfo.nameLower))
       bookIndex.set(seriesInfo.nameLower, new Set());
-    }
+    
     bookIndex.get(seriesInfo.nameLower).add(seriesInfo.positionStr);
   }
 

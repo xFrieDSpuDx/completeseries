@@ -92,9 +92,8 @@ function cmpVals(firstValue, secondValue, direction) {
   if (isNullishValue(firstValue)) return 1;   // nulls last
   if (isNullishValue(secondValue)) return -1; // nulls last
 
-  if (typeof firstValue === "number" && typeof secondValue === "number") {
+  if (typeof firstValue === "number" && typeof secondValue === "number")
     return directionMultiplier * (firstValue - secondValue);
-  }
 
   const firstString = String(firstValue);
   const secondString = String(secondValue);
@@ -115,11 +114,10 @@ function cmpVals(firstValue, secondValue, direction) {
  */
 function setDebugSort(sortKey) {
   if (!sortKey) return;
-  if (__dbgSort.key === sortKey) {
+  if (__dbgSort.key === sortKey)
     __dbgSort.dir = __dbgSort.dir === "asc" ? "desc" : "asc";
-  } else {
+  else
     __dbgSort = { key: sortKey, dir: "asc" };
-  }
 }
 
 /**
@@ -143,9 +141,9 @@ function sortDebugRecordsWithState(records) {
     if (primaryComparison !== 0) return primaryComparison;
 
     // Stable fallback to original order (do not change)
-    if (firstRecord.sessionId !== secondRecord.sessionId) {
+    if (firstRecord.sessionId !== secondRecord.sessionId)
       return String(firstRecord.sessionId).localeCompare(String(secondRecord.sessionId));
-    }
+    
     return (firstRecord.sessionIndex ?? 0) - (secondRecord.sessionIndex ?? 0);
   });
 }
@@ -420,8 +418,10 @@ function renderTableForRecords(containerElement, records) {
       detailsCell.setAttribute("data-label", headerLabels[9]);
       const uniqueId = `${record.sessionId || "s"}_${record.sessionIndex ?? 0}`;
       const detailsObject = buildQuickFactsElement(record, uniqueId, detailRowElement);
-      const detailsElement = detailsObject.detailsWrapper;
-      const detailsPanel = detailsObject.detailsPanel;
+      if (!detailsObject) 
+        throw new Error('buildQuickFactsElement returned nothing');
+      const { detailsWrapper: detailsElement, detailsPanel } = detailsObject;
+
       detailsCell.appendChild(detailsElement);
       rowElement.appendChild(detailsCell);
 
@@ -615,6 +615,7 @@ function buildQuickFactsElement(record, uniqueId, detailRowElement) {
     }
   });
 
+  // eslint-disable-next-line object-shorthand
   return {detailsWrapper: detailsWrapper, detailsPanel: detailsPanel};
 }
 
@@ -676,9 +677,8 @@ function getOrCreateCountLabelElement(debugModalElement) {
     firstControlsRowElement.querySelector("#dbgDownloadJson") ||
     firstControlsRowElement.querySelector("#dbgDownloadCsv");
 
-  if (firstDownloadButtonElement) {
+  if (firstDownloadButtonElement) 
     firstControlsRowElement.insertBefore(countLabelElement, firstDownloadButtonElement);
-  }
 
   return countLabelElement;
 }
@@ -692,9 +692,9 @@ function getOrCreateCountLabelElement(debugModalElement) {
  */
 function sortDebugRecords(records) {
   return [...records].sort((firstRecord, secondRecord) => {
-    if (firstRecord.sessionId !== secondRecord.sessionId) {
+    if (firstRecord.sessionId !== secondRecord.sessionId)
       return String(firstRecord.sessionId).localeCompare(String(secondRecord.sessionId));
-    }
+    
     return (firstRecord.sessionIndex ?? 0) - (secondRecord.sessionIndex ?? 0);
   });
 }
@@ -737,5 +737,6 @@ export function getFilteredDebugLogs({ modalSelector = "#debugModal" } = {}) {
 
   const allLogs = getDebugLogs();
   const currentFilters = readFilters(debugModalElement);
+
   return filterLogs(allLogs, currentFilters);
 }

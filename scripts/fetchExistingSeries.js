@@ -62,11 +62,11 @@ export async function fetchExistingSeriesLibraries({
   function parseSeriesPosition(seriesNameFromMeta) {
     const name = seriesNameFromMeta ?? "Unknown Series";
     const hashIndex = name.indexOf("#");
-    if (hashIndex === -1) {
+    if (hashIndex === -1) 
       return { label: "N/A", number: null };
-    }
+    
     const raw = String(name.slice(hashIndex + 1)).trim();
-    const num = Number.parseFloat(raw.replace(/[^0-9.\-]/g, "")); // tolerate "Book 1", "1.5", etc.
+    const num = Number.parseFloat(raw.replace(/[^0-9.-]/g, "")); // tolerate "Book 1", "1.5", etc.
     return {
       label: raw || "N/A",
       number: Number.isFinite(num) ? num : null
@@ -104,7 +104,7 @@ export async function fetchExistingSeriesLibraries({
         const error = new Error(`Failed to fetch series (page ${page}) from library ${libraryId}`, { cause });
         error.url = seriesUrl;
         error.libraryId = libraryId;
-        throw e;
+        throw error;
       }
 
       if (!httpResponse.ok) {
@@ -122,9 +122,8 @@ export async function fetchExistingSeriesLibraries({
       const results = Array.isArray(seriesPayload?.results) ? seriesPayload.results : [];
 
       // Initialize total on first page
-      if (totalSeriesCount == null && Number.isFinite(seriesPayload?.total)) {
+      if (totalSeriesCount == null && Number.isFinite(seriesPayload?.total))
         totalSeriesCount = seriesPayload.total;
-      }
 
       // Map results to output structures
       for (const series of results) {
