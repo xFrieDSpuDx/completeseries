@@ -87,13 +87,14 @@ export function addSeriesBadge(parentElement, textContentValue) {
  * @returns {HTMLImageElement} The created and appended image element.
  */
 export function addSeriesImage(parentElement, bookMetadata, altText) {
+  const imageWrapper = addDivElement({ className: "series-image-wrap"}, parentElement);
   return addImageElement(
     {
       className: "series-image",
       src: bookMetadata.imageUrl,
       alt: altText,
     },
-    parentElement
+    imageWrapper
   );
 }
 

@@ -120,6 +120,8 @@ export async function fetchAudiobookShelfLibraries(formData) {
     serverUrl,
     username,
     password,
+    apiKey = null,
+    useApiKey = false,
     usePhpProxy = false
   } = formData || {};
 
@@ -143,7 +145,9 @@ export async function fetchAudiobookShelfLibraries(formData) {
       return await fetchAudiobookShelfLibrariesCall({
         serverUrl: normalisedServerUrl,
         username,
-        password
+        password,
+        apiKey,
+        useApiKey
       });
     } catch (error) {
       throw new Error(error?.message || "Error retrieving libraries from AudiobookShelf server.", { cause: error });
@@ -162,7 +166,9 @@ export async function fetchAudiobookShelfLibraries(formData) {
       body: JSON.stringify({
         url: normalisedServerUrl,
         username,
-        password
+        password,
+        apiKey,
+        useApiKey
       })
     });
   } catch (error) {

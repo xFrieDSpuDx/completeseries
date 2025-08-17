@@ -32,8 +32,12 @@ export async function fetchAudiobookShelfLibrariesCall({
   serverUrl,
   username,
   password,
+  apiKey,
+  useApiKey,
   timeoutMs = 5000
 }) {
+
+  let bearerToken = apiKey;
   // ─────────────────────────────────────────────────────────────────────────────
   // Step 1: Validate and normalise inputs (presence only; format is handled upstream)
   // ─────────────────────────────────────────────────────────────────────────────
@@ -41,15 +45,6 @@ export async function fetchAudiobookShelfLibrariesCall({
     typeof serverUrl === "string" ? serverUrl.trim().replace(/\/+$/, "") : "";
   const normalisedUsername = typeof username === "string" ? username.trim() : "";
   const normalisedPassword = typeof password === "string" ? password.trim() : "";
-
-  if (!normalisedServerUrl || !normalisedUsername || !normalisedPassword) {
-    const validationError = new Error(
-      "Missing required fields: url, username, or password"
-    );
-    validationError.httpStatus = 400;
-    validationError.kind = "validation";
-    throw validationError;
-  }
 
   // Helper: create an AbortController that auto-aborts after `ms` milliseconds.
   function createAbortControllerWithTimeout(ms) {
@@ -78,43 +73,40 @@ export async function fetchAudiobookShelfLibrariesCall({
   // ─────────────────────────────────────────────────────────────────────────────
   // Step 2: Authenticate (POST /login) — network errors bubble up; we only check HTTP + JSON
   // ─────────────────────────────────────────────────────────────────────────────
-  const loginAbort = createAbortControllerWithTimeout(timeoutMs);
-  let loginHttpResponse;
-  try {
-    const loginUrl = `${normalisedServerUrl}/login`;
-    const loginRequestBody = {
-      username: normalisedUsername,
-      password: normalisedPassword
-    };
+  // Only needed when username and password login
+  if (!useApiKey) {
+    const loginAbort = createAbortControllerWithTimeout(timeoutMs);
+    let loginHttpResponse;
+    try {
+      const loginUrl = `${normalisedServerUrl}/login`;
+      const loginRequestBody = {
+        username: normalisedUsername,
+        password: normalisedPassword
+      };
 
-    loginHttpResponse = await fetch(loginUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(loginRequestBody),
-      signal: loginAbort.signal
-    });
-  } finally {
-    loginAbort.cancelTimeout(); // ensure cleanup even if fetch rejects
-  }
+      loginHttpResponse = await fetch(loginUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginRequestBody),
+        signal: loginAbort.signal
+      });
+    } finally {
+      loginAbort.cancelTimeout(); // ensure cleanup even if fetch rejects
+    }
 
-  if (!loginHttpResponse.ok) {
-    const responseBodyText = await loginHttpResponse.text().catch(() => "");
-    const httpError = new Error("Login failed. Please check your credentials and try again.");
-    httpError.httpStatus = loginHttpResponse.status;
-    httpError.details = responseBodyText;
-    httpError.kind = "http";
-    throw httpError;
-  }
+    // Unauthorized
+    if (loginHttpResponse.status === 401) 
+      throw await catch401Response(loginHttpResponse);
 
-  const loginResponseJson = await parseJsonFromResponseOrThrow(loginHttpResponse);
-  const defaultLibraryId = loginResponseJson?.userDefaultLibraryId ?? null;
-  const bearerToken = loginResponseJson?.user?.token ?? null;
+    if (!loginHttpResponse.ok) 
+      throw await unexpectedResponse(loginHttpResponse);
 
-  if (!defaultLibraryId || !bearerToken) {
-    const missingFieldsError = new Error("Missing library ID or token in login response");
-    missingFieldsError.httpStatus = 500;
-    missingFieldsError.kind = "missing-fields";
-    throw missingFieldsError;
+    const loginResponseJson = await parseJsonFromResponseOrThrow(loginHttpResponse);
+    const defaultLibraryId = loginResponseJson?.userDefaultLibraryId ?? null;
+    bearerToken = loginResponseJson?.user?.token ?? null;
+
+    if (!defaultLibraryId || !bearerToken)
+      throw await failedReturnResponse();
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -135,14 +127,11 @@ export async function fetchAudiobookShelfLibrariesCall({
     librariesAbort.cancelTimeout();
   }
 
-  if (!librariesHttpResponse.ok) {
-    const responseBodyText = await librariesHttpResponse.text().catch(() => "");
-    const httpError = new Error("Failed to fetch libraries");
-    httpError.httpStatus = librariesHttpResponse.status;
-    httpError.details = responseBodyText;
-    httpError.kind = "http";
-    throw httpError;
-  }
+  if (librariesHttpResponse.status === 401) 
+    throw await catch401Response(librariesHttpResponse);
+
+  if (!librariesHttpResponse.ok) 
+    throw await unexpectedResponse(librariesHttpResponse);
 
   const librariesResponseJson =
     await parseJsonFromResponseOrThrow(librariesHttpResponse);
@@ -152,12 +141,8 @@ export async function fetchAudiobookShelfLibrariesCall({
     ? librariesResponseJson.libraries
     : null;
 
-  if (!allLibrariesList) {
-    const structureError = new Error("Invalid JSON structure in libraries response");
-    structureError.httpStatus = 500;
-    structureError.kind = "bad-structure";
-    throw structureError;
-  }
+  if (!allLibrariesList)
+    throw await failedReturnResponse();
 
   // ─────────────────────────────────────────────────────────────────────────────
   // Step 4: Keep only audiobook libraries (mediaType === "book")
@@ -174,4 +159,29 @@ export async function fetchAudiobookShelfLibrariesCall({
     authToken: bearerToken,
     librariesList: bookLibrariesOnly
   };
+}
+
+async function catch401Response(response) {
+  const responseBodyText = await response.text().catch(() => "");
+  const httpError = new Error("Login failed. Please check your credentials and try again.");
+  httpError.httpStatus = response.status;
+  httpError.details = responseBodyText;
+  httpError.kind = "http";
+  return httpError;
+}
+
+async function unexpectedResponse(response) {
+  const responseBodyText = await response.text().catch(() => "");
+  const httpError = new Error("An unexpected error has happened whlie contacting AudiobookShelf.");
+  httpError.httpStatus = response.status;
+  httpError.details = responseBodyText;
+  httpError.kind = "http";
+  return httpError;
+}
+
+async function failedReturnResponse() {
+  const missingFieldsError = new Error("AudiobookShelf failed to return usable data.");
+  missingFieldsError.httpStatus = 500;
+  missingFieldsError.kind = "missing-fields";
+  return missingFieldsError;
 }
