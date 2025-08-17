@@ -9,7 +9,9 @@ export function getFormData() {
     serverUrl: document.getElementById("serverUrl").value.trim(),
     username: document.getElementById("username").value.trim(),
     password: document.getElementById("password").value,
+    apiKey: document.getElementById("apikeyinput").value,
     region: document.getElementById("audibleRegion").value,
+    useApiKey: document.getElementById("useApiKeyLogin").checked,
     usePhpProxy: document.getElementById("usePhpProxy").checked,
     onlyUnabridged: document.getElementById("filterUnabridged").checked,
     includeSubSeries: document.getElementById("includeSubSeries").checked,
@@ -37,13 +39,21 @@ export function validateForm(data) {
     document.getElementById("urlError").textContent = "Server URL is required.";
     isValid = false;
   }
-  if (!data.username) {
-    document.getElementById("usernameError").textContent = "Username is required.";
-    isValid = false;
-  }
-  if (!data.password) {
-    document.getElementById("passwordError").textContent = "Password is required.";
-    isValid = false;
+
+  if (!data.useApiKey) {
+    if (!data.username) {
+      document.getElementById("usernameError").textContent = "Username is required.";
+      isValid = false;
+    }
+    if (!data.password) {
+      document.getElementById("passwordError").textContent = "Password is required.";
+      isValid = false;
+    }
+  } else {
+    if (!data.apiKey) {
+      document.getElementById("apikeyinputError").textContent = "API key is required.";
+      isValid = false;
+    }
   }
 
   return isValid;
@@ -67,4 +77,5 @@ export function clearErrors() {
   document.getElementById("urlError").textContent = "";
   document.getElementById("usernameError").textContent = "";
   document.getElementById("passwordError").textContent = "";
+  document.getElementById("apikeyinputError").textContent = "";
 }

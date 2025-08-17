@@ -20,26 +20,38 @@
         />
         <div class="error-message" id="urlError"></div>
 
-        <label for="username">Username</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          placeholder="Username"
-          required
-        />
-        <div class="error-message" id="usernameError"></div>
+        <div id="userPasswordInputContainer" class="menuHideable active">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Username"
+            required
+          />
+          <div class="error-message" id="usernameError"></div>
 
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Password"
-          required
-        />
-        <div class="error-message" id="passwordError"></div>
-
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+          <div class="error-message" id="passwordError"></div>
+        </div>
+        <div id="apiKeyInputContainer" class="menuHideable">
+          <label for="apikeyinput">API Key</label>
+          <input
+            type="text"
+            id="apikeyinput"
+            name="apikeyinput"
+            placeholder="API Key"
+            required
+          />
+          <div class="error-message" id="apikeyinputError"></div>
+        </div>
         <label for="audibleRegion">Audible Region:</label>
         <select id="audibleRegion" name="audibleRegion" required>
           <option value="uk">United Kingdom</option>
@@ -67,6 +79,12 @@
 
           <div class="advanced__content">
             <div class="checkbox-row advanced-checkbox-row">
+              <input type="checkbox" id="useApiKeyLogin" />
+              <label for="useApiKeyLogin" class="label-checkbox label-advanced">
+                Use API key login
+              </label>
+            </div>
+            <div class="checkbox-row advanced-checkbox-row">
               <input type="checkbox" id="usePhpProxy" />
               <label for="usePhpProxy" class="label-checkbox label-advanced">
                 Use PHP proxy to login to AudiobookShelf
@@ -91,7 +109,7 @@
       </form>
     </div>
 
-    <div id="library-form-container" class="form-container" style="display: none">
+    <div id="library-form-container" class="form-container menuHideable">
       <form id="libraryForm" novalidate>
         <h2>Select the libraries to scan</h2>
         <!-- Options will be populated dynamically -->

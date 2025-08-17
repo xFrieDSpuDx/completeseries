@@ -42,7 +42,10 @@ export function initializeUIInteractions() {
   const bookDetailModal = document.getElementById("bookDetailModal");
   const closeBookDetail = document.getElementById("closeBookDetail");
 
-  // --- Export Buttons --
+  // --- Advanced Options ---
+  const useApiKeyLogin = document.getElementById("useApiKeyLogin");
+
+  // --- Export Buttons ---
   const exportMissingCsv = document.getElementById("exportMissingCsv");
   const exportMissingJson = document.getElementById("exportMissingJson");
 
@@ -54,6 +57,12 @@ export function initializeUIInteractions() {
 
   // --- Debug Checkbox ---
   const enableDebugChecks = document.getElementById("enableDebugChecks");
+
+  // -------------------------
+  // SET INTERFACE ON LOAD
+  // -------------------------
+
+  toggleApiKeyLogin();
 
   // -------------------------
   // MODAL AND PANEL CLOSERS
@@ -125,6 +134,9 @@ export function initializeUIInteractions() {
 
   if (enableDebugChecks) 
     enableDebugChecks.addEventListener("click", allowReloadForDebug);
+
+  if (useApiKeyLogin)
+    useApiKeyLogin.addEventListener("click", toggleApiKeyLogin);
 
   // -------------------------
   // LOCAL STORAGE CONTROLS
@@ -355,6 +367,20 @@ export function libraryCheckboxWatcher(libraryCheckboxContainer) {
       applyFilterButton.classList.add("active");
     });
   });
+}
+
+export function toggleApiKeyLogin() {
+  const isApiKeyLoginChecked = document.getElementById("useApiKeyLogin").checked;
+  const userPassInput = document.getElementById("userPasswordInputContainer");
+  const apiKeyInput = document.getElementById("apiKeyInputContainer");
+
+  if (isApiKeyLoginChecked) {
+    userPassInput.classList.remove("active");
+    apiKeyInput.classList.add("active");
+  } else {
+    userPassInput.classList.add("active");
+    apiKeyInput.classList.remove("active");
+  }
 }
 
   // -------------------------

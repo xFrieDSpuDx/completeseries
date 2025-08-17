@@ -309,6 +309,7 @@ function errorHandler(error) {
   toggleElementVisibility("library-form-container", false);
   setMessage(error.message || "Something went wrong. Please try again.");
   clearRateMessage();
+  enableClickEventsOnLoadEnd();
   throw new Error(error.message || "An unexpected error occurred. Please try again.");
 }
 

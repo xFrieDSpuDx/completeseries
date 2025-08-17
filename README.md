@@ -62,11 +62,14 @@ You can inspect the full source code in this repository to verify that yourself.
    - Use the 👁️ icon to hide series or books permanently.  
    - Hidden items are tracked and can be managed from the sidebar (burger menu).
 
-5. **Apply new filters**  
+7. **Apply new filters**  
    - Change the filters used and get an updated results page without logging in again
    - Clear cached contents to force a new request
 
-6. **Debug Modal**
+8. **Download results**  
+   - Download the results to CSV or Json format
+
+9. **Debug Modal**
    - The Debug Modal provides a detailed, real-time view of your library’s data and applied filters, helping with troubleshooting and understanding the app’s logic.
    - Group results
    - Filter results
@@ -79,8 +82,11 @@ You can inspect the full source code in this repository to verify that yourself.
 |--------|------------|
 | 🏠 Home Page | ![HomePage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HomepageFilterClosed.png) |
 | 🏠 Home Page Filters | ![HomePageFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HomepageFilterOpen.png) |
+| 🔑 Home Page API Key Login | ![HomePageFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/LoginWithAPIKey.png) |
+| 🔀 Home Page Filters | ![HomePageFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/PHPProxyAndWarning.png) |
 | 📚 Library Selection | ![LibrarySelection](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/LibrarySelect.png) |
 | 📊 Results Page | ![ResultsPage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/ResultsPage.png) |
+| ⏳ Results Loading | ![ResultsPage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/ResultsLoadingPlaceholder.png) |
 | 🧰 Filter Results Page | ![FilterResultsPage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/FilterOptionsAfterResults.png) |
 | 📚 Book Modal | ![BooksModal](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/BooksModal.png) |
 | 📖 Book Details | ![BookDetails](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/BookDetails.png) |
@@ -94,7 +100,7 @@ You can inspect the full source code in this repository to verify that yourself.
 
 ## 📦 Deployment
 
-You can host your own version or use the one at [https://completeseries.lily-pad.uk](https://completeseries.lily-pad.uk). The project is as client-side as possible, however AudiobookShelf login and audimeta proxy components rely on PHP to stop CORS issues.
+You can host your own version or use the one at [https://completeseries.lily-pad.uk](https://completeseries.lily-pad.uk). The project is as client-side as possible, however older AudiobookShelf installs and certain setups rely on PHP to stop CORS issues. By default the application tries to use JavaScript but does give the option to fallback to using a PHP proxy if needed. The proxy option is found in the advanced section of the home page.
 
 ---
 
