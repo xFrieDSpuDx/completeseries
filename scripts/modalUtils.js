@@ -15,44 +15,44 @@ export let bookDetailModalAnchor = null;
  */
 export function extractFormattedBookInfo(bookData = {}) {
   // Helpers kept local to avoid polluting scope
-  const toNames = (arr) =>
-    arr
-      .map((x) => (typeof x === 'string' ? x : x?.name ?? x))
+  const toNames = (array) =>
+    array
+      .map((bookValue) => (typeof bookValue === "string" ? bookValue : bookValue?.name ?? bookValue))
       .filter(Boolean);
 
-  const isNum = (n) => typeof n === 'number' && Number.isFinite(n);
+  const isNum = (numberValue) => typeof numberValue === "number" && Number.isFinite(numberValue);
 
   const formatDate = (value) => {
-    const d = new Date(value);
-    return Number.isNaN(d.getTime()) ? 'Unknown' : d.toLocaleDateString();
+    const dateValue = new Date(value);
+    return Number.isNaN(dateValue.getTime()) ? "Unknown" : dateValue.toLocaleDateString();
   };
 
   const authors =
     Array.isArray(bookData.authors) && bookData.authors.length
-      ? toNames(bookData.authors).join(', ')
-      : 'Unknown';
+      ? toNames(bookData.authors).join(", ")
+      : "Unknown";
 
   const genres =
     Array.isArray(bookData.genres) && bookData.genres.length
-      ? toNames(bookData.genres).join(', ')
-      : 'Unknown';
+      ? toNames(bookData.genres).join(", ")
+      : "Unknown";
 
   const narrators =
     Array.isArray(bookData.narrators) && bookData.narrators.length
-      ? toNames(bookData.narrators).join(', ')
-      : 'Unknown';
+      ? toNames(bookData.narrators).join(", ")
+      : "Unknown";
 
-  const publisher = bookData.publisher || 'Unknown';
+  const publisher = bookData.publisher || "Unknown";
 
-  const releaseDate = bookData.releaseDate ? formatDate(bookData.releaseDate) : 'Unknown';
+  const releaseDate = bookData.releaseDate ? formatDate(bookData.releaseDate) : "Unknown";
 
   const length = isNum(bookData.lengthMinutes)
     ? `${Math.round(bookData.lengthMinutes / 60)} hrs`
-    : 'Unknown';
+    : "Unknown";
 
-  const rating = isNum(bookData.rating) ? bookData.rating.toFixed(2) : 'N/A';
+  const rating = isNum(bookData.rating) ? bookData.rating.toFixed(2) : "N/A";
 
-  const summary = bookData.summary || bookData.description || 'No description available.';
+  const summary = bookData.summary || bookData.description || "No description available.";
 
   return {
     authors,

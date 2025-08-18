@@ -438,8 +438,8 @@ export function bindDebugViewerControls() {
   groupBySelect?.addEventListener("change", triggerRefresh);
   searchInput?.addEventListener("input", triggerRefresh);
 
-  chipListContainer?.addEventListener('change', ({ target }) => {
-    if (target instanceof HTMLInputElement && target.type === 'checkbox') triggerRefresh();
+  chipListContainer?.addEventListener("change", ({ target }) => {
+    if (target instanceof HTMLInputElement && target.type === "checkbox") triggerRefresh();
   });
 
   downloadJsonButton?.addEventListener("click", exportFilteredLogsAsJson);

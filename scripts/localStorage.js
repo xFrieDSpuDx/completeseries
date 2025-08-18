@@ -22,6 +22,16 @@ export async function storeMetadataToLocalStorage(metadata, storeIdentifier) {
 }
 
 /**
+ * Updates the entire value of location storage based on an identifier
+ *
+ * @param {string} metadata - The string to store (e.g., all of the hidden books).
+ * @param {string} storeIdentifier - The localStorage key under which data is stored.
+ */
+export function storeUpdateFullValueForLocalStorage(storageValue, storeIdentifier) {
+  localStorage.setItem(storeIdentifier, JSON.stringify(storageValue));
+}
+
+/**
  * Loads metadata array from localStorage for a given key.
  *
  * @param {string} storeIdentifier - The key used to retrieve stored values.

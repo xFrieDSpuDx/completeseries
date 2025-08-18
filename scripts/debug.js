@@ -104,7 +104,7 @@ export function clearDebugLogs() {
  * @returns {boolean} Whether debug is enabled.
  */
 export function isDebugEnabled() {
-  const debugCheckbox = document.getElementById("enableDebugChecks");
+  const debugCheckbox = document.getElementById("enableDebugChecks").checked;
   return Boolean(debugCheckbox);
 }
 
@@ -134,11 +134,11 @@ export function summariseBookSeries(book) {
  */
 function baseQuickFacts(book, seriesContext) {
   const seriesArray = Array.isArray(book?.series) ? book.series : [];
-  const seriesNames = seriesArray.map(s => s?.name).filter(Boolean);
+  const seriesNames = seriesArray.map(series => series?.name).filter(Boolean);
   const positions = seriesArray
-    .map(s => (s?.position != null ? String(s.position) : null))
+    .map(series => (series?.position != null ? String(series.position) : null))
     .filter(Boolean);
-  const hasDecimalPositions = positions.some(p => p.includes("."));
+  const hasDecimalPositions = positions.some(seriesPosition => seriesPosition.includes("."));
 
   return {
     schemaVersion: 1,
