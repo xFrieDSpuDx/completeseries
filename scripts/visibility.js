@@ -3,6 +3,7 @@
 import { populateHiddenItemsMenu } from "./tileVisibilityUpdater.js";
 import { sortBySeriesThenTitle } from "./dataCleaner.js";
 import { applyFilterButton } from "./interactions.js";
+import { loadMetadataFromLocalStorage, storeUpdateFullValueForLocalStorage } from "./localStorage.js";
 
 // Local storage key value
 const VISIBILITY_KEY = "hiddenItems";
@@ -13,8 +14,7 @@ const VISIBILITY_KEY = "hiddenItems";
  */
 export function getHiddenItems() {
   try {
-    const storedValue = localStorage.getItem(VISIBILITY_KEY);
-    return storedValue ? JSON.parse(storedValue) : [];
+    return loadMetadataFromLocalStorage(VISIBILITY_KEY);
   } catch (error) {
     console.error("Failed to parse hidden items from localStorage:", error);
     return [];
@@ -28,7 +28,7 @@ export function getHiddenItems() {
 export function setHiddenItems(items) {
   try {
     const sortedItems = sortBySeriesThenTitle(items);
-    localStorage.setItem(VISIBILITY_KEY, JSON.stringify(sortedItems));
+    storeUpdateFullValueForLocalStorage(sortedItems, VISIBILITY_KEY);
   } catch (error) {
     console.error("Failed to store hidden items to localStorage:", error);
   }

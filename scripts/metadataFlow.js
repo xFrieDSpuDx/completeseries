@@ -49,10 +49,10 @@ export async function collectBookMetadata(
         const {
           audiMetaResponse,
           responseHeaders = {}
-        } = (await fetchAudibleMetadata(bookASIN, audibleRegion, 'book')) ?? {};
+        } = (await fetchAudibleMetadata(bookASIN, audibleRegion, "book")) ?? {};
 
-        if (!audiMetaResponse || typeof audiMetaResponse !== 'object') {
-          const err = new Error('Audible metadata missing or malformed.');
+        if (!audiMetaResponse || typeof audiMetaResponse !== "object") {
+          const err = new Error("Audible metadata missing or malformed.");
           err.details = { bookASIN, audibleRegion };
           throw err;
         }
@@ -121,10 +121,10 @@ export async function collectSeriesMetadata(seriesAsins, audibleRegion, existing
         const {
           audiMetaResponse,
           responseHeaders = {}
-        } = (await fetchAudibleMetadata(seriesAsin, audibleRegion, 'series')) ?? {};
+        } = (await fetchAudibleMetadata(seriesAsin, audibleRegion, "series")) ?? {};
 
-        if (!audiMetaResponse || typeof audiMetaResponse !== 'object') {
-          const err = new Error('Audible metadata missing or malformed.');
+        if (!audiMetaResponse || typeof audiMetaResponse !== "object") {
+          const err = new Error("Audible metadata missing or malformed.");
           err.details = { seriesAsin, audibleRegion };
           throw err;
         }

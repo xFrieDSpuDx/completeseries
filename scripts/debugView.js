@@ -333,7 +333,7 @@ function renderResults(debugModalElement) {
 
   // Render each group as its own table (headers preserved), sorted by label
   for (const [groupLabel, groupRecords] of [...recordsByGroup.entries()].sort(
-    (a, b) => String(a[0]).localeCompare(String(b[0]))
+    (groupA, groupB) => String(groupA[0]).localeCompare(String(groupB[0]))
   )) {
     const groupTitleElement = document.createElement("h3");
     groupTitleElement.textContent = groupLabel;
@@ -419,7 +419,7 @@ function renderTableForRecords(containerElement, records) {
       const uniqueId = `${record.sessionId || "s"}_${record.sessionIndex ?? 0}`;
       const detailsObject = buildQuickFactsElement(record, uniqueId, detailRowElement);
       if (!detailsObject) 
-        throw new Error('buildQuickFactsElement returned nothing');
+        throw new Error("buildQuickFactsElement returned nothing");
       const { detailsWrapper: detailsElement, detailsPanel } = detailsObject;
 
       detailsCell.appendChild(detailsElement);
@@ -525,7 +525,7 @@ function formatSeriesNames(record) {
   if (!record || !Array.isArray(record.series)) return "";
   try {
     return record.series
-      .map((s) => (s && (s.seriesName || s.name || s.title)) || "")
+      .map((series) => (series && (series.seriesName || series.name || series.title)) || "")
       .filter(Boolean)
       .join(", ");
   } catch {
