@@ -1,13 +1,14 @@
 /**
  * Creates a text-based HTML element (e.g., h2, div) and appends it to a parent.
- * 
+ *
  * @param {string} textContent - The textual content to insert.
  * @param {string} tagName - The tag name to create (e.g., 'h2', 'div').
  * @param {HTMLElement} parentElement - The parent node to append to.
  */
-export function addTextElement(textContent, tagName, parentElement) {
+export function addTextElement(textContent, tagName, parentElement, elementId = null) {
   const textElement = document.createElement(tagName);
   textElement.textContent = textContent;
+  if (elementId) textElement.id = elementId;
   parentElement.appendChild(textElement);
   return textElement;
 }
@@ -37,9 +38,9 @@ export function addDivElement(divAttributes, parentElement) {
  * @returns {HTMLInputElement} The created checkbox input element.
  */
 export function addLabeledCheckbox({ id, labelText, checked = false }, parentElement) {
-   const container = document.createElement("label");
+  const container = document.createElement("label");
   container.className = "library-toggle";
-  
+
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.id = id;
@@ -103,10 +104,13 @@ export function addOptionElement(selectElement, { value, text, selected = false 
 export function setSelectOptions(selectElement, options, preserveSelection = true) {
   const previousValue = preserveSelection ? selectElement.value : "";
   selectElement.innerHTML = "";
-  for (const opt of options) addOptionElement(selectElement, { value: opt.value, text: opt.text, selected: false });
-  
+  for (const opt of options)
+    addOptionElement(selectElement, { value: opt.value, text: opt.text, selected: false });
+
   // restore if still present
-  const hasPrev = Array.from(selectElement.options).some(option => option.value === previousValue);
+  const hasPrev = Array.from(selectElement.options).some(
+    (option) => option.value === previousValue
+  );
   selectElement.value = hasPrev ? previousValue : (selectElement.options[0]?.value ?? "");
 }
 

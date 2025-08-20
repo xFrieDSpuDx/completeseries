@@ -1,6 +1,5 @@
 // visibility.js
 
-import { populateHiddenItemsMenu } from "./tileVisibilityUpdater.js";
 import { sortBySeriesThenTitle } from "./dataCleaner.js";
 import { applyFilterButton } from "./interactions.js";
 import { loadMetadataFromLocalStorage, storeUpdateFullValueForLocalStorage } from "./localStorage.js";
@@ -45,7 +44,6 @@ export function hideItem(item) {
     const currentHidden = getHiddenItems();
     const updatedHidden = [...currentHidden, item];
     setHiddenItems(updatedHidden);
-    populateHiddenItemsMenu(); // Refresh the menu UI
   }
 }
 

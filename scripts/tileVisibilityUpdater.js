@@ -1,8 +1,11 @@
-import { addTextElement, addDivElement } from "./elementFactory.js";
+import { addTextElement, addDivElement, emptyDivContent } from "./elementFactory.js";
+import { getHTMLElement } from "./tileElementFactory.js";
 import { getItemSeries } from "./metadataUtils.js";
 import { toggleHiddenItem, getHiddenItems, toggleHiddenItemVisibilityMenu } from "./visibility.js";
-import { toggleElementVisibilityFullEntity } from "./uiFeedback.js";
+import { toggleElementVisibilityFullEntity, updateSeriesHeaderText } from "./uiFeedback.js";
 import { addEyeIcon } from "./eyeFactory.js";
+import { groupedMissingBooks } from "./main.js";
+import { renderSeriesAndBookTiles } from "./seriesTileBuilder.js";
 
 /**
  * Attaches a click event handler to toggle visibility state, update icons, and adjust badges.
@@ -32,9 +35,10 @@ export function handleEyeIconClick(eyeIcon, maskParent, hiddenItem, isInVisibili
         parentTile.querySelector(".eye-icon")?.click();
       else 
         toggleHiddenItemVisibilityMenu(eyeIcon);
-    } else 
-      updateSeriesMissingBookNumber(hiddenItem, isNowHidden);
+    } else if (hiddenItem.type === "series" && !isInVisibilityMenu) toggleElementVisibilityFullEntity(maskParent, isNowHidden);
+    else updateSeriesMissingBookNumber(hiddenItem, isNowHidden);
     
+    updateSeriesHeaderText();
   });
 }
 
@@ -143,4 +147,13 @@ export function populateHiddenItemsMenu() {
     // Add eye icon with visibility toggling behavior
     addEyeIcon(itemWrapper, false, item, true, true);
   }
+}
+
+/**
+ * Rebuilds the seriesOutput grid and header when hidden items 
+ * are changed. Forces all elements to reset
+ */
+export function showAllHiddenItems() {
+  emptyDivContent(getHTMLElement("seriesOutput"));
+  renderSeriesAndBookTiles(groupedMissingBooks);
 }

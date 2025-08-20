@@ -1,5 +1,6 @@
 // ui.js
-
+import { groupedMissingBooks } from "./main.js";
+import { getTitleContent } from "./metadataUtils.js";
 /**
  * Updates the UI message and displays it to the user.
  * @param {string} text - The message to display.
@@ -36,14 +37,14 @@ export function clearRateMessage() {
  * Displays the loading spinner.
  */
 export function showSpinner() {
-  document.getElementById("spinner").style.display = "block";
+  document.getElementById("spinner").classList.add("active");
 }
 
-/**
+/*
  * Hides the loading spinner.
  */
 export function hideSpinner() {
-  document.getElementById("spinner").style.display = "none";
+  document.getElementById("spinner").classList.remove("active");
 }
 
 /**
@@ -54,9 +55,7 @@ export function hideSpinner() {
  */
 export function toggleElementVisibility(elementId, show, displayType = "flex") {
   const targetElement = document.getElementById(elementId);
-  if (targetElement)
-    targetElement.style.display = show ? displayType : "none";
-  
+  if (targetElement) targetElement.style.display = show ? displayType : "none";
 }
 
 /**
@@ -116,7 +115,7 @@ export function showBooksModal() {
 
 /**
  * Sets the modal width based on tile cound
- * @param {*} tileCount 
+ * @param {*} tileCount
  */
 export function adjustModalWidth(tileCount) {
   const tileWidth = 280;
@@ -125,22 +124,20 @@ export function adjustModalWidth(tileCount) {
   const maxWidth = Math.min(window.innerWidth * 0.95, 1165); // 95% of viewport width or 870px whichever is smaller
 
   // Determine how many tiles can fit in current screen width
-  const maxTilesPerRow = Math.floor((maxWidth - extraPadding) / (tileWidth));
+  const maxTilesPerRow = Math.floor((maxWidth - extraPadding) / tileWidth);
 
   // Calculate how many tiles we want to show (whichever is smaller)
   const visibleTiles = Math.min(tileCount, maxTilesPerRow);
 
   // Final width based on number of visible tiles
-  const calculatedWidth = (visibleTiles * tileWidth) + extraPadding;
+  const calculatedWidth = visibleTiles * tileWidth + extraPadding;
 
   // Constrain between min and max
   const finalWidth = Math.max(minWidth, Math.min(calculatedWidth, maxWidth));
 
   // Apply to modal
   const modal = document.getElementById("booksModal");
-  if (modal)
-    modal.style.width = `${finalWidth}px`;
-  
+  if (modal) modal.style.width = `${finalWidth}px`;
 }
 
 /**
@@ -148,4 +145,12 @@ export function adjustModalWidth(tileCount) {
  */
 export function showLibraryFilterInSettings() {
   document.getElementById("libraryFilter").classList.add("active");
+}
+
+/**
+ * Updates the series grid header text
+ */
+export function updateSeriesHeaderText() {
+  const headerElement = document.getElementById("missingSeriesHeaderText");
+  headerElement.innerHTML = getTitleContent(groupedMissingBooks);
 }
