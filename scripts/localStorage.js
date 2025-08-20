@@ -877,6 +877,12 @@ export async function clearLocalStorageByIdentifier(storeIdentifier) {
 export function exportStorageToJSON() {
   dbGetAll(REQUIRED_KEYS)
     .then((keyValueSnapshot) => {
+      const downloadFileName = `Complete-Series-Local-Storage-${new Date()
+        .toISOString()
+        .replace(/[-:]/g, "")
+        .replace("T", "-")
+        .replace(/\..*/, "")}.json`;
+
       // Build a minimal export object with deterministic keys.
       const exportPayload = {};
       for (const storageKey of REQUIRED_KEYS) {
@@ -892,7 +898,7 @@ export function exportStorageToJSON() {
 
       const downloadLink = document.createElement("a");
       downloadLink.href = objectUrl;
-      downloadLink.download = "series-data.json";
+      downloadLink.download = downloadFileName;
 
       document.body.appendChild(downloadLink);
       downloadLink.click();
