@@ -1,20 +1,30 @@
 // interactions.js
 
-import { populateHiddenItemsMenu } from "./tileVisibilityUpdater.js";
+import { populateHiddenItemsMenu, showAllHiddenItems } from "./tileVisibilityUpdater.js";
 import { bookDetailModalAnchor } from "./modalHandler.js";
-import { clearLocalStorageByIdentifier, clearLocalStorage } from "./localStorage.js";
+import {
+  clearLocalStorageByIdentifier,
+  clearLocalStorage,
+  exportStorageToJSON,
+  bindStorageUploadUI
+} from "./localStorage.js";
 import { getFormData, validateForm } from "./formHandler.js";
 import { temporaryChangeElementText } from "./uiFeedback.js";
 import {
   fetchExistingLibraryData,
   resetUserInterfaceAndStartLoadingProcess,
   selectedLibraries,
-  groupedMissingBooks
+  groupedMissingBooks,
 } from "./main.js";
 import { updatedSelectedLibraries } from "./dataCleaner.js";
 import { clearDebugLogsAndModal, debugStore } from "./debug.js";
 import { refreshDebugModal } from "./debugView.js";
-import { exportFilteredLogsAsJson, exportFilteredLogsAsCsv, exportMissingAsCsv, exportMissingAsJson } from "./exportToFile.js";
+import {
+  exportFilteredLogsAsJson,
+  exportFilteredLogsAsCsv,
+  exportMissingAsCsv,
+  exportMissingAsJson,
+} from "./exportToFile.js";
 
 // Containers
 const settingsManagerFilterOptios = document.getElementById("filterOptions");
@@ -44,16 +54,18 @@ export function initializeUIInteractions() {
 
   // --- Advanced Options ---
   const useApiKeyLogin = document.getElementById("useApiKeyLogin");
+  const uploadLocalStorage = document.getElementById("uploadLocalStorage");
 
   // --- Export Buttons ---
   const exportMissingCsv = document.getElementById("exportMissingCsv");
   const exportMissingJson = document.getElementById("exportMissingJson");
 
-  // --- Settings Buttons ---
+  // --- Storage Buttons ---
   const clearSeriesList = document.getElementById("clearSeriesList");
   const clearBooksList = document.getElementById("clearBooksList");
   const clearHiddenList = document.getElementById("clearHiddenList");
   const clearAllList = document.getElementById("clearAllList");
+  const exportLocalStorage = document.getElementById("exportLocalStorage");
 
   // --- Debug Checkbox ---
   const enableDebugChecks = document.getElementById("enableDebugChecks");
@@ -120,24 +132,22 @@ export function initializeUIInteractions() {
     });
   }
 
-  if (closeVisibilityManagerButton) 
+  if (closeVisibilityManagerButton)
     closeVisibilityManagerButton.addEventListener("click", closeVisibilityPanel);
 
-  if (closeSettingsManagerButton) 
+  if (closeSettingsManagerButton)
     closeSettingsManagerButton.addEventListener("click", closeSettingsPanel);
 
-  if (closeBookDetail) 
-    closeBookDetail.addEventListener("click", closeBookDetailModal);
+  if (closeBookDetail) closeBookDetail.addEventListener("click", closeBookDetailModal);
 
-  if (bookDetailModalOverlay) 
+  if (bookDetailModalOverlay)
     bookDetailModalOverlay.addEventListener("click", closeBookDetailModal);
 
-  if (enableDebugChecks) 
-    enableDebugChecks.addEventListener("click", allowReloadForDebug);
+  if (enableDebugChecks) enableDebugChecks.addEventListener("click", allowReloadForDebug);
 
-  if (useApiKeyLogin)
-    useApiKeyLogin.addEventListener("click", toggleApiKeyLogin);
+  if (useApiKeyLogin) useApiKeyLogin.addEventListener("click", toggleApiKeyLogin);
 
+  if (uploadLocalStorage) bindStorageUploadUI();
   // -------------------------
   // LOCAL STORAGE CONTROLS
   // -------------------------
@@ -153,20 +163,28 @@ export function initializeUIInteractions() {
     clearBooksList.addEventListener("click", () => {
       clearLocalStorageByIdentifier("existingBookMetadata");
       temporaryChangeElementText(clearBooksList, "Book Metadata list successfully deleted");
-  });
+    });
   }
 
   if (clearHiddenList) {
     clearHiddenList.addEventListener("click", () => {
       clearLocalStorageByIdentifier("hiddenItems");
+      showAllHiddenItems();
       temporaryChangeElementText(clearHiddenList, "Hidden items successfully deleted");
-  });
+    });
   }
 
   if (clearAllList) {
     clearAllList.addEventListener("click", () => {
       clearLocalStorage();
       temporaryChangeElementText(clearAllList, "All cache deleted");
+    });
+  }
+
+  if (exportLocalStorage) {
+    exportLocalStorage.addEventListener("click", () => {
+      exportStorageToJSON("localStorage");
+      temporaryChangeElementText(exportLocalStorage, "Downloading local storage");
     });
   }
 
@@ -230,10 +248,7 @@ export function initializeUIInteractions() {
     checkboxNodeList.forEach((checkboxElement, index) => {
       // Stable identity for each checkbox
       const key =
-        checkboxElement.name ||
-        checkboxElement.id ||
-        checkboxElement.value ||
-        `__idx_${index}`;
+        checkboxElement.name || checkboxElement.id || checkboxElement.value || `__idx_${index}`;
 
       checkboxStateMap[key] = !!checkboxElement.checked;
     });
@@ -257,9 +272,8 @@ export function initializeUIInteractions() {
     const bKeys = Object.keys(stateB);
     if (aKeys.length !== bKeys.length) return false;
 
-    for (const key of aKeys) 
-      if (stateA[key] !== stateB[key]) return false;
-    
+    for (const key of aKeys) if (stateA[key] !== stateB[key]) return false;
+
     return true;
   }
 
@@ -331,7 +345,7 @@ export function initializeUIInteractions() {
     if (applyFilterButton.classList.contains("active")) return;
 
     // Read current conditions for this extra rule.
-    const isDebugChecked   = !!debugToggleEvent?.target?.checked;
+    const isDebugChecked = !!debugToggleEvent?.target?.checked;
     const noDebugLogsYet = !(Array.isArray(debugStore?.logs) && debugStore.logs.length > 0);
     const hasVisibleOutput = outputContainerPopulated();
 
@@ -353,7 +367,7 @@ export function initializeUIInteractions() {
 
 /**
  * Adds a change event listener to all library checkboxes in the container.
- * 
+ *
  * On change:
  * - Updates the `selectedLibraries` object with the current checkbox states.
  * - Activates the "Apply Filter" button by adding the `active` class.
@@ -383,10 +397,10 @@ export function toggleApiKeyLogin() {
   }
 }
 
-  // -------------------------
-  // INTERACTION STATES
-  // -------------------------
-  
+// -------------------------
+// INTERACTION STATES
+// -------------------------
+
 /**
  * Temporarily disables UI click access to settings and hidden-item buttons.
  * Useful during fetch or rendering transitions.
@@ -404,9 +418,9 @@ export function enableClickEventsOnLoadEnd() {
   document.getElementById("settingsToggle").style.pointerEvents = "auto";
 }
 
-  // -------------------------
-  // DEBUG UI INTERACTIONS
-  // -------------------------
+// -------------------------
+// DEBUG UI INTERACTIONS
+// -------------------------
 /**
  * Bind debug viewer controls and buttons to refresh the results.
  * This keeps all event handlers out of debugView.js.
@@ -445,28 +459,27 @@ export function bindDebugViewerControls() {
   downloadJsonButton?.addEventListener("click", exportFilteredLogsAsJson);
   downloadCsvButton?.addEventListener("click", exportFilteredLogsAsCsv);
   openDebugButton?.addEventListener("click", () => {
-      debugModalElement.classList.add("active");
+    debugModalElement.classList.add("active");
   });
   closeDebugButton?.addEventListener("click", () => {
-      debugModalElement.classList.remove("active");
+    debugModalElement.classList.remove("active");
   });
   debugOverlay?.addEventListener("click", () => {
-      debugModalElement.classList.remove("active");
+    debugModalElement.classList.remove("active");
   });
   clearDebugLogs?.addEventListener("click", clearDebugLogsAndModal);
 
   /**
- * Initializes click-to-toggle behavior for collapsible sections.
- * 
- * Behavior:
- * - Finds all elements with `.collapsible` class.
- * - For each section, finds its `.collapsible-header`.
- * - Clicking the header toggles the `.open` class on the parent `.collapsible`.
- * - The `.open` class is typically used in CSS to expand/collapse `.collapsible-content`.
- */
+   * Initializes click-to-toggle behavior for collapsible sections.
+   *
+   * Behavior:
+   * - Finds all elements with `.collapsible` class.
+   * - For each section, finds its `.collapsible-header`.
+   * - Clicking the header toggles the `.open` class on the parent `.collapsible`.
+   * - The `.open` class is typically used in CSS to expand/collapse `.collapsible-content`.
+   */
   // Find all collapsible sections on the page
-  document.querySelectorAll(".collapsible").forEach(section => {
-    
+  document.querySelectorAll(".collapsible").forEach((section) => {
     // Locate the header inside each section
     const header = section.querySelector(".collapsible-header");
     if (!header) return; // Skip if no header is found

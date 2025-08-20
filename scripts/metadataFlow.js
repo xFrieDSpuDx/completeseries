@@ -1,7 +1,6 @@
 // metadataCollector.js
 import { fetchAudibleMetadata, findFromStorage } from "./dataFetcher.js";
 import { setMessage, setRateMessage } from "./uiFeedback.js";
-import { isCurrentlyHidden } from "./visibility.js";
 import { storeMetadataToLocalStorage } from "./localStorage.js";
 
 // Rate limit configuration
@@ -71,13 +70,6 @@ export async function collectBookMetadata(
       if (!metadata || !metadata.series) continue;
 
       for (const bookSeries of metadata.series) {
-        const isSeriesHidden = isCurrentlyHidden({
-          type: "series",
-          series: bookSeries.name,
-        });
-
-        if (isSeriesHidden) continue;
-
         if (!seriesAsins.includes(bookSeries.asin))
           seriesAsins.push(bookSeries.asin);
 

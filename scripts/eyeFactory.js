@@ -1,5 +1,6 @@
 import { addImageElement } from "./elementFactory.js";
 import { handleEyeIconClick, toggleTileMask } from "./tileVisibilityUpdater.js";
+import { toggleElementVisibilityFullEntity } from "./uiFeedback.js";
 
 /**
  * Adds an eye icon to an element, enabling visibility toggle interaction.
@@ -23,8 +24,11 @@ export function addEyeIcon(
 
   handleEyeIconClick(eyeIcon, maskParent, hiddenItem, isInVisibilityMenu);
 
-  if (isHidden)
+  if (isHidden) {
     toggleTileMask(eyeIcon, maskParent);
+    if (hiddenItem.type === "series" && !isInVisibilityMenu)
+        toggleElementVisibilityFullEntity(maskParent, !isHidden);
+  }
 
   return eyeIcon;
 }

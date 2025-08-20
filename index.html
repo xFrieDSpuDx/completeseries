@@ -4,12 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Book Series Tracker</title>
+    <!-- Standard favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon/favicon.ico">
+
+    <!-- PNG versions for various sizes -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon/favicon-64x64.png">
+    <link rel="icon" type="image/png" sizes="180x180" href="/assets/favicon/favicon-180x180.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon/favicon-512x512.png">
+
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/favicon-180x180.png">
+
     <link rel="stylesheet" href="styles/style.css" />
   </head>
   <body>
     <div id="form-container" class="form-container">
       <form id="loginForm" novalidate>
-        <h2>Login to AudiobookShelf</h2>
+        <div class="logoContainer">
+          <img alt="Site Logo" src="/assets/logo-background-transparent.webp"/>
+        </div>
+        <div class="headingContainer">
+          <h2>Complete your collection</h2>
+          <h4>Every series brought together</h4>
+        </div>
         <label for="serverUrl">AudiobookShelf Server URL</label>
         <input
           type="text"
@@ -104,6 +123,11 @@
                 </span>
               </span>
             </div>
+            <label for="uploadLocalStorage" class="label-upload">Import LocalStorage</label>
+            <div class="upload-box" id="uploadBox">
+              <p id="uploadPlaceholder">Click here or drag & drop a JSON file to update the local storage</p>
+              <input type="file" id="uploadLocalStorage" class="input-upload" accept=".json"/>
+            </div>
           </div>
         </details>
       </form>
@@ -120,7 +144,7 @@
     </div>  
 
     <div id="message" class="message">
-      <span id="spinner" class="spinner" style="display: none"></span>
+      <span id="spinner" class="spinner"></span>
       <span id="statusText" class="statusText"></span>
       <span id="rateLimitText" class="statusText"></span>
     </div>
@@ -283,19 +307,33 @@
           <button id="exportMissingJson" class="accent-button">Export Missing (JSON)</button>
         </div>
       </div>
-      <h3>Clear Local Storage Cache</h3>
-      <button id="clearSeriesList" class="accent-button">
-        Clear Series List
-      </button>
-      <button id="clearBooksList" class="accent-button">
-        Clear Book Metadata List
-      </button>
-      <button id="clearHiddenList" class="accent-button">
-        Clear Hidden Items
-      </button>
-      <button id="clearAllList" class="accent-button">
-        Clear All Saved Data
-      </button>
+      <div id="exportStorageContainer" class="menuHideable">
+        <div id="exportStorage">
+          <h3>Download Local Storage Cache</h3>
+            <button id="exportLocalStorage" class="accent-button">Download Local Storage</button>
+        </div>
+        <h3>Clear Local Storage Cache</h3>
+        <div id="clearSeriesListContainer" class="menuHideable">
+          <button id="clearSeriesList" class="accent-button">
+            Clear Series List
+          </button>
+        </div>
+        <div id="clearBooksListContainer" class="menuHideable">
+          <button id="clearBooksList" class="accent-button">
+            Clear Book Metadata List
+          </button>
+        </div>
+        <div id="clearHiddenListContainer" class="menuHideable">
+          <button id="clearHiddenList" class="accent-button">
+            Clear Hidden Items
+          </button>
+        </div>
+        <div id="clearAllListContainer">
+          <button id="clearAllList" class="accent-button">
+            Clear All Saved Data
+          </button>
+        </div>
+      </div>
 
       <h3>Debug</h3>
       <div class="checkbox-row">

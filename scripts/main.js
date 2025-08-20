@@ -15,24 +15,21 @@ import {
 } from "./uiFeedback.js";
 import { collectBookMetadata, collectSeriesMetadata } from "./metadataFlow.js";
 import { fetchExistingContent, fetchAudiobookShelfLibraries } from "./dataFetcher.js";
-import {
-  removeHiddenSeries,
-  findMissingBooks,
-  groupBooksBySeries,
-} from "./dataCleaner.js";
+import { findMissingBooks, groupBooksBySeries } from "./dataCleaner.js";
 import { renderSeriesAndBookTiles } from "./seriesTileBuilder.js";
 import { populateHiddenItemsMenu } from "./tileVisibilityUpdater.js";
 import {
   initializeUIInteractions,
   disableClickEventsOnLoad,
   enableClickEventsOnLoadEnd,
-  libraryCheckboxWatcher
+  libraryCheckboxWatcher,
 } from "./interactions.js";
 import { emptyDivContent, addLabeledCheckbox } from "./elementFactory.js";
 
 import { bindDebugViewerControls } from "./interactions.js";
 import { initDebugModal } from "./debugView.js";
 import { isDebugEnabled, getDebugLogs } from "./debug.js";
+import { beginRun, endRun, computeStoragePresence } from "./localStorage.js";
 
 // Stores current data fetched from AudiobookShelf
 export let existingContent;
@@ -47,11 +44,12 @@ export let libraryArrayObject = {};
 /**
  * Initializes core UI and form behavior after DOM is ready
  */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await beginRun({ fresh: true });
   // Set up UI event listeners and populate hidden series menu
   initializeUIInteractions();
   populateHiddenItemsMenu();
-
+  computeStoragePresence();
   bindDebugViewerControls();
 
   const loginForm = document.getElementById("loginForm");
@@ -85,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Store all libraries found
       selectedLibraries.librariesList = structuredClone(libraryArrayObject.librariesList);
       selectedLibraries.authToken = libraryArrayObject.authToken;
-      
+
       if (libraryArrayObject.librariesList.length === 1) {
         // Auto-process single-library users
         fetchExistingLibraryData(formData, libraryArrayObject);
@@ -95,8 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       errorHandler(error);
-    } finally {
-      hideSpinner();
     }
   });
 
@@ -117,11 +113,10 @@ document.addEventListener("DOMContentLoaded", () => {
     settingsLibraries.appendChild(libraryList);
     // Show library filter in settings
     showLibraryFilterInSettings();
-    
+
     fetchExistingLibraryData(formData, selectedLibraries);
   });
 });
-
 
 /**
  * Coordinates the process of fetching the user's existing AudiobookShelf library data.
@@ -134,6 +129,8 @@ document.addEventListener("DOMContentLoaded", () => {
  */
 export async function fetchExistingLibraryData(formData, selectedLibraries) {
   resetUserInterfaceAndStartLoadingProcess();
+  // "auto" = load from DB only if workingCache isn't already a fresh snapshot
+  await beginRun({ fresh: "auto" });
 
   try {
     setMessage("Fetching libraries and series...");
@@ -150,8 +147,6 @@ export async function fetchExistingLibraryData(formData, selectedLibraries) {
     await fetchAndDisplayResults(existingContent, formData);
   } catch (error) {
     errorHandler(error);
-  } finally {
-    hideSpinner();
   }
 }
 
@@ -179,8 +174,7 @@ export function resetUserInterfaceAndStartLoadingProcess() {
  * @param {boolean} [refreshFilter=false] - Whether triggered by UI filter refresh
  */
 export async function fetchAndDisplayResults(existingContent, formData, refreshFilter = false) {
-  if (refreshFilter) 
-    setMessage("Refreshing filter results...");
+  if (refreshFilter) setMessage("Refreshing filter results...");
 
   // Fetch book + series metadata
   const seriesMetadata = await fetchAllMetadataForBooks(existingContent, formData);
@@ -203,8 +197,7 @@ async function collectExistingSeriesFromAudiobookShelf(formData, libraryArrayObj
 
   setMessage("Login successful. Fetching book and series information...");
 
-  // Remove hidden series before further processing
-  return await removeHiddenSeries(existingContent);
+  return existingContent;
 }
 
 /**
@@ -261,11 +254,7 @@ async function fetchAllMetadataForBooks(existingContent, formData) {
  * @returns {Promise<Object>} - Grouped missing books ready to render
  */
 async function groupMissingBooks(existingContent, seriesMetadata, formData) {
-  const missingBooks = findMissingBooks(
-    existingContent.seriesAllASIN,
-    seriesMetadata,
-    formData
-  );
+  const missingBooks = findMissingBooks(existingContent.seriesAllASIN, seriesMetadata, formData);
 
   return await groupBooksBySeries(missingBooks, formData.includeSubSeries);
 }
@@ -275,9 +264,8 @@ async function groupMissingBooks(existingContent, seriesMetadata, formData) {
  *
  * @param {Object} groupedMissingBooks - Data structured by series
  */
-function uiUpdateAndDrawResults(groupedMissingBooks) {
-  renderSeriesAndBookTiles(groupedMissingBooks);
-
+async function uiUpdateAndDrawResults(groupedMissingBooks) {
+  await renderSeriesAndBookTiles(groupedMissingBooks);
   toggleElementVisibility("form-container", false);
   toggleElementVisibility("message", false);
   hideSpinner();
@@ -285,6 +273,10 @@ function uiUpdateAndDrawResults(groupedMissingBooks) {
   enableExportButtons();
   // After run completes (and logs have been written), re-render:
   populateDebugViewerIfResultsExist();
+  await endRun({
+    persist: true, // flush dirty keys to DB
+    clearHeavy: true, // clear only heavy arrays in memory; keeps "hiddenItems"
+  });
 }
 
 /**
@@ -305,6 +297,7 @@ function showLoadingState() {
  */
 function errorHandler(error) {
   console.error(error);
+  hideSpinner();
   toggleElementVisibility("form-container", true);
   toggleElementVisibility("library-form-container", false);
   setMessage(error.message || "Something went wrong. Please try again.");

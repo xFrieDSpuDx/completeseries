@@ -1,9 +1,20 @@
-import { getHTMLElement, addTileWrapper, addSeriesTile, addSeriesBadge, addSeriesImage, addSeriesTitle, addEyeBadge, addSeriesGridContainer } from "./tileElementFactory.js";
-import { addTextElement } from "./elementFactory.js";
+import {
+  getHTMLElement,
+  addTileWrapper,
+  addSeriesTile,
+  addSeriesBadge,
+  addSeriesImage,
+  addSeriesTitle,
+  addEyeBadge,
+  addSeriesGridContainer,
+} from "./tileElementFactory.js";
+import { addTextElement, addDivElement, addImageElement } from "./elementFactory.js";
 import { getTitleContent } from "./metadataUtils.js";
 import { hideItemObjectBuilder } from "./tileVisibilityUpdater.js";
 import { addEyeIcon } from "./eyeFactory.js";
 import { isCurrentlyHidden, totalHiddenInSeries } from "./visibility.js";
+import { toggleElementVisibilityFullEntity } from "./uiFeedback.js";
+
 /**
  * Renders all series tiles and their associated book metadata.
  * This is the entry point for populating the main grid of missing book series.
@@ -11,18 +22,41 @@ import { isCurrentlyHidden, totalHiddenInSeries } from "./visibility.js";
  * @param {Array<Object>} groupedMissingBooks - An array of series objects with missing books.
  * Each object should include a `series` name and a `books` array.
  */
-export function renderSeriesAndBookTiles(groupedMissingBooks) {
+export async function renderSeriesAndBookTiles(groupedMissingBooks) {
   const outputContainer = getHTMLElement("seriesOutput");
-  const titleContent = getTitleContent(groupedMissingBooks);
 
-  // Add header text (e.g. "You have 3 series with missing books.")
-  addTextElement(titleContent, "h2", outputContainer);
+  headerBuilder(outputContainer, groupedMissingBooks);
 
   const tileGridContainer = addSeriesGridContainer(outputContainer);
 
   // Render a tile for each series
-  for (const seriesData of groupedMissingBooks)
-    generateSeriesTiles(seriesData, tileGridContainer);
+  for (const seriesData of groupedMissingBooks) generateSeriesTiles(seriesData, tileGridContainer);
+}
+
+/**
+ * Generates the header text and logo.
+ * The text is dynamic, updating to show the number of series with missing books
+ *
+ * @param {HTMLElement} parentElement - The HTML element the header will be built in
+ * @param {Array<Object>} groupedMissingBooks - An array of series objects with missing books.
+ *                                            - Used to generate the dynamic number
+ */
+function headerBuilder(parentElement, groupedMissingBooks) {
+  const titleContent = getTitleContent(groupedMissingBooks);
+  const headerContainer = addDivElement({ className: "results-header" }, parentElement);
+
+  addImageElement(
+    {
+      className: "results-logo",
+      src: "/assets/logo-background-transparent.webp",
+      alt: "Site Logo"
+    },
+    headerContainer
+  );
+  // Add header text (e.g. "You have 3 series with missing books.")
+  addTextElement(titleContent, "h2", headerContainer, "missingSeriesHeaderText");
+
+  return headerContainer;
 }
 
 /**
@@ -49,6 +83,9 @@ function generateSeriesTiles(seriesData, outputContainer) {
   // Adjust badge count to exclude already hidden books
   const hiddenBooksInSeries = totalHiddenInSeries(seriesTitle);
   const visibleMissingCount = missingBooksCount - hiddenBooksInSeries;
+
+  if (visibleMissingCount === 0) 
+    toggleElementVisibilityFullEntity(tileContainerWrapper, false);
 
   addSeriesBadge(tileInnerContainer, visibleMissingCount);
   addSeriesImage(tileInnerContainer, firstBook, seriesTitle);

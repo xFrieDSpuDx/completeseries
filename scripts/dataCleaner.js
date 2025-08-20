@@ -5,7 +5,6 @@
  */
 // dataCleaner.js
 
-import { getHiddenItems, isCurrentlyHiddenByAsin } from "./visibility.js";
 import { getFormData } from "./formHandler.js";
 import { selectedLibraries, libraryArrayObject } from "./main.js";
 import { debugLogBookViability, 
@@ -151,31 +150,6 @@ export function isInternalAudiobookShelfURL(sanitizedUrl) {
     console.warn("Invalid URL format:", sanitizedUrl);
     return false;
   }
-}
-
-/**
- * Returns a new `existingContent` where series present in the hidden list are removed from `seriesFirstASIN`.
- * (Pure: does not mutate the input.)
- *
- * @param {{ seriesFirstASIN: Array<{series: string, asin: string}> }} existingContent
- * @returns {{ seriesFirstASIN: Array<{series: string, asin: string}> }}
- */
-/**
- * Removehiddenseries.
- *
- * @param {any} existingContent 
- * @returns {any}
- */
-export function removeHiddenSeries(existingContent) {
-  const hiddenItemsList = getHiddenItems() || [];
-
-  const visibleSeriesList = (existingContent?.seriesFirstASIN || []).filter(seriesEntry =>
-    !hiddenItemsList.some(hiddenEntry =>
-      hiddenEntry?.type === "series" && hiddenEntry?.series === seriesEntry?.series
-    )
-  );
-
-  return { ...existingContent, seriesFirstASIN: visibleSeriesList };
 }
 
 /**
@@ -1068,11 +1042,6 @@ export function groupBooksBySeries(missingBooks, includeSubSeries) {
   for (const bookMetadata of missingBooks) {
     for (const selectedSeries of bookMetadata.series) {
       const seriesName = selectedSeries.name || "No Series";
-
-      const seriesHidden = isCurrentlyHiddenByAsin(selectedSeries.asin);
-
-      if (seriesHidden === true)
-        continue;
 
       let existingGroup = groupedBySeries.find(
         (groupEntry) => groupEntry.series === seriesName

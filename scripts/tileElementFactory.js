@@ -19,7 +19,7 @@ export function getHTMLElement(elementId) {
  * @returns {HTMLDivElement} The created grid container element.
  */
 export function addSeriesGridContainer(parentElement) {
-  return addDivElement({ className: "series-grid" }, parentElement);
+  return addDivElement({ id: "seriesGrid", className: "series-grid" }, parentElement);
 }
 
 /**
@@ -93,6 +93,7 @@ export function addSeriesImage(parentElement, bookMetadata, altText) {
       className: "series-image",
       src: bookMetadata.imageUrl,
       alt: altText,
+      loading: "lazy"
     },
     imageWrapper
   );
