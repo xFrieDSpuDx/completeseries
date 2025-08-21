@@ -116,18 +116,23 @@ You can host your own version or use the one at [https://completeseries.lily-pad
 This repository ships with a full, production-grade toolchain so you can build and host your own optimised bundle instead of running the raw dev files. The build process bundles and minifies JS/CSS, rewrites HTML to use content-hashed assets, and copies required `assets/` and optional `php/` proxy files into `dist/` for zero-config deployment. Linting (ESLint) and formatting (Prettier) configs are included to keep contributions consistent. See the commands below to install, build, preview, and lint your local clone.
 
 #### 1) Install (Node 18+)
+
 npm install # or: npm ci
 
 #### 2) Build a production bundle → dist/
+
 npm run build
 
 #### 3) Preview the built site locally
+
 npm run serve:all
 
 #### (Optional) Rebuild on changes during development
+
 npm run watch
 
 #### (Optional) Lint & auto-fix
+
 npm run lint && npm run lint:fix && npm run format
 
 ---

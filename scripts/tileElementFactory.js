@@ -94,7 +94,7 @@ export function addSeriesImage(parentElement, bookMetadata, altText) {
 
 /**
  * Appends a variation string to an image URL before the extension.
- * 
+ *
  * @param {string} imageUrl - The original image URL (no query string or hash).
  * @param {string} sizeVariation - The string to insert before the file extension.
  * @returns {string} - The modified image URL.
