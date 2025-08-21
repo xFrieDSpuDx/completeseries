@@ -84,12 +84,31 @@ export function addSeriesImage(parentElement, bookMetadata, altText) {
   return addImageElement(
     {
       className: "series-image",
-      src: bookMetadata.imageUrl,
+      src: appendImageSizeVariation(bookMetadata.imageUrl, "._SL500_"),
       alt: altText,
       loading: "lazy",
     },
     imageWrapper
   );
+}
+
+/**
+ * Appends a variation string to an image URL before the extension.
+ * 
+ * @param {string} imageUrl - The original image URL (no query string or hash).
+ * @param {string} sizeVariation - The string to insert before the file extension.
+ * @returns {string} - The modified image URL.
+ */
+export function appendImageSizeVariation(imageUrl, sizeVariation) {
+  const lastDotIndex = imageUrl.lastIndexOf(".");
+  if (lastDotIndex === -1) {
+    throw new Error("Image URL does not contain a file extension.");
+  }
+
+  const name = imageUrl.substring(0, lastDotIndex);
+  const extension = imageUrl.substring(lastDotIndex);
+
+  return `${name}${sizeVariation}${extension}`;
 }
 
 /**

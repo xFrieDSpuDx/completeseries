@@ -1,4 +1,5 @@
 import { emptyDivContent } from "./elementFactory.js";
+import { appendImageSizeVariation } from "./tileElementFactory.js";
 import { extractFormattedBookInfo, calculateModalTransform } from "./modalUtils.js";
 /**
  * Returns the current transform string used to animate the book modal
@@ -22,7 +23,7 @@ function buildModalContent(bookData, info) {
     </div>
     <div class="book-modal-main">
       <div class="book-modal-image">
-        <img src="${bookData.imageUrl}" alt="${bookData.title}" />
+        <img src="${appendImageSizeVariation(bookData.imageUrl, "._SL500_")}" alt="${bookData.title}" />
       </div>
       <div class="book-modal-info">
         <div class="book-modal-title">
