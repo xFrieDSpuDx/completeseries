@@ -1,0 +1,42 @@
+{
+  "name": "completeseries",
+  "version": "1.0.0",
+  "description": "**Identify missing audiobooks from the series you own**   *Designed for use with Audible series and AudiobookShelf.*",
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "serve:dist": "npx http-server dist -p 8080 -c-1",
+    "serve:php": "php -S localhost:8080",
+    "serve:all": "concurrently \"npm run serve:dist\" \"npm run serve:php\"",
+    "clean": "node -e \"await (await import('fs/promises')).rm('dist', {recursive:true, force:true}); console.log('dist/ removed')\"",
+    "rebuild": "npm run clean && npm run build",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --write",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/css": "^0.10.0",
+    "@eslint/js": "^9.33.0",
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^9.2.0",
+    "cssnano": "^6.1.2",
+    "esbuild": "^0.23.1",
+    "eslint": "^9.33.0",
+    "eslint-config-prettier": "^10.1.8",
+    "execa": "^9.6.0",
+    "globals": "^16.3.0",
+    "node-html-parser": "^7.0.1",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "prettier": "^3.6.2",
+    "svgo": "^3.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
