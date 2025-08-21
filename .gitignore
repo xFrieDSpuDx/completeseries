@@ -2,8 +2,6 @@
 .vscode:settings.json
 .hintrc
 Archive.zip
-package-lock.json
-package.json
 node_modules
 .build
 .vscode
