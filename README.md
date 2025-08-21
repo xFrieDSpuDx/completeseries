@@ -1,5 +1,6 @@
 
-# 📘 Complete My Series
+# 📘 Complete Your Collection
+### Every series brought together
 
 **Identify missing audiobooks from the series you own**  
 *Designed for use with Audible series and AudiobookShelf.*
@@ -8,7 +9,11 @@ Live demo: [completeseries.lily-pad.uk](https://completeseries.lily-pad.uk)
 
 ### ⚠️ Security & Server Use
 
-This project uses PHP to make server-side requests — specifically for authenticating with your AudiobookShelf server and proxying metadata queries to external APIs.
+By default this project uses JavaScript to authenticate with your AudiobookShelf server. To achieve this CORS acceptions must be added in AudiobookShelf. These settings are found in the Audiobook main settings page under "Allowed CORS Origins". You should add the domain you are accessing this project from, e.g. you are accessing it form https://completeseries.lily-pad.uk you should add that URL into the Allow CORS Origins text area. If you are hosting locally e.g. http://localhost:8080, then add that URL instead. 
+
+Potential issues with CORS; you can not access an HTTP URL from an HTTPS URL. E.g. you are accessing this app from https://completeseries.lily-pad.uk and trying to connect to your AudiobookShelf server at http://audiobooks.example.com. This will always fail.
+
+If you are unable to connect using JavaScript this project can use PHP to make server-side requests, acting as a proxy to avoid CORS issues — specifically for authenticating with your AudiobookShelf server. This is a manually selectable option to increase security and avoid sending authentication information to a potentially unknown server.
 
 > ⚠️ **A word of caution:**  
 > In many PHP-based projects, usernames, passwords, or URLs *can* be logged, either accidentally or intentionally.  
@@ -32,8 +37,10 @@ You can inspect the full source code in this repository to verify that yourself.
 - 🔎 Automatically identifies missing books in Audible series  
 - 📚 Supports filtering for unique titles only (no duplicates)  
 - 🎭 Hide unwanted books or series to reduce clutter  
-- 💬 Full metadata view via modals, with direct links to Audible  
+- 💬 Full metadata view via modals, with direct links to Audible and download options 
 - 🌍 Region support (UK, US, CA, AU, FR, DE, JP, IT, IN, ES, BR)
+- 🐞 View and download full debug reports to understand exactly why results were filtered
+- 📥 Download local cache to avoid being forced to request book metadata again
 
 ---
 
@@ -41,6 +48,9 @@ You can inspect the full source code in this repository to verify that yourself.
 
 1. **Enter your AudiobookShelf credentials**  
    - URL, username, and password are required to retrieve your audiobook and series list.
+
+1(b). ***Enter your AudiobookShelf credentials - API Key***
+   - If you use API keys instead of username and password enable this option in the advanced section.
 
 2. **Choose your settings**  
    - Default behavior: shows only unique, unabridged titles you're missing.  
@@ -101,6 +111,19 @@ You can inspect the full source code in this repository to verify that yourself.
 ## 📦 Deployment
 
 You can host your own version or use the one at [https://completeseries.lily-pad.uk](https://completeseries.lily-pad.uk). The project is as client-side as possible, however older AudiobookShelf installs and certain setups rely on PHP to stop CORS issues. By default the application tries to use JavaScript but does give the option to fallback to using a PHP proxy if needed. The proxy option is found in the advanced section of the home page.
+
+This repository ships with a full, production-grade toolchain so you can build and host your own optimised bundle instead of running the raw dev files. The build process bundles and minifies JS/CSS, rewrites HTML to use content-hashed assets, and copies required `assets/` and optional `php/` proxy files into `dist/` for zero-config deployment. Linting (ESLint) and formatting (Prettier) configs are included to keep contributions consistent. See the commands below to install, build, preview, and lint your local clone.
+
+# 1) Install (Node 18+)
+npm install   # or: npm ci
+# 2) Build a production bundle → dist/
+npm run build
+# 3) Preview the built site locally
+npm run serve:dist
+# (Optional) Rebuild on changes during development
+npm run watch
+# (Optional) Lint & auto-fix
+npm run lint && npm run lint:fix && npm run format
 
 ---
 

@@ -420,6 +420,8 @@ label {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+  z-index: 10;
+  border: 1px solid var(--danger);
 }
 
 /* ---------- PROGRESS INFO ---------- */
