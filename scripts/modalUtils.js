@@ -17,7 +17,9 @@ export function extractFormattedBookInfo(bookData = {}) {
   // Helpers kept local to avoid polluting scope
   const toNames = (array) =>
     array
-      .map((bookValue) => (typeof bookValue === "string" ? bookValue : bookValue?.name ?? bookValue))
+      .map((bookValue) =>
+        typeof bookValue === "string" ? bookValue : (bookValue?.name ?? bookValue)
+      )
       .filter(Boolean);
 
   const isNum = (numberValue) => typeof numberValue === "number" && Number.isFinite(numberValue);
@@ -87,12 +89,12 @@ export function calculateModalTransform(sourceTile, modalElement) {
   if (window.innerWidth > 950) {
     return {
       transform: `translate(calc(-50% + ${offsetX}px), ${offsetY}px) scale(0)`,
-      anchor: `translate(calc(-50% + ${offsetX}px), ${offsetY}px) scale(0)`
+      anchor: `translate(calc(-50% + ${offsetX}px), ${offsetY}px) scale(0)`,
     };
   } else {
     return {
       transform: `translateX(0)`,
-      anchor: `translate(0, ${offsetY}px) scale(0)`
+      anchor: `translate(0, ${offsetY}px) scale(0)`,
     };
   }
 }

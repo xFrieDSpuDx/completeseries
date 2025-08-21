@@ -11,7 +11,7 @@ export default defineConfig([
       sourceType: "module",
       globals: {
         ...globals.browser, // for client-side code
-        ...globals.node,    // for build scripts like esbuild.config.mjs
+        ...globals.node, // for build scripts like esbuild.config.mjs
       },
     },
     plugins: {},
@@ -22,15 +22,25 @@ export default defineConfig([
       "jsx-quotes": ["error", "prefer-double"],
 
       // === Naming: discourage single-character identifiers (tweak exceptions as desired) ===
-      "id-length": ["warn", {
-        min: 2,
-        exceptions: [
-          // common iterators / axes (allow if you ever need them)
-          "i", "j", "k", "x", "y", "z",
-          // small common abbreviations
-          "fs", "os", "db",
-        ],
-      }],
+      "id-length": [
+        "warn",
+        {
+          min: 2,
+          exceptions: [
+            // common iterators / axes (allow if you ever need them)
+            "i",
+            "j",
+            "k",
+            "x",
+            "y",
+            "z",
+            // small common abbreviations
+            "fs",
+            "os",
+            "db",
+          ],
+        },
+      ],
 
       // Reasonable baseline strictness
       "no-var": "error",
@@ -41,12 +51,7 @@ export default defineConfig([
       "prefer-template": "error",
       "arrow-body-style": ["error", "as-needed"],
     },
-    ignores: [
-      "node_modules/",
-      "dist/",
-      ".build/",
-      "**/*.min.js",
-    ],
+    ignores: ["node_modules/", "dist/", ".build/", "**/*.min.js"],
   },
 
   // Optional: relax rule for config/automation files where short ids are conventional

@@ -14,7 +14,8 @@ export async function fetchWithDiagnosis(targetUrl) {
   // Validate URL and compute the origin we’ll probe later
   let targetOrigin;
   try {
-    const base = (typeof location !== "undefined" && location.href) ? location.href : "http://localhost";
+    const base =
+      typeof location !== "undefined" && location.href ? location.href : "http://localhost";
     targetOrigin = new URL(targetUrl, base).origin;
   } catch {
     const err = new Error("Invalid URL.");
@@ -28,7 +29,7 @@ export async function fetchWithDiagnosis(targetUrl) {
     mode: "cors",
     cache: "no-store",
     credentials: "omit",
-    redirect: "follow"
+    redirect: "follow",
   };
 
   // Abort after a reasonable timeout
@@ -56,10 +57,10 @@ export async function fetchWithDiagnosis(targetUrl) {
     let originReachable = false;
     try {
       await fetch(`${targetOrigin}/?cors_probe=${Date.now()}`, {
-        mode: "no-cors",          // succeeds with opaque if origin is reachable
+        mode: "no-cors", // succeeds with opaque if origin is reachable
         cache: "no-store",
         credentials: "omit",
-        redirect: "follow"
+        redirect: "follow",
       });
       originReachable = true;
     } catch {
@@ -71,7 +72,7 @@ export async function fetchWithDiagnosis(targetUrl) {
         "Probably blocked by CORS. Check Allowed Origins on the AudiobookShelf (e.g. https://completeseries.lily-pad.uk) server or enable the PHP proxy in the advanced section below."
       );
       err.kind = "likely-cors";
-      throw err;                 // IMPORTANT: not inside the probe try/catch
+      throw err; // IMPORTANT: not inside the probe try/catch
     } else {
       const err = new Error(
         "Unable to contact AudiobookShelf. Please check the URL and try again."

@@ -1,4 +1,12 @@
-import { addTileWrapper, addSeriesTile, addSeriesBadge, addSeriesImage, addSeriesTitle, addEyeBadge, addSeriesGridContainer } from "./tileElementFactory.js";
+import {
+  addTileWrapper,
+  addSeriesTile,
+  addSeriesBadge,
+  addSeriesImage,
+  addSeriesTitle,
+  addEyeBadge,
+  addSeriesGridContainer,
+} from "./tileElementFactory.js";
 import { addTextElement, emptyDivContent } from "./elementFactory.js";
 import { getPositionBySeriesName } from "./metadataUtils.js";
 import { addEyeIcon } from "./eyeFactory.js";

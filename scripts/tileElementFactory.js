@@ -4,7 +4,7 @@ import { openBookModal } from "./modalHandler.js";
 import { showBooksModal, adjustModalWidth } from "./uiFeedback.js";
 /**
  * Retrieves an HTML element by its ID.
- * 
+ *
  * @param {string} elementId - The ID of the HTML element to retrieve.
  * @returns {HTMLElement} The matching DOM element.
  */
@@ -32,10 +32,7 @@ export function addSeriesGridContainer(parentElement) {
  * @returns {HTMLDivElement} The created tile wrapper element.
  */
 export function addTileWrapper(bookMetadata, parentElement) {
-  const tileContainerWrapper = addDivElement(
-    { className: "tile-wrapper" },
-    parentElement
-  );
+  const tileContainerWrapper = addDivElement({ className: "tile-wrapper" }, parentElement);
 
   tileContainerWrapper.addEventListener("click", (event) => {
     event.stopPropagation();
@@ -47,8 +44,7 @@ export function addTileWrapper(bookMetadata, parentElement) {
       generateBookTiles(bookMetadata);
       adjustModalWidth(bookMetadata.books.length);
       showBooksModal();
-    } else
-      openBookModal(bookMetadata, tileContainerWrapper);
+    } else openBookModal(bookMetadata, tileContainerWrapper);
   });
 
   return tileContainerWrapper;
@@ -72,10 +68,7 @@ export function addSeriesTile(parentElement) {
  * @returns {HTMLDivElement} The created badge element.
  */
 export function addSeriesBadge(parentElement, textContentValue) {
-  return addDivElement(
-    { className: "series-badge", textContent: textContentValue },
-    parentElement
-  );
+  return addDivElement({ className: "series-badge", textContent: textContentValue }, parentElement);
 }
 
 /**
@@ -87,13 +80,13 @@ export function addSeriesBadge(parentElement, textContentValue) {
  * @returns {HTMLImageElement} The created and appended image element.
  */
 export function addSeriesImage(parentElement, bookMetadata, altText) {
-  const imageWrapper = addDivElement({ className: "series-image-wrap"}, parentElement);
+  const imageWrapper = addDivElement({ className: "series-image-wrap" }, parentElement);
   return addImageElement(
     {
       className: "series-image",
       src: bookMetadata.imageUrl,
       alt: altText,
-      loading: "lazy"
+      loading: "lazy",
     },
     imageWrapper
   );
@@ -108,10 +101,7 @@ export function addSeriesImage(parentElement, bookMetadata, altText) {
  * @returns {HTMLDivElement} The created title element.
  */
 export function addSeriesTitle(parentElement, textContentValue) {
-  return addDivElement(
-    { className: "series-title", textContent: textContentValue },
-    parentElement
-  );
+  return addDivElement({ className: "series-title", textContent: textContentValue }, parentElement);
 }
 
 /**

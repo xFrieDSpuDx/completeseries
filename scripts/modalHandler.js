@@ -57,12 +57,11 @@ function buildModalContent(bookData, info) {
  * @param {HTMLElement} sourceTile - The tile element that triggered the modal.
  */
 export function openBookModal(bookData, sourceTile) {
-
   const modalElement = document.getElementById("bookDetailModal");
   const modalOverlay = document.getElementById("bookDetailModalOverlay");
   const modalContentElement = document.getElementById("bookDetailModalContent");
 
-   emptyDivContent(modalContentElement);
+  emptyDivContent(modalContentElement);
 
   const formatted = extractFormattedBookInfo(bookData);
   modalContentElement.innerHTML = buildModalContent(bookData, formatted);
@@ -86,8 +85,7 @@ export function openBookModal(bookData, sourceTile) {
     modalOverlay.classList.add("active");
     modalElement.classList.add("active");
 
-    if (window.innerWidth > 950)
-      modalElement.style.transform = "translateX(-50%) scale(1)";
+    if (window.innerWidth > 950) modalElement.style.transform = "translateX(-50%) scale(1)";
 
     modalElement.style.opacity = "0.95";
   });

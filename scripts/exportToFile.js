@@ -17,15 +17,9 @@ function formatSeriesNames(record) {
       .map((seriesItem) => {
         if (!seriesItem) return "";
         // Get the best series name
-        const seriesName =
-          seriesItem.seriesName ||
-          seriesItem.name ||
-          seriesItem.title ||
-          "";
+        const seriesName = seriesItem.seriesName || seriesItem.name || seriesItem.title || "";
         // Get the position if available
-        const position = seriesItem.position
-          ? ` #${seriesItem.position}`
-          : "";
+        const position = seriesItem.position ? ` #${seriesItem.position}` : "";
 
         return seriesName ? `${seriesName}${position}` : "";
       })
@@ -57,8 +51,8 @@ function selectDetails(record) {
  *
  * @returns {string} Timestamp string, e.g. "2025-08-14T17-59-09Z".
  */
-function makeTimestampForFilename() {
-  return new Date().toISOString().replace(/[:.]/g, "-");
+export function makeTimestampForFilename() {
+  return new Date().toISOString().replace(/[-:]/g, "").replace("T", "-").replace(/\..*/, "");
 }
 
 /**
@@ -72,7 +66,8 @@ function makeTimestampForFilename() {
  * @returns {HTMLElement|null} The resolved element, or null if not found.
  */
 function resolveElement(elementOrSelector, fallbackSelector = "#debugModal") {
-  if (elementOrSelector && typeof elementOrSelector.querySelector === "function") return elementOrSelector; // Already an element
+  if (elementOrSelector && typeof elementOrSelector.querySelector === "function")
+    return elementOrSelector; // Already an element
   if (typeof elementOrSelector === "string") return document.querySelector(elementOrSelector);
 
   return document.querySelector(fallbackSelector);
@@ -102,13 +97,20 @@ function createCsvSafeField(rawValue) {
  */
 function groupLabelFor(logRecord, groupByMode) {
   switch (groupByMode) {
-    case "check":     return logRecord.checkLabel || logRecord.check || "(none)";
-    case "outcome":   return logRecord.outcome ?? "(none)";
-    case "series":    return formatSeriesNames(logRecord) || "(none)";
-    case "title":     return logRecord.title ?? "(none)";
-    case "region":    return logRecord.region ?? "(none)";
-    case "available": return logRecord.isAvailable ? "Available" : "Unavailable";
-    default:          return "All results";
+    case "check":
+      return logRecord.checkLabel || logRecord.check || "(none)";
+    case "outcome":
+      return logRecord.outcome ?? "(none)";
+    case "series":
+      return formatSeriesNames(logRecord) || "(none)";
+    case "title":
+      return logRecord.title ?? "(none)";
+    case "region":
+      return logRecord.region ?? "(none)";
+    case "available":
+      return logRecord.isAvailable ? "Available" : "Unavailable";
+    default:
+      return "All results";
   }
 }
 
@@ -142,7 +144,7 @@ export function exportFilteredLogsAsJson(debugModalElement) {
   const filteredLogs = getFilteredDebugLogs(); // uses controls in #debugModal
   if (!filteredLogs.length) return;
 
-  const fileName = `debug-logs-${makeTimestampForFilename()}.json`;
+  const fileName = `Complete-Series-Debug-Logs-${makeTimestampForFilename()}.json`;
   const dataBlob = new Blob([JSON.stringify(filteredLogs, null, 2)], { type: "application/json" });
   const objectUrl = URL.createObjectURL(dataBlob);
 
@@ -178,8 +180,16 @@ export function exportFilteredLogsAsCsv(debugModalElement) {
 
   // Column order must match the visible table
   const baseColumns = [
-    "Index", "Session", "Check", "Outcome",
-    "ASIN", "Series", "Title", "Region", "Available", "Details"
+    "Index",
+    "Session",
+    "Check",
+    "Outcome",
+    "ASIN",
+    "Series",
+    "Title",
+    "Region",
+    "Available",
+    "Details",
   ];
   const headerColumns = includeGroupColumn ? ["Group", ...baseColumns] : baseColumns;
 
@@ -205,14 +215,14 @@ export function exportFilteredLogsAsCsv(debugModalElement) {
       record.title || "",
       record.region || "",
       record.isAvailable != null ? String(!!record.isAvailable) : "",
-      (typeof detailsValue === "object" ? JSON.stringify(detailsValue) : (detailsValue ?? ""))
+      typeof detailsValue === "object" ? JSON.stringify(detailsValue) : (detailsValue ?? ""),
     ].map(toCsvField);
 
     return fields.join(",");
   });
 
   const csvString = [headerRow, ...dataRows].join("\n");
-  const fileName = `debug-logs-${makeTimestampForFilename()}.csv`;
+  const fileName = `Complete-Series-Debug-Logs-${makeTimestampForFilename()}.csv`;
 
   const dataBlob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
   const objectUrl = URL.createObjectURL(dataBlob);
@@ -315,9 +325,7 @@ export function flattenGroupedMissingBooksForExport(groupedEntries = []) {
     const candidateGenres = preferredGenres.length > 0 ? preferredGenres : genres;
 
     // Extract trimmed names, ignoring blanks.
-    const rawGenreNames = candidateGenres
-      .map((item) => asText(item?.name).trim())
-      .filter(Boolean);
+    const rawGenreNames = candidateGenres.map((item) => asText(item?.name).trim()).filter(Boolean);
 
     // De-duplicate while preserving first occurrence.
     const seenNames = new Set();
@@ -359,9 +367,10 @@ export function flattenGroupedMissingBooksForExport(groupedEntries = []) {
 
     for (const book of booksInGroup) {
       // Use existing series string formatter for the book's own series array.
-      const allSeriesForThisBook = (typeof formatSeriesNames === "function")
-        ? formatSeriesNames(book) || "(none)" // expects { series: [...] } on the passed object
-        : ""; // fallback to empty string if not available
+      const allSeriesForThisBook =
+        typeof formatSeriesNames === "function"
+          ? formatSeriesNames(book) || "(none)" // expects { series: [...] } on the passed object
+          : ""; // fallback to empty string if not available
 
       // Build row with keys in the EXACT requested order
       rows.push({
@@ -398,7 +407,7 @@ export function flattenGroupedMissingBooksForExport(groupedEntries = []) {
  * @param {Array} groupedMissingBooks
  * @param {string} [baseName="missing-books"]
  */
-export function exportMissingAsJson(groupedMissingBooks, baseName = "missing-books") {
+export function exportMissingAsJson(groupedMissingBooks, baseName = "Exported-Results") {
   // Flatten to a CSV/JSON-ready structure
   const exportRows = flattenGroupedMissingBooksForExport(groupedMissingBooks);
 
@@ -439,7 +448,7 @@ export function exportMissingAsJson(groupedMissingBooks, baseName = "missing-boo
  * @param {Array} groupedMissingBooks
  * @param {string} [baseName="missing-books"]
  */
-export function exportMissingAsCsv(groupedMissingBooks, baseName = "missing-books") {
+export function exportMissingAsCsv(groupedMissingBooks, baseName = "Exported-Results") {
   // Flatten into CSV-ready rows
   const exportRows = flattenGroupedMissingBooksForExport(groupedMissingBooks);
   if (!exportRows.length) return;

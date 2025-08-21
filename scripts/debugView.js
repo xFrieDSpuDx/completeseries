@@ -8,7 +8,7 @@ import {
   addTableRow,
   addHeaderCell,
   addCell,
-  addTextElement
+  addTextElement,
 } from "./elementFactory.js";
 // --- Click-to-sort state & helpers ---
 let __dbgSort = { key: null, dir: "asc" }; // dir: "asc" | "desc"
@@ -56,19 +56,30 @@ function normaliseHeaderToSortKey(headerLabel) {
  */
 function valueForSort(record, sortKey) {
   switch (sortKey) {
-    case "Index":     return record.sessionIndex ?? null;
-    case "Session":   return record.sessionId ?? "";
-    case "Check":     return record.checkLabel || record.check || "";
-    case "Outcome":   return record.outcome ?? "";
-    case "ASIN":      return record.asin ?? "";
-    case "Series":    return (typeof formatSeriesNames === "function"
-                              ? formatSeriesNames(record)
-                              : (record.seriesAsin || ""));
-    case "Title":     return record.title ?? "";
-    case "Region":    return record.region ?? "";
-    case "Available": return record.isAvailable != null ? (record.isAvailable ? 1 : 0) : null;
-    case "Details":   return record.details ?? "";
-    default:          return null;
+    case "Index":
+      return record.sessionIndex ?? null;
+    case "Session":
+      return record.sessionId ?? "";
+    case "Check":
+      return record.checkLabel || record.check || "";
+    case "Outcome":
+      return record.outcome ?? "";
+    case "ASIN":
+      return record.asin ?? "";
+    case "Series":
+      return typeof formatSeriesNames === "function"
+        ? formatSeriesNames(record)
+        : record.seriesAsin || "";
+    case "Title":
+      return record.title ?? "";
+    case "Region":
+      return record.region ?? "";
+    case "Available":
+      return record.isAvailable != null ? (record.isAvailable ? 1 : 0) : null;
+    case "Details":
+      return record.details ?? "";
+    default:
+      return null;
   }
 }
 
@@ -89,7 +100,7 @@ function cmpVals(firstValue, secondValue, direction) {
   const isNullishValue = (value) => value === null || value === undefined || value === "";
 
   if (isNullishValue(firstValue) && isNullishValue(secondValue)) return 0;
-  if (isNullishValue(firstValue)) return 1;   // nulls last
+  if (isNullishValue(firstValue)) return 1; // nulls last
   if (isNullishValue(secondValue)) return -1; // nulls last
 
   if (typeof firstValue === "number" && typeof secondValue === "number")
@@ -97,10 +108,9 @@ function cmpVals(firstValue, secondValue, direction) {
 
   const firstString = String(firstValue);
   const secondString = String(secondValue);
-  return directionMultiplier * firstString.localeCompare(
-    secondString,
-    undefined,
-    { numeric: true, sensitivity: "base" }
+  return (
+    directionMultiplier *
+    firstString.localeCompare(secondString, undefined, { numeric: true, sensitivity: "base" })
   );
 }
 
@@ -114,10 +124,8 @@ function cmpVals(firstValue, secondValue, direction) {
  */
 function setDebugSort(sortKey) {
   if (!sortKey) return;
-  if (__dbgSort.key === sortKey)
-    __dbgSort.dir = __dbgSort.dir === "asc" ? "desc" : "asc";
-  else
-    __dbgSort = { key: sortKey, dir: "asc" };
+  if (__dbgSort.key === sortKey) __dbgSort.dir = __dbgSort.dir === "asc" ? "desc" : "asc";
+  else __dbgSort = { key: sortKey, dir: "asc" };
 }
 
 /**
@@ -143,7 +151,7 @@ function sortDebugRecordsWithState(records) {
     // Stable fallback to original order (do not change)
     if (firstRecord.sessionId !== secondRecord.sessionId)
       return String(firstRecord.sessionId).localeCompare(String(secondRecord.sessionId));
-    
+
     return (firstRecord.sessionIndex ?? 0) - (secondRecord.sessionIndex ?? 0);
   });
 }
@@ -164,21 +172,25 @@ function sortDebugRecordsWithState(records) {
  * @returns {void}
  */
 function hydrateControls(debugModalElement) {
-  const sessionSelectElement   = debugModalElement.querySelector("#dbgSession");
-  const outcomeSelectElement   = debugModalElement.querySelector("#dbgOutcome");
-  const groupBySelectElement   = debugModalElement.querySelector("#dbgGroupBy"); // intentionally unused (future use)
+  const sessionSelectElement = debugModalElement.querySelector("#dbgSession");
+  const outcomeSelectElement = debugModalElement.querySelector("#dbgOutcome");
+  const groupBySelectElement = debugModalElement.querySelector("#dbgGroupBy"); // intentionally unused (future use)
   const checkListContainerElement = debugModalElement.querySelector("#dbgCheckList");
 
   // Abort if any required control is missing
-  if (!sessionSelectElement || !outcomeSelectElement || !groupBySelectElement || !checkListContainerElement) return;
+  if (
+    !sessionSelectElement ||
+    !outcomeSelectElement ||
+    !groupBySelectElement ||
+    !checkListContainerElement
+  )
+    return;
 
   const debugLogs = getDebugLogs();
 
   // ----- Sessions -----
   const distinctSessionIds = Array.from(
-    new Set(
-      debugLogs.map((logRecord) => logRecord.sessionId).filter(Boolean)
-    )
+    new Set(debugLogs.map((logRecord) => logRecord.sessionId).filter(Boolean))
   );
   const sessionOptions = [
     { value: "", text: "(All)" },
@@ -188,9 +200,7 @@ function hydrateControls(debugModalElement) {
 
   // ----- Outcomes -----
   const distinctOutcomeValues = Array.from(
-    new Set(
-      debugLogs.map((logRecord) => logRecord.outcome).filter(Boolean)
-    )
+    new Set(debugLogs.map((logRecord) => logRecord.outcome).filter(Boolean))
   ).sort();
   const outcomeOptions = [
     { value: "any", text: "(Any)" },
@@ -201,9 +211,9 @@ function hydrateControls(debugModalElement) {
   // ----- Check chips -----
   // Preserve previous checked state
   const previouslyCheckedCheckIds = new Set(
-    Array.from(
-      checkListContainerElement.querySelectorAll('input[type="checkbox"]:checked')
-    ).map((inputEl) => inputEl.value)
+    Array.from(checkListContainerElement.querySelectorAll('input[type="checkbox"]:checked')).map(
+      (inputEl) => inputEl.value
+    )
   );
 
   // Clear existing chips
@@ -241,24 +251,24 @@ function hydrateControls(debugModalElement) {
  * @returns {{ sessionId: string, outcome: string, groupBy: string, query: string, selectedChecks: Set<string> }}
  */
 function readFilters(debugModalElement) {
-  const sessionSelectElement    = debugModalElement.querySelector("#dbgSession");
-  const outcomeSelectElement    = debugModalElement.querySelector("#dbgOutcome");
-  const groupBySelectElement    = debugModalElement.querySelector("#dbgGroupBy");
-  const searchInputElement      = debugModalElement.querySelector("#dbgSearch");
+  const sessionSelectElement = debugModalElement.querySelector("#dbgSession");
+  const outcomeSelectElement = debugModalElement.querySelector("#dbgOutcome");
+  const groupBySelectElement = debugModalElement.querySelector("#dbgGroupBy");
+  const searchInputElement = debugModalElement.querySelector("#dbgSearch");
   const checkListContainerElement = debugModalElement.querySelector("#dbgCheckList");
 
   const selectedCheckIds = new Set(
-    Array.from(
-      checkListContainerElement.querySelectorAll('input[type="checkbox"]:checked')
-    ).map((inputEl) => inputEl.value)
+    Array.from(checkListContainerElement.querySelectorAll('input[type="checkbox"]:checked')).map(
+      (inputEl) => inputEl.value
+    )
   );
 
   return {
     sessionId: sessionSelectElement?.value || "",
-    outcome:  outcomeSelectElement?.value || "any",
-    groupBy:  groupBySelectElement?.value || "none",
-    query:    searchInputElement?.value?.trim() || "",
-    selectedChecks: selectedCheckIds
+    outcome: outcomeSelectElement?.value || "any",
+    groupBy: groupBySelectElement?.value || "none",
+    query: searchInputElement?.value?.trim() || "",
+    selectedChecks: selectedCheckIds,
   };
 }
 
@@ -285,11 +295,14 @@ function renderResults(debugModalElement) {
   // ----- Filtering -----
   const filteredLogs = debugLogs.filter((logEntry) => {
     if (currentFilters.sessionId && logEntry.sessionId !== currentFilters.sessionId) return false;
-    if (currentFilters.selectedChecks.size && !currentFilters.selectedChecks.has(logEntry.check)) return false;
-    if (currentFilters.outcome !== "any" && logEntry.outcome !== currentFilters.outcome) return false;
+    if (currentFilters.selectedChecks.size && !currentFilters.selectedChecks.has(logEntry.check))
+      return false;
+    if (currentFilters.outcome !== "any" && logEntry.outcome !== currentFilters.outcome)
+      return false;
 
     if (currentFilters.query) {
-      const searchableText = `${logEntry.asin ?? ""} ${logEntry.title ?? ""} ${formatSeriesNames(logEntry)}`.toLowerCase();
+      const searchableText =
+        `${logEntry.asin ?? ""} ${logEntry.title ?? ""} ${formatSeriesNames(logEntry)}`.toLowerCase();
       if (!searchableText.includes(currentFilters.query.toLowerCase())) return false;
     }
 
@@ -332,8 +345,8 @@ function renderResults(debugModalElement) {
   }
 
   // Render each group as its own table (headers preserved), sorted by label
-  for (const [groupLabel, groupRecords] of [...recordsByGroup.entries()].sort(
-    (groupA, groupB) => String(groupA[0]).localeCompare(String(groupB[0]))
+  for (const [groupLabel, groupRecords] of [...recordsByGroup.entries()].sort((groupA, groupB) =>
+    String(groupA[0]).localeCompare(String(groupB[0]))
   )) {
     const groupTitleElement = document.createElement("h3");
     groupTitleElement.textContent = groupLabel;
@@ -364,9 +377,16 @@ function renderTableForRecords(containerElement, records) {
 
   // Header labels control visible order and sort-key mapping
   const headerLabels = [
-    "Index", "Session", "Check", "Outcome",
-    "ASIN", "Series", "Title", "Region",
-    "Available", "Details"
+    "Index",
+    "Session",
+    "Check",
+    "Outcome",
+    "ASIN",
+    "Series",
+    "Title",
+    "Region",
+    "Available",
+    "Details",
   ];
 
   for (const headerLabel of headerLabels) {
@@ -399,15 +419,24 @@ function renderTableForRecords(containerElement, records) {
     const rowElement = addTableRow(tbodyElement);
 
     // Cells in the same order as headerLabels
-    addCell(String(record.sessionIndex ?? ""), rowElement).setAttribute("data-label", headerLabels[0]);                         // Index
-    addCell(record.sessionId ?? "", rowElement).setAttribute("data-label", headerLabels[1]);                                    // Session
-    addCell(record.checkLabel || record.check || "", rowElement).setAttribute("data-label", headerLabels[2]);                   // Check
-    addCell(record.outcome ?? "", rowElement).setAttribute("data-label", headerLabels[3]);                                      // Outcome
-    addCell(record.asin ?? "", rowElement).setAttribute("data-label", headerLabels[4]);                                         // ASIN
-    addCell(formatSeriesNames(record), rowElement).setAttribute("data-label", headerLabels[5]);                                 // Series
-    addCell(record.title ?? "", rowElement).setAttribute("data-label", headerLabels[6]);                                        // Title
-    addCell(record.region ?? "", rowElement).setAttribute("data-label", headerLabels[7]);                                       // Region
-    addCell(record.isAvailable != null ? String(!!record.isAvailable) : "", rowElement).setAttribute("data-label", headerLabels[8]); // Available
+    addCell(String(record.sessionIndex ?? ""), rowElement).setAttribute(
+      "data-label",
+      headerLabels[0]
+    ); // Index
+    addCell(record.sessionId ?? "", rowElement).setAttribute("data-label", headerLabels[1]); // Session
+    addCell(record.checkLabel || record.check || "", rowElement).setAttribute(
+      "data-label",
+      headerLabels[2]
+    ); // Check
+    addCell(record.outcome ?? "", rowElement).setAttribute("data-label", headerLabels[3]); // Outcome
+    addCell(record.asin ?? "", rowElement).setAttribute("data-label", headerLabels[4]); // ASIN
+    addCell(formatSeriesNames(record), rowElement).setAttribute("data-label", headerLabels[5]); // Series
+    addCell(record.title ?? "", rowElement).setAttribute("data-label", headerLabels[6]); // Title
+    addCell(record.region ?? "", rowElement).setAttribute("data-label", headerLabels[7]); // Region
+    addCell(
+      record.isAvailable != null ? String(!!record.isAvailable) : "",
+      rowElement
+    ).setAttribute("data-label", headerLabels[8]); // Available
 
     // Details cell with quickFacts/details toggle (kept as-is)
     (function renderDetailsCell() {
@@ -418,8 +447,7 @@ function renderTableForRecords(containerElement, records) {
       detailsCell.setAttribute("data-label", headerLabels[9]);
       const uniqueId = `${record.sessionId || "s"}_${record.sessionIndex ?? 0}`;
       const detailsObject = buildQuickFactsElement(record, uniqueId, detailRowElement);
-      if (!detailsObject) 
-        throw new Error("buildQuickFactsElement returned nothing");
+      if (!detailsObject) throw new Error("buildQuickFactsElement returned nothing");
       const { detailsWrapper: detailsElement, detailsPanel } = detailsObject;
 
       detailsCell.appendChild(detailsElement);
@@ -436,13 +464,13 @@ function renderTableForRecords(containerElement, records) {
 
 /**
  * Determines the preferred column width (in `ch` units) based on the current viewport width.
- * 
+ *
  * Breakpoints:
  * - > 100rem:     Column width = 10ch   (large desktops / wide screens)
  * - 75rem–100rem: Column width = 8ch    (medium desktops / laptops)
  * - ≤ 59.375rem:  Column width = 6ch    (tablets / smaller devices)
  * - Fallback:     Column width = 6ch
- * 
+ *
  * @returns {number} The numeric width in `ch` units (to be used with CSS, e.g. "10ch").
  */
 function getColumnWidthValue() {
@@ -452,7 +480,7 @@ function getColumnWidthValue() {
   if (windowRem > 100) return 10;
   if (windowRem >= 75) return 8;
   if (windowRem <= 59.375) return 6;
-  
+
   // fallback for smaller screens
   return 6;
 }
@@ -601,7 +629,7 @@ function buildQuickFactsElement(record, uniqueId, detailRowElement) {
 
   // Toggle behavior
   toggleLink.addEventListener("click", () => {
-    const isHidden= detailRowElement.hidden;
+    const isHidden = detailRowElement.hidden;
     detailRowElement.hidden = !isHidden;
     toggleLink.setAttribute("aria-expanded", String(isHidden));
     toggleLink.textContent = !isHidden ? "Show details ▶" : "Hide details ▼";
@@ -616,7 +644,7 @@ function buildQuickFactsElement(record, uniqueId, detailRowElement) {
   });
 
   // eslint-disable-next-line object-shorthand
-  return {detailsWrapper: detailsWrapper, detailsPanel: detailsPanel};
+  return { detailsWrapper: detailsWrapper, detailsPanel: detailsPanel };
 }
 
 /**
@@ -637,14 +665,21 @@ function buildQuickFactsElement(record, uniqueId, detailRowElement) {
  */
 function getGroupLabelForRecord(record, groupByValue) {
   switch (groupByValue) {
-    case "check":     return record.checkLabel || record.check || "(none)";
-    case "outcome":   return record.outcome ?? "(none)";
-    case "series":    return formatSeriesNames(record) || "(none)";
-    case "title":     return record.title ?? "(none)";
-    case "region":    return record.region ?? "(none)";
-    case "available": return record.isAvailable ? "Available" : "Unavailable";
+    case "check":
+      return record.checkLabel || record.check || "(none)";
+    case "outcome":
+      return record.outcome ?? "(none)";
+    case "series":
+      return formatSeriesNames(record) || "(none)";
+    case "title":
+      return record.title ?? "(none)";
+    case "region":
+      return record.region ?? "(none)";
+    case "available":
+      return record.isAvailable ? "Available" : "Unavailable";
     case "none":
-    default:          return "All results";
+    default:
+      return "All results";
   }
 }
 
@@ -677,7 +712,7 @@ function getOrCreateCountLabelElement(debugModalElement) {
     firstControlsRowElement.querySelector("#dbgDownloadJson") ||
     firstControlsRowElement.querySelector("#dbgDownloadCsv");
 
-  if (firstDownloadButtonElement) 
+  if (firstDownloadButtonElement)
     firstControlsRowElement.insertBefore(countLabelElement, firstDownloadButtonElement);
 
   return countLabelElement;
@@ -694,7 +729,7 @@ function sortDebugRecords(records) {
   return [...records].sort((firstRecord, secondRecord) => {
     if (firstRecord.sessionId !== secondRecord.sessionId)
       return String(firstRecord.sessionId).localeCompare(String(secondRecord.sessionId));
-    
+
     return (firstRecord.sessionIndex ?? 0) - (secondRecord.sessionIndex ?? 0);
   });
 }

@@ -6,7 +6,7 @@ import {
   clearLocalStorageByIdentifier,
   clearLocalStorage,
   exportStorageToJSON,
-  bindStorageUploadUI
+  bindStorageUploadUI,
 } from "./localStorage.js";
 import { getFormData, validateForm } from "./formHandler.js";
 import { temporaryChangeElementText } from "./uiFeedback.js";
@@ -154,6 +154,7 @@ export function initializeUIInteractions() {
 
   if (clearSeriesList) {
     clearSeriesList.addEventListener("click", () => {
+      applyFilterVisibleAfterMemoryClear();
       clearLocalStorageByIdentifier("existingFirstBookASINs");
       temporaryChangeElementText(clearSeriesList, "Series list successfully deleted");
     });
@@ -161,6 +162,7 @@ export function initializeUIInteractions() {
 
   if (clearBooksList) {
     clearBooksList.addEventListener("click", () => {
+      applyFilterVisibleAfterMemoryClear();
       clearLocalStorageByIdentifier("existingBookMetadata");
       temporaryChangeElementText(clearBooksList, "Book Metadata list successfully deleted");
     });
@@ -168,6 +170,7 @@ export function initializeUIInteractions() {
 
   if (clearHiddenList) {
     clearHiddenList.addEventListener("click", () => {
+      applyFilterVisibleAfterMemoryClear();
       clearLocalStorageByIdentifier("hiddenItems");
       showAllHiddenItems();
       temporaryChangeElementText(clearHiddenList, "Hidden items successfully deleted");
@@ -176,6 +179,7 @@ export function initializeUIInteractions() {
 
   if (clearAllList) {
     clearAllList.addEventListener("click", () => {
+      applyFilterVisibleAfterMemoryClear();
       clearLocalStorage();
       temporaryChangeElementText(clearAllList, "All cache deleted");
     });
@@ -186,6 +190,11 @@ export function initializeUIInteractions() {
       exportStorageToJSON("localStorage");
       temporaryChangeElementText(exportLocalStorage, "Downloading local storage");
     });
+  }
+
+  function applyFilterVisibleAfterMemoryClear() {
+    if (!outputContainerPopulated()) return;
+    applyFilterButton.classList.add("active");
   }
 
   // -------------------------
@@ -213,11 +222,11 @@ export function initializeUIInteractions() {
   // -------------------------
 
   exportMissingCsv.addEventListener("click", () => {
-    exportMissingAsCsv(groupedMissingBooks, "audible-missing");
+    exportMissingAsCsv(groupedMissingBooks, "Complete-Series-Exported-Results");
   });
 
   exportMissingJson.addEventListener("click", () => {
-    exportMissingAsJson(groupedMissingBooks, "audible-missing");
+    exportMissingAsJson(groupedMissingBooks, "Complete-Series-Exported-Results");
   });
 
   // -----------------------------------------------------------------------------

@@ -22,22 +22,19 @@ export function handleEyeIconClick(eyeIcon, maskParent, hiddenItem, isInVisibili
     toggleHiddenItem(hiddenItem, eyeIcon);
 
     const isNowHidden = eyeIcon.src.includes("eye-closed.svg");
-    eyeIcon.src = isNowHidden
-      ? "../assets/eye-open.svg"
-      : "../assets/eye-closed.svg";
+    eyeIcon.src = isNowHidden ? "../assets/eye-open.svg" : "../assets/eye-closed.svg";
 
     toggleTileMask(eyeIcon, maskParent);
 
     const parentTile = getItemSeries(hiddenItem);
 
     if (isInVisibilityMenu && hiddenItem.type === "series") {
-      if (parentTile)
-        parentTile.querySelector(".eye-icon")?.click();
-      else 
-        toggleHiddenItemVisibilityMenu(eyeIcon);
-    } else if (hiddenItem.type === "series" && !isInVisibilityMenu) toggleElementVisibilityFullEntity(maskParent, isNowHidden);
+      if (parentTile) parentTile.querySelector(".eye-icon")?.click();
+      else toggleHiddenItemVisibilityMenu(eyeIcon);
+    } else if (hiddenItem.type === "series" && !isInVisibilityMenu)
+      toggleElementVisibilityFullEntity(maskParent, isNowHidden);
     else updateSeriesMissingBookNumber(hiddenItem, isNowHidden);
-    
+
     updateSeriesHeaderText();
   });
 }
@@ -52,8 +49,7 @@ export function handleEyeIconClick(eyeIcon, maskParent, hiddenItem, isInVisibili
 export function toggleTileMask(eyeIcon, maskParent) {
   eyeIcon.classList.toggle("eyeClosed");
 
-  if (maskParent) 
-    maskParent.classList.toggle("series-mask");
+  if (maskParent) maskParent.classList.toggle("series-mask");
 }
 
 /**
@@ -66,13 +62,14 @@ export function toggleTileMask(eyeIcon, maskParent) {
  * @returns {Object} A normalised hidden item object with type, series, ASIN, and title.
  */
 export function hideItemObjectBuilder(bookMetadata, seriesTitle, itemType) {
-  const objectToHide =  {
+  const objectToHide = {
     type: itemType,
     series: seriesTitle,
     // Use book ASIN for book items, series ASIN for series items
-    asin: itemType === "series"
-      ? (bookMetadata.seriesAsin ?? bookMetadata.asin)   // series toggle gets series ASIN
-      : (bookMetadata.asin ?? bookMetadata.seriesAsin),  // book toggle gets book ASIN
+    asin:
+      itemType === "series"
+        ? (bookMetadata.seriesAsin ?? bookMetadata.asin) // series toggle gets series ASIN
+        : (bookMetadata.asin ?? bookMetadata.seriesAsin), // book toggle gets book ASIN
     title: bookMetadata.title,
   };
 
@@ -97,8 +94,7 @@ function adjustBadgeCount(badgeElement, delta) {
  * @param {boolean} isClosed - True if the book was just hidden, false if unhidden.
  */
 function updateSeriesMissingBookNumber(hideItemObject, isClosed) {
-  if (hideItemObject.type === "series")
-    return; // Series-level items are not affected
+  if (hideItemObject.type === "series") return; // Series-level items are not affected
 
   const parentTile = getItemSeries(hideItemObject);
   if (!parentTile) return;
@@ -110,9 +106,8 @@ function updateSeriesMissingBookNumber(hideItemObject, isClosed) {
     adjustBadgeCount(badgeElement, +1);
     toggleElementVisibilityFullEntity(parentTile.parentElement, true);
   } else {
-    if (currentCount === 1) 
-      toggleElementVisibilityFullEntity(parentTile.parentElement, false);
-    
+    if (currentCount === 1) toggleElementVisibilityFullEntity(parentTile.parentElement, false);
+
     adjustBadgeCount(badgeElement, -1);
   }
 }
@@ -136,10 +131,7 @@ export function populateHiddenItemsMenu() {
     const isSeries = item.type === "series";
     const container = isSeries ? hiddenSeriesContainer : hiddenBooksContainer;
 
-    const itemWrapper = addDivElement(
-      { className: "visibility-item" },
-      container
-    );
+    const itemWrapper = addDivElement({ className: "visibility-item" }, container);
 
     const labelText = isSeries ? item.series : `${item.series} - ${item.title}`;
     addTextElement(labelText, "span", itemWrapper);
@@ -150,10 +142,12 @@ export function populateHiddenItemsMenu() {
 }
 
 /**
- * Rebuilds the seriesOutput grid and header when hidden items 
+ * Rebuilds the seriesOutput grid and header when hidden items
  * are changed. Forces all elements to reset
  */
 export function showAllHiddenItems() {
+  if (!groupedMissingBooks) return;
+
   emptyDivContent(getHTMLElement("seriesOutput"));
   renderSeriesAndBookTiles(groupedMissingBooks);
 }

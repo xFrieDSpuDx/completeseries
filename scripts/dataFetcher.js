@@ -29,14 +29,11 @@ export async function fetchExistingContent(formData, audiobookShelfLoginResponse
   // normalise once, don’t mutate inputs
   const normalisedServerUrl = sanitiseAudiobookShelfURL(serverUrl);
 
-    // Safely read prior login payload
-  const {
-    authToken = null,
-    librariesList: audiobookShelfLibraries = null
-  } = audiobookShelfLoginResponse || {};
+  // Safely read prior login payload
+  const { authToken = null, librariesList: audiobookShelfLibraries = null } =
+    audiobookShelfLoginResponse || {};
 
-  if (!authToken)
-    throw new Error("Missing auth token from prior login. Please sign in first.");
+  if (!authToken) throw new Error("Missing auth token from prior login. Please sign in first.");
 
   // ───────────────────────────────────────────────────────────────────────────
   // A) Direct JS path (token-based)
@@ -46,7 +43,7 @@ export async function fetchExistingContent(formData, audiobookShelfLoginResponse
       return await fetchExistingSeriesLibraries({
         serverUrl: normalisedServerUrl,
         authToken,
-        libraries: audiobookShelfLibraries
+        libraries: audiobookShelfLibraries,
       });
     } catch (error) {
       throw new Error(error?.message || genericError, { cause: error });
@@ -62,14 +59,14 @@ export async function fetchExistingContent(formData, audiobookShelfLoginResponse
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        Accept: "application/json",
       },
       credentials: "same-origin",
       body: JSON.stringify({
         url: normalisedServerUrl,
         libraries: audiobookShelfLibraries,
-        authToken
-      })
+        authToken,
+      }),
     });
   } catch (error) {
     throw new Error("Could not contact PHP proxy.", { cause: error });
@@ -122,7 +119,7 @@ export async function fetchAudiobookShelfLibraries(formData) {
     password,
     apiKey = null,
     useApiKey = false,
-    usePhpProxy = false
+    usePhpProxy = false,
   } = formData || {};
 
   // normalise once, don’t mutate inputs
@@ -137,7 +134,9 @@ export async function fetchAudiobookShelfLibraries(formData) {
       await fetchWithDiagnosis(`${normalisedServerUrl}/login`);
     } catch (error) {
       // Preserve root cause while shaping the message
-      throw new Error(error?.message || "Error contacting AudiobookShelf server.", { cause: error });
+      throw new Error(error?.message || "Error contacting AudiobookShelf server.", {
+        cause: error,
+      });
     }
 
     try {
@@ -147,13 +146,15 @@ export async function fetchAudiobookShelfLibraries(formData) {
         username,
         password,
         apiKey,
-        useApiKey
+        useApiKey,
       });
     } catch (error) {
-      throw new Error(error?.message || "Error retrieving libraries from AudiobookShelf server.", { cause: error });
+      throw new Error(error?.message || "Error retrieving libraries from AudiobookShelf server.", {
+        cause: error,
+      });
     }
-  }   
-  
+  }
+
   // ───────────────────────────────────────────────────────────────────────────
   // B) PHP proxy path
   // ───────────────────────────────────────────────────────────────────────────
@@ -162,14 +163,14 @@ export async function fetchAudiobookShelfLibraries(formData) {
   try {
     response = await fetch("php/getLibraries.php", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
         url: normalisedServerUrl,
         username,
         password,
         apiKey,
-        useApiKey
-      })
+        useApiKey,
+      }),
     });
   } catch (error) {
     // Network error reaching the proxy
@@ -179,7 +180,9 @@ export async function fetchAudiobookShelfLibraries(formData) {
   if (!response.ok) {
     // Server reached, but proxy returned non-2xx
     const text = await response.text().catch(() => "");
-    const err = new Error("Login failed via PHP proxy. Please check your credentials and try again.");
+    const err = new Error(
+      "Login failed via PHP proxy. Please check your credentials and try again."
+    );
     err.details = text;
     throw err;
   }
@@ -198,14 +201,17 @@ export async function fetchAudiobookShelfLibraries(formData) {
     const urlErrorElement = globalThis?.document?.getElementById?.("urlError") ?? null;
 
     if (urlErrorElement && isInternalAudiobookShelfURL(normalisedServerUrl)) {
-      urlErrorElement.textContent = "Server IP is an internal address. Ensure it is accessible from this site.";
-      urlErrorElement.hidden = false;                 // in case the element is initially hidden
-      urlErrorElement.setAttribute("role", "alert");  // announce the change to screen readers
+      urlErrorElement.textContent =
+        "Server IP is an internal address. Ensure it is accessible from this site.";
+      urlErrorElement.hidden = false; // in case the element is initially hidden
+      urlErrorElement.setAttribute("role", "alert"); // announce the change to screen readers
       urlErrorElement.setAttribute("aria-live", "polite");
       urlErrorElement.classList?.add("error");
     }
 
-    throw new Error(responseData.message || "No response from the AudiobookShelf server via proxy.");
+    throw new Error(
+      responseData.message || "No response from the AudiobookShelf server via proxy."
+    );
   }
 
   return responseData;
@@ -226,7 +232,7 @@ export async function fetchAudibleMetadata(itemASIN, region, itemType) {
       asin: itemASIN,
       // eslint-disable-next-line object-shorthand
       region: region,
-      type: itemType
+      type: itemType,
     });
   } catch (error) {
     throw new Error(`Failed to fetch metadata for ASIN ${itemASIN}: ${error.message}`);
@@ -246,11 +252,12 @@ export function findFromStorage(key, value, storeIdentifier) {
   const existingFirstBookASINsArray = loadMetadataFromLocalStorage(storeIdentifier);
 
   // Validate that the result is a proper array
-  if (!existingFirstBookASINsArray || !Array.isArray(existingFirstBookASINsArray))
-    return null;
+  if (!existingFirstBookASINsArray || !Array.isArray(existingFirstBookASINsArray)) return null;
 
   // Attempt to find the first object where the specified key matches the given value
-  const matchingItem = existingFirstBookASINsArray.find(item => key in item && item[key] === value);
+  const matchingItem = existingFirstBookASINsArray.find(
+    (item) => key in item && item[key] === value
+  );
 
   // Return the found item or null if no match
   return matchingItem || null;

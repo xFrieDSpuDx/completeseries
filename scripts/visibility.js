@@ -2,7 +2,10 @@
 
 import { sortBySeriesThenTitle } from "./dataCleaner.js";
 import { applyFilterButton } from "./interactions.js";
-import { loadMetadataFromLocalStorage, storeUpdateFullValueForLocalStorage } from "./localStorage.js";
+import {
+  loadMetadataFromLocalStorage,
+  storeUpdateFullValueForLocalStorage,
+} from "./localStorage.js";
 
 // Local storage key value
 const VISIBILITY_KEY = "hiddenItems";
@@ -73,10 +76,8 @@ export function unhideItem(item) {
  * @param {HTMLElement} eyeIcon - The icon element indicating hidden state.
  */
 export function toggleHiddenItem(item, eyeIcon) {
-  if (eyeIcon.classList.contains("eyeClosed")) 
-    unhideItem(item);
-  else 
-    hideItem(item);
+  if (eyeIcon.classList.contains("eyeClosed")) unhideItem(item);
+  else hideItem(item);
 }
 
 /**
@@ -138,7 +139,5 @@ export function isCurrentlyHiddenByAsin(asin) {
  */
 export function totalHiddenInSeries(seriesName) {
   const hiddenItems = getHiddenItems();
-  return hiddenItems.filter(
-    (item) => item.type === "book" && item.series === seriesName
-  ).length;
+  return hiddenItems.filter((item) => item.type === "book" && item.series === seriesName).length;
 }

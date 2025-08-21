@@ -49,7 +49,7 @@ function headerBuilder(parentElement, groupedMissingBooks) {
     {
       className: "results-logo",
       src: "/assets/logo-background-transparent.webp",
-      alt: "Site Logo"
+      alt: "Site Logo",
     },
     headerContainer
   );
@@ -84,8 +84,7 @@ function generateSeriesTiles(seriesData, outputContainer) {
   const hiddenBooksInSeries = totalHiddenInSeries(seriesTitle);
   const visibleMissingCount = missingBooksCount - hiddenBooksInSeries;
 
-  if (visibleMissingCount === 0) 
-    toggleElementVisibilityFullEntity(tileContainerWrapper, false);
+  if (visibleMissingCount === 0) toggleElementVisibilityFullEntity(tileContainerWrapper, false);
 
   addSeriesBadge(tileInnerContainer, visibleMissingCount);
   addSeriesImage(tileInnerContainer, firstBook, seriesTitle);

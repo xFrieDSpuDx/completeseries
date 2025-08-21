@@ -7,21 +7,23 @@
 
 import { getFormData } from "./formHandler.js";
 import { selectedLibraries, libraryArrayObject } from "./main.js";
-import { debugLogBookViability, 
-  debugLogBookAlreadyInLibrary, 
-  debugLogOnlyUnabridgedGate, 
-  debugLogIgnoreNoPosition, 
-  debugLogIgnoreMultiplePositions, 
-  debugLogIgnoreDecimalPositions, 
-  debugLogIgnoreFutureRelease, 
+import {
+  debugLogBookViability,
+  debugLogBookAlreadyInLibrary,
+  debugLogOnlyUnabridgedGate,
+  debugLogIgnoreNoPosition,
+  debugLogIgnoreMultiplePositions,
+  debugLogIgnoreDecimalPositions,
+  debugLogIgnoreFutureRelease,
   debugLogIgnorePastRelease,
   debugLogIgnoreTitleSubtitleExisting,
   debugLogIgnoreSameSeriesPositionExisting,
   debugLogIgnoreTitleSubtitleMissing,
   debugLogIgnoreSameSeriesPositionMissing,
-  startDebugSession } from "./debug.js";
+  startDebugSession,
+} from "./debug.js";
 
-  /**
+/**
  * @typedef {Object} BookRecord
  * @property {string} asin - Audible ASIN identifier for the book.
  * @property {string} [title] - Title of the book.
@@ -67,14 +69,13 @@ import { debugLogBookViability,
 /**
  * Sanitiseaudiobookshelfurl.
  *
- * @param {any} audiobookShelfURL 
+ * @param {any} audiobookShelfURL
  * @returns {any}
  */
 export function sanitiseAudiobookShelfURL(audiobookShelfURL) {
   let url = audiobookShelfURL.trim();
-  if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(url))
-    url = `https://${url}`;
-  
+  if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(url)) url = `https://${url}`;
+
   audiobookShelfURL = url;
 
   return audiobookShelfURL.replace(/\/$/, ""); // Remove trailing slash
@@ -92,7 +93,7 @@ Trim and lowercase
 /**
  * normalisetext.
  *
- * @param {any} input 
+ * @param {any} input
  * @returns {any}
  */
 function normaliseText(input) {
@@ -114,15 +115,15 @@ function normaliseText(input) {
 /**
  * Isprivateip.
  *
- * @param {any} ipAddress 
+ * @param {any} ipAddress
  * @returns {any}
  */
 function isPrivateIP(ipAddress) {
   return (
-    /^10\.(\d{1,3}\.){2}\d{1,3}$/.test(ipAddress) ||                          // 10.x.x.x
-    /^192\.168\.(\d{1,3})\.\d{1,3}$/.test(ipAddress) ||                      // 192.168.x.x
-    /^172\.(1[6-9]|2\d|3[0-1])\.(\d{1,3})\.\d{1,3}$/.test(ipAddress) ||      // 172.16.x.x - 172.31.x.x
-    /^127\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.test(ipAddress)                 // loopback
+    /^10\.(\d{1,3}\.){2}\d{1,3}$/.test(ipAddress) || // 10.x.x.x
+    /^192\.168\.(\d{1,3})\.\d{1,3}$/.test(ipAddress) || // 192.168.x.x
+    /^172\.(1[6-9]|2\d|3[0-1])\.(\d{1,3})\.\d{1,3}$/.test(ipAddress) || // 172.16.x.x - 172.31.x.x
+    /^127\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.test(ipAddress) // loopback
   );
 }
 
@@ -136,7 +137,7 @@ function isPrivateIP(ipAddress) {
 /**
  * Isinternalaudiobookshelfurl.
  *
- * @param {any} sanitizedUrl 
+ * @param {any} sanitizedUrl
  * @returns {any}
  */
 export function isInternalAudiobookShelfURL(sanitizedUrl) {
@@ -164,15 +165,15 @@ export function isInternalAudiobookShelfURL(sanitizedUrl) {
 /**
  * Findmissingbooks.
  *
- * @param {any} existingContent 
- * @param {any} seriesMetadata 
- * @param {any} formData 
+ * @param {any} existingContent
+ * @param {any} seriesMetadata
+ * @param {any} formData
  * @returns {any}
  */
 export function findMissingBooks(existingContent, seriesMetadata, formData) {
   ensureDebugSession(); // only starts when debug is enabled
 
-  const libraryASINs = new Set(existingContent.map(bookItem => bookItem.asin));
+  const libraryASINs = new Set(existingContent.map((bookItem) => bookItem.asin));
   const missingBooks = [];
 
   // Ordered list of gates; behavior unchanged
@@ -235,13 +236,12 @@ export function findMissingBooks(existingContent, seriesMetadata, formData) {
 /**
  * Rungatepipeline.
  *
- * @param {any} context 
- * @param {any} gates 
+ * @param {any} context
+ * @param {any} gates
  * @returns {any}
  */
 function runGatePipeline(context, gates) {
-  for (const gate of gates)
-    if (gate(context) === true) return true;
+  for (const gate of gates) if (gate(context) === true) return true;
 
   return false;
 }
@@ -263,10 +263,10 @@ log (optionally) and signal “skip” by returning true.
 /**
  * Gatecheck.
  *
- * @param {any} optionEnabled 
- * @param {any} condition 
- * @param {any} debugFn 
- * @param {any} payloadBuilder 
+ * @param {any} optionEnabled
+ * @param {any} condition
+ * @param {any} debugFn
+ * @param {any} payloadBuilder
  * @returns {any}
  */
 function gateCheck(optionEnabled, condition, debugFn, payloadBuilder) {
@@ -276,7 +276,7 @@ function gateCheck(optionEnabled, condition, debugFn, payloadBuilder) {
       debugFn(payload);
     }
     return true;
-    }
+  }
   return false;
 }
 
@@ -293,7 +293,7 @@ function gateCheck(optionEnabled, condition, debugFn, payloadBuilder) {
 /**
  * Gatenotviable.
  *
- * @param {any} context 
+ * @param {any} context
  * @returns {any}
  */
 function gateNotViable(context) {
@@ -321,7 +321,7 @@ function gateNotViable(context) {
 /**
  * Gatealreadyinlibrary.
  *
- * @param {any} context 
+ * @param {any} context
  * @returns {any}
  */
 function gateAlreadyInLibrary(context) {
@@ -350,18 +350,16 @@ function gateAlreadyInLibrary(context) {
 /**
  * Gateonlyunabridged.
  *
- * @param {any} context 
+ * @param {any} context
  * @returns {any}
  */
 function gateOnlyUnabridged(context) {
   const { formData, book, seriesContext } = context;
 
   // Prefer the new flag `filterUnabridged`; fall back to legacy `onlyUnabridged` if needed.
-  const filterUnabridgedEnabled =
-    !!(formData?.filterUnabridged ?? formData?.onlyUnabridged);
+  const filterUnabridgedEnabled = !!(formData?.filterUnabridged ?? formData?.onlyUnabridged);
 
-  if (!filterUnabridgedEnabled)
-    return false;
+  if (!filterUnabridgedEnabled) return false;
 
   // Determine if this book is unabridged using the canonical helper.
   const isUnabridged = isBookUnabridged(book);
@@ -373,7 +371,7 @@ function gateOnlyUnabridged(context) {
       book,
       seriesContext,
       onlyUnabridgedEnabled: filterUnabridgedEnabled, // keep legacy name for compatibility
-      helperReportedUnabridged: isUnabridged,         // false in this branch
+      helperReportedUnabridged: isUnabridged, // false in this branch
     });
     return true; // skip
   }
@@ -398,7 +396,7 @@ function gateOnlyUnabridged(context) {
 /**
  * Gateignorenoseriesposition.
  *
- * @param {any} context 
+ * @param {any} context
  * @returns {any}
  */
 function gateIgnoreNoSeriesPosition(context) {
@@ -406,12 +404,13 @@ function gateIgnoreNoSeriesPosition(context) {
   const optionEnabled = !!formData.ignoreNoPositionBooks;
   const hasNoPosition = hasNoSeriesPosition(bookSeriesArray);
 
-  return gateCheck(
+  return gateCheck(optionEnabled, hasNoPosition, debugLogIgnoreNoPosition, () => ({
+    book,
+    seriesContext,
     optionEnabled,
     hasNoPosition,
-    debugLogIgnoreNoPosition,
-    () => ({ book, seriesContext, optionEnabled, hasNoPosition, positionsList: toPositionsList(bookSeriesArray) })
-  );
+    positionsList: toPositionsList(bookSeriesArray),
+  }));
 }
 
 /**
@@ -430,7 +429,7 @@ function gateIgnoreNoSeriesPosition(context) {
 /**
  * Gateignoremultiplepositions.
  *
- * @param {any} context 
+ * @param {any} context
  * @returns {any}
  */
 function gateIgnoreMultiplePositions(context) {
@@ -438,18 +437,13 @@ function gateIgnoreMultiplePositions(context) {
   const optionEnabled = !!formData.ignoreMultiBooks;
   const multiplePositions = hasMultiplePositions(bookSeriesArray);
 
-  return gateCheck(
+  return gateCheck(optionEnabled, multiplePositions, debugLogIgnoreMultiplePositions, () => ({
+    book,
+    seriesContext,
     optionEnabled,
     multiplePositions,
-    debugLogIgnoreMultiplePositions,
-    () => ({
-      book,
-      seriesContext,
-      optionEnabled,
-      multiplePositions,
-      positionsList: toPositionsList(bookSeriesArray),
-    })
-  );
+    positionsList: toPositionsList(bookSeriesArray),
+  }));
 }
 
 /**
@@ -468,7 +462,7 @@ function gateIgnoreMultiplePositions(context) {
 /**
  * Gateignoredecimalpositions.
  *
- * @param {any} context 
+ * @param {any} context
  * @returns {any}
  */
 function gateIgnoreDecimalPositions(context) {
@@ -476,16 +470,11 @@ function gateIgnoreDecimalPositions(context) {
   const optionEnabled = !!formData.ignoreSubPositionBooks;
   const hasAnyDecimalPosition = hasDecimalSeriesPosition(bookSeriesArray);
 
-  return gateCheck(
-    optionEnabled,
-    hasAnyDecimalPosition,
-    debugLogIgnoreDecimalPositions,
-    () => {
-      const positionsList = toPositionsList(bookSeriesArray);
-      const decimalPositions = positionsList.filter((pos) => /^\d+\.\d+$/.test(pos));
-      return { book, seriesContext, optionEnabled, decimalPositions, positionsList };
-    }
-  );
+  return gateCheck(optionEnabled, hasAnyDecimalPosition, debugLogIgnoreDecimalPositions, () => {
+    const positionsList = toPositionsList(bookSeriesArray);
+    const decimalPositions = positionsList.filter((pos) => /^\d+\.\d+$/.test(pos));
+    return { book, seriesContext, optionEnabled, decimalPositions, positionsList };
+  });
 }
 
 /**
@@ -504,7 +493,7 @@ function gateIgnoreDecimalPositions(context) {
 /**
  * Gateignorefuturerelease.
  *
- * @param {any} context 
+ * @param {any} context
  * @returns {any}
  */
 function gateIgnoreFutureRelease(context) {
@@ -512,12 +501,13 @@ function gateIgnoreFutureRelease(context) {
   const optionEnabled = !!formData.ignoreFutureDateBooks;
   const isFuture = isReleaseInFuture(releaseDate);
 
-  return gateCheck(
+  return gateCheck(optionEnabled, isFuture, debugLogIgnoreFutureRelease, () => ({
+    book,
+    seriesContext,
     optionEnabled,
+    releaseDate,
     isFuture,
-    debugLogIgnoreFutureRelease,
-    () => ({ book, seriesContext, optionEnabled, releaseDate, isFuture })
-  );
+  }));
 }
 
 /**
@@ -536,7 +526,7 @@ function gateIgnoreFutureRelease(context) {
 /**
  * Gateignorepastrelease.
  *
- * @param {any} context 
+ * @param {any} context
  * @returns {any}
  */
 function gateIgnorePastRelease(context) {
@@ -544,12 +534,13 @@ function gateIgnorePastRelease(context) {
   const optionEnabled = !!formData.ignorePastDateBooks;
   const isPast = !isReleaseInFuture(releaseDate);
 
-  return gateCheck(
+  return gateCheck(optionEnabled, isPast, debugLogIgnorePastRelease, () => ({
+    book,
+    seriesContext,
     optionEnabled,
+    releaseDate,
     isPast,
-    debugLogIgnorePastRelease,
-    () => ({ book, seriesContext, optionEnabled, releaseDate, isPast })
-  );
+  }));
 }
 
 /**
@@ -571,11 +562,12 @@ function gateIgnorePastRelease(context) {
 /**
  * Gateignoretitlesubtitleexisting.
  *
- * @param {any} context 
+ * @param {any} context
  * @returns {any}
  */
 function gateIgnoreTitleSubtitleExisting(context) {
-  const { formData, title, subtitle, bookSeriesArray, existingContent, book, seriesContext } = context;
+  const { formData, title, subtitle, bookSeriesArray, existingContent, book, seriesContext } =
+    context;
   const optionEnabled = !!formData.ignoreTitleSubtitle;
   const helperMatched = doesTitleSubtitleMatch(title, subtitle, bookSeriesArray, existingContent);
 
@@ -612,7 +604,7 @@ function gateIgnoreTitleSubtitleExisting(context) {
 /**
  * Gateignoresameseriespositionexisting.
  *
- * @param {any} context 
+ * @param {any} context
  * @returns {any}
  */
 function gateIgnoreSameSeriesPositionExisting(context) {
@@ -653,13 +645,18 @@ function gateIgnoreSameSeriesPositionExisting(context) {
 /**
  * Gateignoretitlesubtitlemissing.
  *
- * @param {any} context 
+ * @param {any} context
  * @returns {any}
  */
 function gateIgnoreTitleSubtitleMissing(context) {
   const { formData, title, subtitle, bookSeriesArray, missingBooks, book, seriesContext } = context;
   const optionEnabled = !!formData.ignoreTitleSubtitleInMissingArray;
-  const helperMatched = doesTitleSubtileMatchMissingExists(title, subtitle, bookSeriesArray, missingBooks);
+  const helperMatched = doesTitleSubtileMatchMissingExists(
+    title,
+    subtitle,
+    bookSeriesArray,
+    missingBooks
+  );
 
   if (optionEnabled && helperMatched) {
     debugLogIgnoreTitleSubtitleMissing({
@@ -694,7 +691,7 @@ function gateIgnoreTitleSubtitleMissing(context) {
 /**
  * Gateignoresameseriespositionmissing.
  *
- * @param {any} context 
+ * @param {any} context
  * @returns {any}
  */
 function gateIgnoreSameSeriesPositionMissing(context) {
@@ -728,7 +725,7 @@ function gateIgnoreSameSeriesPositionMissing(context) {
 /**
  * Topositionslist.
  *
- * @param {any} bookSeriesArray 
+ * @param {any} bookSeriesArray
  * @returns {any}
  */
 function toPositionsList(bookSeriesArray) {
@@ -746,7 +743,7 @@ function toPositionsList(bookSeriesArray) {
 /**
  * normalisedate.
  *
- * @param {any} value 
+ * @param {any} value
  * @returns {any}
  */
 function normaliseDate(value) {
@@ -766,13 +763,11 @@ function normaliseDate(value) {
  */
 function ensureDebugSession() {
   const debugEnabled =
-    typeof window !== "undefined" &&
-    document.getElementById("enableDebugChecks")?.checked === true;
+    typeof window !== "undefined" && document.getElementById("enableDebugChecks")?.checked === true;
 
   if (debugEnabled && typeof startDebugSession === "function")
     startDebugSession({ label: "Find missing books" });
 }
-
 
 /**
  * Determines whether a book has any associated series entry without a defined position.
@@ -783,11 +778,11 @@ function ensureDebugSession() {
 /**
  * Hasnoseriesposition.
  *
- * @param {any} seriesArray 
+ * @param {any} seriesArray
  * @returns {any}
  */
 function hasNoSeriesPosition(seriesArray) {
-  return seriesArray.some(entry => (entry.position || "N/A") === "N/A");
+  return seriesArray.some((entry) => (entry.position || "N/A") === "N/A");
 }
 
 /**
@@ -800,11 +795,11 @@ function hasNoSeriesPosition(seriesArray) {
 /**
  * Hasmultiplepositions.
  *
- * @param {any} seriesArray 
+ * @param {any} seriesArray
  * @returns {any}
  */
 function hasMultiplePositions(seriesArray) {
-  return seriesArray.some(entry => (entry.position || "N/A").includes("-"));
+  return seriesArray.some((entry) => (entry.position || "N/A").includes("-"));
 }
 
 /**
@@ -816,11 +811,11 @@ function hasMultiplePositions(seriesArray) {
 /**
  * Hasdecimalseriesposition.
  *
- * @param {any} seriesArray 
+ * @param {any} seriesArray
  * @returns {any}
  */
 function hasDecimalSeriesPosition(seriesArray) {
-  return seriesArray.some(entry => (entry.position || "N/A").includes("."));
+  return seriesArray.some((entry) => (entry.position || "N/A").includes("."));
 }
 
 /**
@@ -833,7 +828,7 @@ function hasDecimalSeriesPosition(seriesArray) {
 /**
  * Isreleaseinfuture.
  *
- * @param {any} releaseDateString 
+ * @param {any} releaseDateString
  * @returns {any}
  */
 function isReleaseInFuture(releaseDateString) {
@@ -856,27 +851,27 @@ function isReleaseInFuture(releaseDateString) {
 /**
  * Doestitlesubtitlematch.
  *
- * @param {any} title 
- * @param {any} subtitle 
- * @param {any} bookSeriesArray 
- * @param {any} existingContent 
+ * @param {any} title
+ * @param {any} subtitle
+ * @param {any} bookSeriesArray
+ * @param {any} existingContent
  * @returns {any}
  */
 function doesTitleSubtitleMatch(title, subtitle, bookSeriesArray, existingContent) {
   const nTitle = normaliseText(title);
   const nSubtitle = normaliseText(subtitle);
   const candidateSeries = new Set(
-    (Array.isArray(bookSeriesArray) ? bookSeriesArray : [])
-      .map(seriesEntry => normaliseText(seriesEntry?.name ?? seriesEntry?.series ?? seriesEntry))
+    (Array.isArray(bookSeriesArray) ? bookSeriesArray : []).map((seriesEntry) =>
+      normaliseText(seriesEntry?.name ?? seriesEntry?.series ?? seriesEntry)
+    )
   );
 
-  for (const existing of (Array.isArray(existingContent) ? existingContent : [])) {
+  for (const existing of Array.isArray(existingContent) ? existingContent : []) {
     const eTitle = normaliseText(existing?.title);
     const eSubtitle = normaliseText(existing?.subtitle);
     const eSeries = normaliseText(existing?.series);
 
-    if (candidateSeries.has(eSeries) && eTitle === nTitle && eSubtitle === nSubtitle)
-      return true;
+    if (candidateSeries.has(eSeries) && eTitle === nTitle && eSubtitle === nSubtitle) return true;
   }
   return false;
 }
@@ -894,28 +889,28 @@ function doesTitleSubtitleMatch(title, subtitle, bookSeriesArray, existingConten
 /**
  * Doestitlesubtilematchmissingexists.
  *
- * @param {any} title 
- * @param {any} subtitle 
- * @param {any} bookSeriesArray 
- * @param {any} missingBooks 
+ * @param {any} title
+ * @param {any} subtitle
+ * @param {any} bookSeriesArray
+ * @param {any} missingBooks
  * @returns {any}
  */
 function doesTitleSubtileMatchMissingExists(title, subtitle, bookSeriesArray, missingBooks) {
   const nTitle = normaliseText(title);
   const nSubtitle = normaliseText(subtitle);
   const candidateSeries = new Set(
-    (Array.isArray(bookSeriesArray) ? bookSeriesArray : [])
-      .map(seriesEntry => normaliseText(seriesEntry?.name ?? seriesEntry?.series ?? seriesEntry))
+    (Array.isArray(bookSeriesArray) ? bookSeriesArray : []).map((seriesEntry) =>
+      normaliseText(seriesEntry?.name ?? seriesEntry?.series ?? seriesEntry)
+    )
   );
 
-  for (const missing of (Array.isArray(missingBooks) ? missingBooks : [])) {
+  for (const missing of Array.isArray(missingBooks) ? missingBooks : []) {
     for (const selectedSeries of missing.series) {
       const mTitle = normaliseText(missing?.title);
       const mSubtitle = normaliseText(missing?.subtitle);
       const mSeries = normaliseText(selectedSeries?.name);
 
-      if (candidateSeries.has(mSeries) && mTitle === nTitle && mSubtitle === nSubtitle)
-        return true;
+      if (candidateSeries.has(mSeries) && mTitle === nTitle && mSubtitle === nSubtitle) return true;
     }
   }
   return false;
@@ -931,14 +926,17 @@ function doesTitleSubtileMatchMissingExists(title, subtitle, bookSeriesArray, mi
 /**
  * Hassameseriesposition.
  *
- * @param {any} bookSeriesArray 
- * @param {any} existingContent 
+ * @param {any} bookSeriesArray
+ * @param {any} existingContent
  * @returns {any}
  */
 function hasSameSeriesPosition(bookSeriesArray, existingContent) {
   for (const existingBook of existingContent) {
     for (const seriesEntry of bookSeriesArray) {
-      if (existingBook.seriesPosition === seriesEntry.position && existingBook.series === seriesEntry.name)
+      if (
+        existingBook.seriesPosition === seriesEntry.position &&
+        existingBook.series === seriesEntry.name
+      )
         return true;
     }
   }
@@ -956,15 +954,18 @@ function hasSameSeriesPosition(bookSeriesArray, existingContent) {
 /**
  * Hassameseriespositionmissingexists.
  *
- * @param {any} bookSeriesArray 
- * @param {any} missingBooks 
+ * @param {any} bookSeriesArray
+ * @param {any} missingBooks
  * @returns {any}
  */
 function hasSameSeriesPositionMissingExists(bookSeriesArray, missingBooks) {
   for (const existingMissingBook of missingBooks) {
     for (const seriesEntry of bookSeriesArray) {
       for (const existingMissingBookSeries of existingMissingBook.series) {
-        if (existingMissingBookSeries.position === seriesEntry.position && existingMissingBookSeries.name === seriesEntry.name)
+        if (
+          existingMissingBookSeries.position === seriesEntry.position &&
+          existingMissingBookSeries.name === seriesEntry.name
+        )
           return true;
       }
     }
@@ -982,8 +983,8 @@ function hasSameSeriesPositionMissingExists(bookSeriesArray, missingBooks) {
 /**
  * Doesbookexistinarray.
  *
- * @param {any} missingBooks 
- * @param {any} bookAsin 
+ * @param {any} missingBooks
+ * @param {any} bookAsin
  * @returns {any}
  */
 function doesBookExistInArray(missingBooks, bookAsin) {
@@ -999,28 +1000,23 @@ function doesBookExistInArray(missingBooks, bookAsin) {
 /**
  * Isbookviable.
  *
- * @param {any} bookMetadata 
+ * @param {any} bookMetadata
  * @returns {any}
  */
 function isBookViable(bookMetadata) {
   const formData = getFormData();
 
-  return (
-    bookMetadata.isAvailable !== false &&
-    bookMetadata.region === formData.region
-  );
+  return bookMetadata.isAvailable !== false && bookMetadata.region === formData.region;
 }
 
 /**
  * Isbookunabridged.
  *
- * @param {any} bookMetadata 
+ * @param {any} bookMetadata
  * @returns {any}
  */
 function isBookUnabridged(bookMetadata) {
-  return (
-    bookMetadata.bookFormat === "unabridged"
-  );
+  return bookMetadata.bookFormat === "unabridged";
 }
 
 /**
@@ -1032,8 +1028,8 @@ function isBookUnabridged(bookMetadata) {
 /**
  * Groupbooksbyseries.
  *
- * @param {any} missingBooks 
- * @param {any} includeSubSeries 
+ * @param {any} missingBooks
+ * @param {any} includeSubSeries
  * @returns {any}
  */
 export function groupBooksBySeries(missingBooks, includeSubSeries) {
@@ -1043,9 +1039,7 @@ export function groupBooksBySeries(missingBooks, includeSubSeries) {
     for (const selectedSeries of bookMetadata.series) {
       const seriesName = selectedSeries.name || "No Series";
 
-      let existingGroup = groupedBySeries.find(
-        (groupEntry) => groupEntry.series === seriesName
-      );
+      let existingGroup = groupedBySeries.find((groupEntry) => groupEntry.series === seriesName);
 
       if (!existingGroup) {
         existingGroup = {
@@ -1057,8 +1051,7 @@ export function groupBooksBySeries(missingBooks, includeSubSeries) {
 
       existingGroup.books.push(bookMetadata);
 
-      if (!includeSubSeries)
-          break;
+      if (!includeSubSeries) break;
     }
   }
 
@@ -1079,7 +1072,7 @@ export function groupBooksBySeries(missingBooks, includeSubSeries) {
 /**
  * Sortseriesalphabetically.
  *
- * @param {any} groupedBySeries 
+ * @param {any} groupedBySeries
  * @returns {any}
  */
 function sortSeriesAlphabetically(groupedBySeries) {
@@ -1109,7 +1102,7 @@ function sortSeriesAlphabetically(groupedBySeries) {
 /**
  * Sortbyseriesthentitle.
  *
- * @param {any} metadataItems 
+ * @param {any} metadataItems
  * @returns {any}
  */
 export function sortBySeriesThenTitle(metadataItems) {
@@ -1119,8 +1112,7 @@ export function sortBySeriesThenTitle(metadataItems) {
     const firstTitle = (firstItem.title || "").toLowerCase();
     const secondTitle = (secondItem.title || "").toLowerCase();
 
-    if (firstSeries !== secondSeries)
-      return firstSeries.localeCompare(secondSeries);
+    if (firstSeries !== secondSeries) return firstSeries.localeCompare(secondSeries);
 
     return firstTitle.localeCompare(secondTitle);
   });
@@ -1142,7 +1134,7 @@ export function sortBySeriesThenTitle(metadataItems) {
 /**
  * Updatedselectedlibraries.
  *
- * @param {any} libraryCheckboxContainer 
+ * @param {any} libraryCheckboxContainer
  * @returns {any}
  */
 export function updatedSelectedLibraries(libraryCheckboxContainer) {
@@ -1158,10 +1150,10 @@ export function updatedSelectedLibraries(libraryCheckboxContainer) {
   const libraryCheckboxes = libraryCheckboxContainer.querySelectorAll('input[type="checkbox"]');
 
   // 2) TRANSFORM: build a lightweight array of checkbox states (pure data shape).
-  const checkboxStates = Array.from(libraryCheckboxes).map(checkbox => ({
+  const checkboxStates = Array.from(libraryCheckboxes).map((checkbox) => ({
     id: checkbox.id,
     checked: checkbox.checked,
-    value: checkbox.value || null
+    value: checkbox.value || null,
   }));
 
   // 3) UPDATE APP STATE: map selected checkboxes to library objects and store in global selection (side-effect).
@@ -1169,15 +1161,13 @@ export function updatedSelectedLibraries(libraryCheckboxContainer) {
   for (const checkbox of checkboxStates) {
     if (checkbox.checked) {
       const matchedLibrary = libraryArrayObject.librariesList.find(
-        library => library.id === checkbox.id
+        (library) => library.id === checkbox.id
       );
-      if (matchedLibrary) 
-        selectedLibraries.librariesList.push(matchedLibrary);
+      if (matchedLibrary) selectedLibraries.librariesList.push(matchedLibrary);
     }
   }
 
   // 4) UPDATE UI: enable/disable the submit button based on whether any libraries are selected (UI concern).
   // NOTE: If the submit button is not present, skip without throwing.
-  if (submitButton)
-    submitButton.disabled = selectedLibraries.librariesList.length === 0;
+  if (submitButton) submitButton.disabled = selectedLibraries.librariesList.length === 0;
 }
