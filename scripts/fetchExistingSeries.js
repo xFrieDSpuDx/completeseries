@@ -21,7 +21,7 @@ export async function fetchExistingSeriesLibraries({
   serverUrl,
   authToken,
   libraries,
-  limit = 100
+  limit = 100,
 }) {
   // ─────────────────────────────────────────────────────────────────────────────
   // Step 1: Validate and normalise inputs (presence only; format is handled upstream)
@@ -30,7 +30,9 @@ export async function fetchExistingSeriesLibraries({
     typeof serverUrl === "string" ? serverUrl.trim().replace(/\/+$/, "") : "";
 
   if (!normalisedServerUrl || !authToken || !Array.isArray(libraries) || libraries.length === 0) {
-    const error = new Error("Missing required fields: url, authentication token, or libraries list");
+    const error = new Error(
+      "Missing required fields: url, authentication token, or libraries list"
+    );
     error.httpStatus = 400;
     error.kind = "validation";
     throw error;
@@ -62,14 +64,13 @@ export async function fetchExistingSeriesLibraries({
   function parseSeriesPosition(seriesNameFromMeta) {
     const name = seriesNameFromMeta ?? "Unknown Series";
     const hashIndex = name.indexOf("#");
-    if (hashIndex === -1) 
-      return { label: "N/A", number: null };
-    
+    if (hashIndex === -1) return { label: "N/A", number: null };
+
     const raw = String(name.slice(hashIndex + 1)).trim();
     const num = Number.parseFloat(raw.replace(/[^0-9.-]/g, "")); // tolerate "Book 1", "1.5", etc.
     return {
       label: raw || "N/A",
-      number: Number.isFinite(num) ? num : null
+      number: Number.isFinite(num) ? num : null,
     };
   }
 
@@ -84,8 +85,8 @@ export async function fetchExistingSeriesLibraries({
     if (!libraryId) continue; // skip malformed entries
 
     let page = 0;
-    let totalSeriesCount = null;       // from API "total"
-    let fetchedCountThisLibrary = 0;   // number of series processed for this library
+    let totalSeriesCount = null; // from API "total"
+    let fetchedCountThisLibrary = 0; // number of series processed for this library
 
     // Paginate until we've processed all series for this library
     do {
@@ -96,12 +97,14 @@ export async function fetchExistingSeriesLibraries({
         httpResponse = await fetch(seriesUrl, {
           method: "GET",
           headers: {
-            "Accept": "application/json",
-            "Authorization": `Bearer ${authToken}`
-          }
+            Accept: "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
         });
       } catch (cause) {
-        const error = new Error(`Failed to fetch series (page ${page}) from library ${libraryId}`, { cause });
+        const error = new Error(`Failed to fetch series (page ${page}) from library ${libraryId}`, {
+          cause,
+        });
         error.url = seriesUrl;
         error.libraryId = libraryId;
         throw error;
@@ -109,7 +112,9 @@ export async function fetchExistingSeriesLibraries({
 
       if (!httpResponse.ok) {
         const details = await httpResponse.text().catch(() => "");
-        const httpError = new Error(`Failed to fetch series (page ${page}) from library ${libraryId}`);
+        const httpError = new Error(
+          `Failed to fetch series (page ${page}) from library ${libraryId}`
+        );
         httpError.httpStatus = httpResponse.status;
         httpError.details = details;
         httpError.kind = "http";
@@ -136,23 +141,24 @@ export async function fetchExistingSeriesLibraries({
           seriesFirstASIN.push({
             series: seriesName,
             title: firstMeta.title ?? "Unknown Title",
-            asin: firstMeta.asin ?? "Unknown ASIN"
+            asin: firstMeta.asin ?? "Unknown ASIN",
           });
         }
 
         // All ASIN entries for every book in the series
         for (const book of books) {
           const meta = book?.media?.metadata ?? {};
-          const { label: seriesPosition, number: seriesPositionNumber } =
-            parseSeriesPosition(meta.seriesName);
+          const { label: seriesPosition, number: seriesPositionNumber } = parseSeriesPosition(
+            meta.seriesName
+          );
 
           seriesAllASIN.push({
             series: seriesName,
             title: meta.title ?? "Unknown Title",
             asin: meta.asin ?? "Unknown ASIN",
             subtitle: meta.subtitle ?? "No Subtitle",
-            seriesPosition,           // original string form (e.g., "1", "1.5", "Book 1")
-            seriesPositionNumber      // numeric when parseable, else null
+            seriesPosition, // original string form (e.g., "1", "1.5", "Book 1")
+            seriesPositionNumber, // numeric when parseable, else null
           });
         }
       }
@@ -162,13 +168,12 @@ export async function fetchExistingSeriesLibraries({
 
       // If API didn't provide a total, stop when we hit an empty page
       if (totalSeriesCount == null && results.length === 0) break;
-
     } while (fetchedCountThisLibrary < totalSeriesCount);
   }
 
   return {
     status: "success",
     seriesFirstASIN,
-    seriesAllASIN
+    seriesAllASIN,
   };
 }

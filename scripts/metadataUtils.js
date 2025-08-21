@@ -122,9 +122,7 @@ function isSeriesExplicitlyHidden(seriesEntry, index) {
   // Back-compat: treat hidden series items that carry a *book* ASIN as a series hide.
   const hasRepresentativeHiddenBook =
     Array.isArray(books) &&
-    books.some(
-      (book) => book.asin && index.hiddenSeriesBookAsins.has(book.asin)
-    );
+    books.some((book) => book.asin && index.hiddenSeriesBookAsins.has(book.asin));
 
   return hasRepresentativeHiddenBook;
 }
@@ -142,8 +140,7 @@ function areAllSeriesBooksHidden(seriesEntry, index) {
   const bookList = Array.isArray(books) ? books : [];
   if (bookList.length === 0) return false;
 
-  const hiddenSetForSeries =
-    index.hiddenBooksBySeriesName.get(series) ?? new Set();
+  const hiddenSetForSeries = index.hiddenBooksBySeriesName.get(series) ?? new Set();
 
   let hiddenMatchCount = 0;
 
@@ -169,9 +166,7 @@ function areAllSeriesBooksHidden(seriesEntry, index) {
  * @returns {number}
  */
 export function countSeriesMissingBooks(groupedMissingBooks, hiddenItemsOverride) {
-  const hiddenItems = Array.isArray(hiddenItemsOverride)
-    ? hiddenItemsOverride
-    : getHiddenItems();
+  const hiddenItems = Array.isArray(hiddenItemsOverride) ? hiddenItemsOverride : getHiddenItems();
 
   const hiddenIndex = buildHiddenIndexFromItems(hiddenItems);
 

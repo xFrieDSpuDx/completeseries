@@ -12,13 +12,7 @@ import { toggleElementVisibilityFullEntity } from "./uiFeedback.js";
  * @param {boolean} isInVisibilityMenu - Whether this icon is in the side visibility menu.
  * @returns {HTMLImageElement} The final, interactive eye icon element.
  */
-export function addEyeIcon(
-  parentElement,
-  maskParent,
-  hiddenItem,
-  isHidden,
-  isInVisibilityMenu
-) {
+export function addEyeIcon(parentElement, maskParent, hiddenItem, isHidden, isInVisibilityMenu) {
   const eyeIcon = createEyeIconElement(isHidden);
   parentElement.appendChild(eyeIcon);
 
@@ -27,7 +21,7 @@ export function addEyeIcon(
   if (isHidden) {
     toggleTileMask(eyeIcon, maskParent);
     if (hiddenItem.type === "series" && !isInVisibilityMenu)
-        toggleElementVisibilityFullEntity(maskParent, !isHidden);
+      toggleElementVisibilityFullEntity(maskParent, !isHidden);
   }
 
   return eyeIcon;

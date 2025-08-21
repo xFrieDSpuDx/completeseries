@@ -1,21 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Book Series Tracker</title>
     <!-- Standard favicon -->
-    <link rel="icon" type="image/x-icon" href="/assets/favicon/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon/favicon.ico" />
 
     <!-- PNG versions for various sizes -->
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon/favicon-64x64.png">
-    <link rel="icon" type="image/png" sizes="180x180" href="/assets/favicon/favicon-180x180.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon/favicon-512x512.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon/favicon-64x64.png" />
+    <link rel="icon" type="image/png" sizes="180x180" href="/assets/favicon/favicon-180x180.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon/favicon-512x512.png" />
 
     <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/favicon-180x180.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/favicon-180x180.png" />
 
     <link rel="stylesheet" href="styles/style.css" />
   </head>
@@ -23,7 +23,7 @@
     <div id="form-container" class="form-container">
       <form id="loginForm" novalidate>
         <div class="logoContainer">
-          <img alt="Site Logo" src="/assets/logo-background-transparent.webp"/>
+          <img alt="Site Logo" src="/assets/logo-background-transparent.webp" />
         </div>
         <div class="headingContainer">
           <h2>Complete your collection</h2>
@@ -41,34 +41,16 @@
 
         <div id="userPasswordInputContainer" class="menuHideable active">
           <label for="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="Username"
-            required
-          />
+          <input type="text" id="username" name="username" placeholder="Username" required />
           <div class="error-message" id="usernameError"></div>
 
           <label for="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Password"
-            required
-          />
+          <input type="password" id="password" name="password" placeholder="Password" required />
           <div class="error-message" id="passwordError"></div>
         </div>
         <div id="apiKeyInputContainer" class="menuHideable">
           <label for="apikeyinput">API Key</label>
-          <input
-            type="text"
-            id="apikeyinput"
-            name="apikeyinput"
-            placeholder="API Key"
-            required
-          />
+          <input type="text" id="apikeyinput" name="apikeyinput" placeholder="API Key" required />
           <div class="error-message" id="apikeyinputError"></div>
         </div>
         <label for="audibleRegion">Audible Region:</label>
@@ -87,12 +69,25 @@
         </select>
 
         <button type="submit">Login</button>
-       
+
         <details id="advancedSection" class="advanced">
           <summary class="advanced__summary">
             <span class="advanced__title">Advanced</span>
-            <svg class="advanced__chevron" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg
+              class="advanced__chevron"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M6 9l6 6 6-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
           </summary>
 
@@ -112,21 +107,30 @@
               <span class="tooltip" tabindex="0" aria-describedby="proxyWarningTip">
                 <!-- Warning icon -->
                 <svg class="tooltip__icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 2L1 21h22L12 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-                  <path d="M12 8v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                  <circle cx="12" cy="17" r="1.25" fill="currentColor"/>
+                  <path
+                    d="M12 2L1 21h22L12 2z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  />
+                  <path d="M12 8v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  <circle cx="12" cy="17" r="1.25" fill="currentColor" />
                 </svg>
 
                 <!-- Tooltip bubble -->
                 <span id="proxyWarningTip" role="tooltip" class="tooltip__bubble">
-                  Only use a proxy you control or trust. A proxy can read usernames, passwords, and tokens passed to it.
+                  Only use a proxy you control or trust. A proxy can read usernames, passwords, and
+                  tokens passed to it.
                 </span>
               </span>
             </div>
             <label for="uploadLocalStorage" class="label-upload">Import LocalStorage</label>
             <div class="upload-box" id="uploadBox">
-              <p id="uploadPlaceholder">Click here or drag & drop a JSON file to update the local storage</p>
-              <input type="file" id="uploadLocalStorage" class="input-upload" accept=".json"/>
+              <p id="uploadPlaceholder">
+                Click here or drag & drop a JSON file to update the local storage
+              </p>
+              <input type="file" id="uploadLocalStorage" class="input-upload" accept=".json" />
             </div>
           </div>
         </details>
@@ -137,11 +141,11 @@
       <form id="libraryForm" novalidate>
         <h2>Select the libraries to scan</h2>
         <!-- Options will be populated dynamically -->
-        <div id="availableLibraries" class="library-list"></div>  
+        <div id="availableLibraries" class="library-list"></div>
         <button id="selectLibrarySubmit" type="submit">Continue with selected</button>
         <div class="error-message" id="libraryError"></div>
-      </form> 
-    </div>  
+      </form>
+    </div>
 
     <div id="message" class="message">
       <span id="spinner" class="spinner"></span>
@@ -170,24 +174,14 @@
     </div>
     <div id="bookDetailModalOverlay" class="books-detail-modal-overlay"></div>
     <div id="bookDetailModal" class="book-detail-modal">
-      <button
-        class="close-button-right"
-        id="closeBookDetail"
-        aria-label="Close"
-        title="Close"
-      >
+      <button class="close-button-right" id="closeBookDetail" aria-label="Close" title="Close">
         <img src="assets/close.svg" alt="" />
       </button>
       <div id="bookDetailModalContent" class="modal-content"></div>
     </div>
 
     <div id="visibilityManager">
-      <button
-        class="close-button"
-        id="closeVisibilityManager"
-        aria-label="Close"
-        title="Close"
-      >
+      <button class="close-button" id="closeVisibilityManager" aria-label="Close" title="Close">
         <img src="assets/close.svg" alt="" />
       </button>
       <div id="requestReloadDiv" class="request-reload">
@@ -201,39 +195,33 @@
     </div>
 
     <div id="burgerContainer">
-      <button
-        id="burgerToggle"
-        aria-label="Show hidden items"
-        title="Show hidden items"
-      >
+      <button id="burgerToggle" aria-label="Show hidden items" title="Show hidden items">
         <img src="assets/burger.svg" alt="" />
       </button>
     </div>
 
     <div id="settingsManager">
-      <button
-        class="close-button"
-        id="closeSettingsManager"
-        aria-label="Close"
-        title="Close"
-      >
+      <button class="close-button" id="closeSettingsManager" aria-label="Close" title="Close">
         <img src="assets/close.svg" alt="" />
       </button>
-      <button id="applyFilter" class="accent-button-inline-right" aria-label="Apply filter" title="Apple filter">Apply Filter</button>
+      <button
+        id="applyFilter"
+        class="accent-button-inline-right"
+        aria-label="Apply filter"
+        title="Apple filter"
+      >
+        Apply Filter
+      </button>
       <div id="filterOptions">
         <h3>Filters</h3>
         <h4>Book Types</h4>
         <div class="checkbox-row">
           <input type="checkbox" id="filterUnabridged" checked />
-          <label for="filterUnabridged" class="label-checkbox"
-            >Only include unabridged books</label
-          >
+          <label for="filterUnabridged" class="label-checkbox">Only include unabridged books</label>
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="ignoreMultiBooks" />
-          <label for="ignoreMultiBooks" class="label-checkbox"
-            >Ignore multi-book audiobooks</label
-          >
+          <label for="ignoreMultiBooks" class="label-checkbox">Ignore multi-book audiobooks</label>
         </div>
         <h4>Series</h4>
         <div class="checkbox-row">
@@ -263,9 +251,7 @@
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="ignoreSameSeriesPositionInMissingArray" />
-          <label
-            for="ignoreSameSeriesPositionInMissingArray"
-            class="label-checkbox"
+          <label for="ignoreSameSeriesPositionInMissingArray" class="label-checkbox"
             >Only show first found series position</label
           >
         </div>
@@ -295,10 +281,10 @@
             >Ignore books that have already been released</label
           >
         </div>
-      </div> 
+      </div>
       <div id="libraryFilter" class="menuHideable">
         <h3>Select the libraries to scan</h3>
-        <div id="availableLibrariesSettings" class="library-list"></div> 
+        <div id="availableLibrariesSettings" class="library-list"></div>
       </div>
       <div id="exportResults" class="menuHideable">
         <h3>Export Results</h3>
@@ -310,28 +296,20 @@
       <div id="exportStorageContainer" class="menuHideable">
         <div id="exportStorage">
           <h3>Download Local Storage Cache</h3>
-            <button id="exportLocalStorage" class="accent-button">Download Local Storage</button>
+          <button id="exportLocalStorage" class="accent-button">Download Local Storage</button>
         </div>
         <h3>Clear Local Storage Cache</h3>
         <div id="clearSeriesListContainer" class="menuHideable">
-          <button id="clearSeriesList" class="accent-button">
-            Clear Series List
-          </button>
+          <button id="clearSeriesList" class="accent-button">Clear Series List</button>
         </div>
         <div id="clearBooksListContainer" class="menuHideable">
-          <button id="clearBooksList" class="accent-button">
-            Clear Book Metadata List
-          </button>
+          <button id="clearBooksList" class="accent-button">Clear Book Metadata List</button>
         </div>
         <div id="clearHiddenListContainer" class="menuHideable">
-          <button id="clearHiddenList" class="accent-button">
-            Clear Hidden Items
-          </button>
+          <button id="clearHiddenList" class="accent-button">Clear Hidden Items</button>
         </div>
         <div id="clearAllListContainer">
-          <button id="clearAllList" class="accent-button">
-            Clear All Saved Data
-          </button>
+          <button id="clearAllList" class="accent-button">Clear All Saved Data</button>
         </div>
       </div>
 
@@ -343,56 +321,57 @@
         </label>
       </div>
       <div id="debugButtons" class="menuHideable">
-        <button id="openDebugModalBtn" class="accent-button default-hidden">Open Debug Viewer</button>
+        <button id="openDebugModalBtn" class="accent-button default-hidden">
+          Open Debug Viewer
+        </button>
         <button id="clearDebugBtn" class="accent-button default-hidden">Clear Debug Values</button>
       </div>
     </div>
 
     <div id="settingsContainer">
-      <button
-        id="settingsToggle"
-        aria-label="Settings"
-        title="Settings"
-      >
+      <button id="settingsToggle" aria-label="Settings" title="Settings">
         <img src="assets/cog.svg" alt="" />
       </button>
     </div>
 
     <!-- Fullscreen Debug Modal -->
     <div id="debugModal" class="dbg-modal dbg-theme">
-      <div id="debugModalOverlay"class="dbg-modal__overlay"></div>
+      <div id="debugModalOverlay" class="dbg-modal__overlay"></div>
       <div class="dbg-modal__panel" role="dialog" aria-modal="true" aria-labelledby="dbgModalTitle">
         <header class="dbg-modal__header">
           <h2 id="dbgModalTitle">Debug Session Viewer</h2>
           <button
-        class="close-button-right close-button-debug"
-        aria-label="Close debug viewer"
-        title="Close debug viewer"
-        data-close="true"
-        type="button"
-        id="closeDebugModal"
-      >
-        <img src="assets/close.svg" alt="" />
-      </button>
+            class="close-button-right close-button-debug"
+            aria-label="Close debug viewer"
+            title="Close debug viewer"
+            data-close="true"
+            type="button"
+            id="closeDebugModal"
+          >
+            <img src="assets/close.svg" alt="" />
+          </button>
         </header>
 
         <section class="dbg-modal__controls">
           <div class="dbg-row">
-            <label>Session:
+            <label
+              >Session:
               <select id="dbgSession">
                 <option value="">(All)</option>
                 <!-- sessions injected -->
               </select>
             </label>
 
-            <label>Outcome:
+            <label
+              >Outcome:
               <select id="dbgOutcome">
                 <option value="any">(Any)</option>
                 <!-- outcomes injected -->
               </select>
             </label>
 
-            <label>Group by:
+            <label
+              >Group by:
               <select id="dbgGroupBy">
                 <option value="none">None</option>
                 <option value="check">Check</option>
@@ -404,18 +383,33 @@
               </select>
             </label>
 
-            <label class="grow">Search:
-              <input id="dbgSearch" type="text" placeholder="ASIN, Title or Series">
+            <label class="grow"
+              >Search:
+              <input id="dbgSearch" type="text" placeholder="ASIN, Title or Series" />
             </label>
 
             <div class="grow"></div>
-            <button id="dbgDownloadJson" class="accent-button-inline-right active debug-accent-button" type="button">JSON</button>
-            <button id="dbgDownloadCsv"  class="accent-button-inline-right active debug-accent-button" type="button">CSV</button>
+            <button
+              id="dbgDownloadJson"
+              class="accent-button-inline-right active debug-accent-button"
+              type="button"
+            >
+              JSON
+            </button>
+            <button
+              id="dbgDownloadCsv"
+              class="accent-button-inline-right active debug-accent-button"
+              type="button"
+            >
+              CSV
+            </button>
           </div>
 
           <div class="dbg-row collapsible">
             <span class="collapsible-header">Checks:<span class="collapsible-arrow">▼</span></span>
-            <div id="dbgCheckList" class="dbg-chiplist collapsible-content"><!-- chips injected --></div>
+            <div id="dbgCheckList" class="dbg-chiplist collapsible-content">
+              <!-- chips injected -->
+            </div>
           </div>
         </section>
 

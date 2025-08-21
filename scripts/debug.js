@@ -14,7 +14,10 @@ export const debugStore = { logs: [] };
  * @returns {string} The generated session id.
  */
 function generateSessionId() {
-  const datePart = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 8); // YYYYMMDD
+  const datePart = new Date()
+    .toISOString()
+    .replace(/[-:.TZ]/g, "")
+    .slice(0, 8); // YYYYMMDD
   const randomPart = Math.random().toString(36).slice(2, 6);
   return `dbg_${datePart}_${randomPart}`;
 }
@@ -25,9 +28,8 @@ function generateSessionId() {
  * @returns {string} The current session id.
  */
 export function getCurrentDebugSessionId() {
-  if (!debugStore.currentSessionId)
-    startDebugSession(); // auto-start with no label
-  
+  if (!debugStore.currentSessionId) startDebugSession(); // auto-start with no label
+
   return debugStore.currentSessionId;
 }
 
@@ -45,8 +47,7 @@ export function startDebugSession(options = {}) {
   debugStore.currentSessionId = newSessionId;
   debugStore.sessionSequence = 0;
 
-  if (!Array.isArray(debugStore.sessions))
-    debugStore.sessions = [];
+  if (!Array.isArray(debugStore.sessions)) debugStore.sessions = [];
 
   debugStore.sessions.push({
     sessionId: newSessionId,
@@ -67,8 +68,7 @@ export function startDebugSession(options = {}) {
 function pushDebugRecord(record) {
   const sessionId = getCurrentDebugSessionId();
 
-  if (typeof debugStore.sessionSequence !== "number")
-    debugStore.sessionSequence = 0;
+  if (typeof debugStore.sessionSequence !== "number") debugStore.sessionSequence = 0;
 
   const recordWithSession = {
     sessionId,
@@ -134,11 +134,11 @@ export function summariseBookSeries(book) {
  */
 function baseQuickFacts(book, seriesContext) {
   const seriesArray = Array.isArray(book?.series) ? book.series : [];
-  const seriesNames = seriesArray.map(series => series?.name).filter(Boolean);
+  const seriesNames = seriesArray.map((series) => series?.name).filter(Boolean);
   const positions = seriesArray
-    .map(series => (series?.position != null ? String(series.position) : null))
+    .map((series) => (series?.position != null ? String(series.position) : null))
     .filter(Boolean);
-  const hasDecimalPositions = positions.some(seriesPosition => seriesPosition.includes("."));
+  const hasDecimalPositions = positions.some((seriesPosition) => seriesPosition.includes("."));
 
   return {
     schemaVersion: 1,
@@ -153,7 +153,9 @@ function baseQuickFacts(book, seriesContext) {
         releaseDateISO:
           book?.releaseDate instanceof Date
             ? book.releaseDate.toISOString().slice(0, 10)
-            : (typeof book?.releaseDate === "string" ? book.releaseDate.slice(0, 10) : null),
+            : typeof book?.releaseDate === "string"
+              ? book.releaseDate.slice(0, 10)
+              : null,
         isAbridged: book?.isAbridged ?? null,
       },
       series: {
@@ -229,7 +231,7 @@ export function debugLogBookViability({ book, seriesContext }) {
     region: book?.region ?? undefined,
     isAvailable: book?.isAvailable ?? null,
     series: summariseBookSeries(book),
-    quickFacts
+    quickFacts,
   };
 
   pushDebugRecord(record);
@@ -278,7 +280,7 @@ export function debugLogBookAlreadyInLibrary({ book, seriesContext, libraryASINs
     region: book?.region ?? undefined,
     isAvailable: book?.isAvailable ?? null,
     series: summariseBookSeries(book),
-    quickFacts
+    quickFacts,
   };
 
   pushDebugRecord(record);
@@ -332,7 +334,7 @@ export function debugLogOnlyUnabridgedGate({
     region: book?.region ?? undefined,
     isAvailable: book?.isAvailable ?? null,
     series: summariseBookSeries(book),
-    quickFacts
+    quickFacts,
   };
 
   pushDebugRecord(record);
@@ -385,7 +387,7 @@ export function debugLogIgnoreNoPosition({
     region: book?.region ?? undefined,
     isAvailable: book?.isAvailable ?? null,
     series: summariseBookSeries(book),
-    quickFacts
+    quickFacts,
   };
 
   pushDebugRecord(record);
@@ -441,7 +443,7 @@ export function debugLogIgnoreMultiplePositions({
     region: book?.region ?? undefined,
     isAvailable: book?.isAvailable ?? null,
     series: summariseBookSeries(book),
-    quickFacts
+    quickFacts,
   };
 
   pushDebugRecord(record);
@@ -496,7 +498,7 @@ export function debugLogIgnoreDecimalPositions({
     region: book?.region ?? undefined,
     isAvailable: book?.isAvailable ?? null,
     series: summariseBookSeries(book),
-    quickFacts
+    quickFacts,
   };
 
   pushDebugRecord(record);
@@ -527,7 +529,7 @@ export function debugLogIgnoreFutureRelease({
     base,
     inputs: {
       optionEnabled: !!optionEnabled,
-      releaseDateISO: releaseDate instanceof Date ? releaseDate.toISOString().slice(0,10) : null,
+      releaseDateISO: releaseDate instanceof Date ? releaseDate.toISOString().slice(0, 10) : null,
       todayISO: new Date().toISOString().slice(0, 10),
     },
     computed: { treatedAsFuture: !!isFuture },
@@ -550,7 +552,7 @@ export function debugLogIgnoreFutureRelease({
     region: book?.region ?? undefined,
     isAvailable: book?.isAvailable ?? null,
     series: summariseBookSeries(book),
-    quickFacts
+    quickFacts,
   };
 
   pushDebugRecord(record);
@@ -581,7 +583,7 @@ export function debugLogIgnorePastRelease({
     base,
     inputs: {
       optionEnabled: !!optionEnabled,
-      releaseDateISO: releaseDate instanceof Date ? releaseDate.toISOString().slice(0,10) : null,
+      releaseDateISO: releaseDate instanceof Date ? releaseDate.toISOString().slice(0, 10) : null,
       todayISO: new Date().toISOString().slice(0, 10),
     },
     computed: { treatedAsPast: !!isPast },
@@ -604,7 +606,7 @@ export function debugLogIgnorePastRelease({
     region: book?.region ?? undefined,
     isAvailable: book?.isAvailable ?? null,
     series: summariseBookSeries(book),
-    quickFacts
+    quickFacts,
   };
 
   pushDebugRecord(record);
@@ -637,7 +639,10 @@ export function debugLogIgnoreTitleSubtitleExisting({
 }) {
   if (!isDebugEnabled()) return;
 
-  const normalise = (str) => String(str ?? "").trim().toLowerCase();
+  const normalise = (str) =>
+    String(str ?? "")
+      .trim()
+      .toLowerCase();
 
   // Series names linked to the current book
   const bookSeriesNames = new Set(
@@ -711,7 +716,7 @@ export function debugLogIgnoreTitleSubtitleExisting({
     region: book?.region ?? undefined,
     isAvailable: book?.isAvailable ?? null,
     series: summariseBookSeries(book),
-    quickFacts
+    quickFacts,
   };
 
   pushDebugRecord(record);
@@ -755,9 +760,8 @@ export function debugLogIgnoreSameSeriesPositionExisting({
   // Build lookup for the current book: seriesNameLower -> Set(positionStr)
   const bookIndex = new Map();
   for (const seriesInfo of bookSeriesnormalised) {
-    if (!bookIndex.has(seriesInfo.nameLower))
-      bookIndex.set(seriesInfo.nameLower, new Set());
-    
+    if (!bookIndex.has(seriesInfo.nameLower)) bookIndex.set(seriesInfo.nameLower, new Set());
+
     bookIndex.get(seriesInfo.nameLower).add(seriesInfo.positionStr);
   }
 
@@ -837,7 +841,7 @@ export function debugLogIgnoreSameSeriesPositionExisting({
     region: book?.region ?? undefined,
     isAvailable: book?.isAvailable ?? null,
     series: summariseBookSeries(book),
-    quickFacts
+    quickFacts,
   };
 
   pushDebugRecord(record);
@@ -870,7 +874,10 @@ export function debugLogIgnoreTitleSubtitleMissing({
 }) {
   if (!isDebugEnabled()) return;
 
-  const normalise = (str) => String(str ?? "").trim().toLowerCase();
+  const normalise = (str) =>
+    String(str ?? "")
+      .trim()
+      .toLowerCase();
 
   const currentSeriesNames = new Set(
     (Array.isArray(bookSeriesArray) ? bookSeriesArray : [])
@@ -942,7 +949,7 @@ export function debugLogIgnoreTitleSubtitleMissing({
     region: book?.region ?? undefined,
     isAvailable: book?.isAvailable ?? null,
     series: summariseBookSeries(book),
-    quickFacts
+    quickFacts,
   };
 
   pushDebugRecord(record);
@@ -986,9 +993,8 @@ export function debugLogIgnoreSameSeriesPositionMissing({
   // Build lookup for the current book: seriesNameLower -> Set(positionStr)
   const bookIndex = new Map();
   for (const seriesInfo of bookSeriesnormalised) {
-    if (!bookIndex.has(seriesInfo.nameLower))
-      bookIndex.set(seriesInfo.nameLower, new Set());
-    
+    if (!bookIndex.has(seriesInfo.nameLower)) bookIndex.set(seriesInfo.nameLower, new Set());
+
     bookIndex.get(seriesInfo.nameLower).add(seriesInfo.positionStr);
   }
 
@@ -1068,7 +1074,7 @@ export function debugLogIgnoreSameSeriesPositionMissing({
     region: book?.region ?? undefined,
     isAvailable: book?.isAvailable ?? null,
     series: summariseBookSeries(book),
-    quickFacts
+    quickFacts,
   };
 
   pushDebugRecord(record);

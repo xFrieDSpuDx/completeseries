@@ -22,8 +22,11 @@ export function getFormData() {
     ignorePastDateBooks: document.getElementById("ignorePastDateBooks").checked,
     ignoreTitleSubtitle: document.getElementById("ignoreTitleSubtitle").checked,
     ignoreSameSeriesPosition: document.getElementById("ignoreSameSeriesPosition").checked,
-    ignoreTitleSubtitleInMissingArray: document.getElementById("ignoreTitleSubtitleInMissingArray").checked,
-    ignoreSameSeriesPositionInMissingArray: document.getElementById("ignoreSameSeriesPositionInMissingArray").checked,
+    ignoreTitleSubtitleInMissingArray: document.getElementById("ignoreTitleSubtitleInMissingArray")
+      .checked,
+    ignoreSameSeriesPositionInMissingArray: document.getElementById(
+      "ignoreSameSeriesPositionInMissingArray"
+    ).checked,
   };
 }
 
@@ -68,7 +71,6 @@ export function validateForm(data) {
 export function validateLibraryForm(libraryList) {
   return libraryList.length > 0;
 }
-
 
 /**
  * Clears all error messages in the login form.

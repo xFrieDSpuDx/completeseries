@@ -34,9 +34,8 @@ export async function fetchAudiobookShelfLibrariesCall({
   password,
   apiKey,
   useApiKey,
-  timeoutMs = 5000
+  timeoutMs = 5000,
 }) {
-
   let bearerToken = apiKey;
   // ─────────────────────────────────────────────────────────────────────────────
   // Step 1: Validate and normalise inputs (presence only; format is handled upstream)
@@ -52,7 +51,7 @@ export async function fetchAudiobookShelfLibrariesCall({
     const timeoutId = setTimeout(() => abortController.abort(), ms);
     return {
       signal: abortController.signal,
-      cancelTimeout: () => clearTimeout(timeoutId)
+      cancelTimeout: () => clearTimeout(timeoutId),
     };
   }
 
@@ -81,32 +80,29 @@ export async function fetchAudiobookShelfLibrariesCall({
       const loginUrl = `${normalisedServerUrl}/login`;
       const loginRequestBody = {
         username: normalisedUsername,
-        password: normalisedPassword
+        password: normalisedPassword,
       };
 
       loginHttpResponse = await fetch(loginUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginRequestBody),
-        signal: loginAbort.signal
+        signal: loginAbort.signal,
       });
     } finally {
       loginAbort.cancelTimeout(); // ensure cleanup even if fetch rejects
     }
 
     // Unauthorized
-    if (loginHttpResponse.status === 401) 
-      throw await catch401Response(loginHttpResponse);
+    if (loginHttpResponse.status === 401) throw await catch401Response(loginHttpResponse);
 
-    if (!loginHttpResponse.ok) 
-      throw await unexpectedResponse(loginHttpResponse);
+    if (!loginHttpResponse.ok) throw await unexpectedResponse(loginHttpResponse);
 
     const loginResponseJson = await parseJsonFromResponseOrThrow(loginHttpResponse);
     const defaultLibraryId = loginResponseJson?.userDefaultLibraryId ?? null;
     bearerToken = loginResponseJson?.user?.token ?? null;
 
-    if (!defaultLibraryId || !bearerToken)
-      throw await failedReturnResponse();
+    if (!defaultLibraryId || !bearerToken) throw await failedReturnResponse();
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -121,28 +117,24 @@ export async function fetchAudiobookShelfLibrariesCall({
     librariesHttpResponse = await fetch(librariesUrl, {
       method: "GET",
       headers: { Authorization: `Bearer ${bearerToken}` },
-      signal: librariesAbort.signal
+      signal: librariesAbort.signal,
     });
   } finally {
     librariesAbort.cancelTimeout();
   }
 
-  if (librariesHttpResponse.status === 401) 
-    throw await catch401Response(librariesHttpResponse);
+  if (librariesHttpResponse.status === 401) throw await catch401Response(librariesHttpResponse);
 
-  if (!librariesHttpResponse.ok) 
-    throw await unexpectedResponse(librariesHttpResponse);
+  if (!librariesHttpResponse.ok) throw await unexpectedResponse(librariesHttpResponse);
 
-  const librariesResponseJson =
-    await parseJsonFromResponseOrThrow(librariesHttpResponse);
+  const librariesResponseJson = await parseJsonFromResponseOrThrow(librariesHttpResponse);
 
   // We expect a top-level object with a "libraries" array
   const allLibrariesList = Array.isArray(librariesResponseJson?.libraries)
     ? librariesResponseJson.libraries
     : null;
 
-  if (!allLibrariesList)
-    throw await failedReturnResponse();
+  if (!allLibrariesList) throw await failedReturnResponse();
 
   // ─────────────────────────────────────────────────────────────────────────────
   // Step 4: Keep only audiobook libraries (mediaType === "book")
@@ -157,7 +149,7 @@ export async function fetchAudiobookShelfLibrariesCall({
   return {
     status: "success",
     authToken: bearerToken,
-    librariesList: bookLibrariesOnly
+    librariesList: bookLibrariesOnly,
   };
 }
 

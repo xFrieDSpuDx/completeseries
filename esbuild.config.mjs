@@ -130,7 +130,7 @@ async function bundleJavaScript(entryVirtualFile) {
     assetNames: "assets/[name]-[hash]",
     chunkNames: "assets/chunk-[name]-[hash]",
     define: {
-      "process.env.NODE_ENV": "\"production\"",
+      "process.env.NODE_ENV": '"production"',
       __BUILD_ID__: JSON.stringify(BUILD_ID),
     },
     banner: { js: `/* build:${BUILD_ID} */` },
@@ -140,7 +140,7 @@ async function bundleJavaScript(entryVirtualFile) {
   });
 
   const outputPath = Object.keys(buildResult.metafile.outputs).find(
-    (output) => output.endsWith(".js") && output.includes("assets/bundle-"),
+    (output) => output.endsWith(".js") && output.includes("assets/bundle-")
   );
   return outputPath ? outputPath.replace(/^dist\//, "") : "assets/bundle.js";
 }
@@ -161,7 +161,14 @@ async function minifyCss(cssContent) {
     const outputCssPath = path.join(tempDirectory, "out.css");
     await ensureDirectory(tempDirectory);
     await writeTextFile(inputCssPath, cssContent);
-    await execa("npx", ["postcss", inputCssPath, "--config", "postcss.config.cjs", "--output", outputCssPath]);
+    await execa("npx", [
+      "postcss",
+      inputCssPath,
+      "--config",
+      "postcss.config.cjs",
+      "--output",
+      outputCssPath,
+    ]);
     return readTextFile(outputCssPath);
   } catch {
     return cssContent
@@ -244,14 +251,18 @@ async function processStylesFromIndex(indexHtmlPath = "index.html") {
  */
 function stripLegacyAssets(domRoot, originalHrefList) {
   const originalHrefSet = new Set(
-    originalHrefList.map((href) => stripQueryOrHash(href).replace(/^\.\//, "")),
+    originalHrefList.map((href) => stripQueryOrHash(href).replace(/^\.\//, ""))
   );
 
   // Remove stylesheet links (by rel or styles/*) and any exact original
   domRoot.querySelectorAll("link").forEach((element) => {
     const relValue = (element.getAttribute("rel") || "").toLowerCase();
     const cleanedHref = stripQueryOrHash(element.getAttribute("href") || "").replace(/^\.\//, "");
-    if (relValue.includes("stylesheet") || cleanedHref.startsWith("styles/") || originalHrefSet.has(cleanedHref)) {
+    if (
+      relValue.includes("stylesheet") ||
+      cleanedHref.startsWith("styles/") ||
+      originalHrefSet.has(cleanedHref)
+    ) {
       element.remove();
     }
   });
@@ -266,9 +277,15 @@ function stripLegacyAssets(domRoot, originalHrefList) {
  * Inject hashed CSS and JS into the DOM, using per-page relative URLs inside OUTPUT_DIRECTORY.
  * Ensures <head> exists, and appends CSS first, then a deferred JS <script>.
  */
-function injectHashedAssets(domRoot, pageOutputDirectoryAbsolute, jsDistAbsolute, cssDistAbsoluteList) {
+function injectHashedAssets(
+  domRoot,
+  pageOutputDirectoryAbsolute,
+  jsDistAbsolute,
+  cssDistAbsoluteList
+) {
   /** Convert absolute path to a per-page relative POSIX URL. */
-  const toRelativeUrl = (absolutePath) => toPosixPath(path.relative(pageOutputDirectoryAbsolute, absolutePath) || "");
+  const toRelativeUrl = (absolutePath) =>
+    toPosixPath(path.relative(pageOutputDirectoryAbsolute, absolutePath) || "");
 
   // Ensure <head> exists
   let headElement = domRoot.querySelector("head");
@@ -296,7 +313,12 @@ function injectHashedAssets(domRoot, pageOutputDirectoryAbsolute, jsDistAbsolute
  *  - inject hashed CSS/JS with per-page relative URLs
  *  - write to OUTPUT_DIRECTORY, preserving the same directory structure
  */
-async function rewriteHtmlPage(sourceHtmlPath, jsRelFromDistRoot, cssRelListFromDistRoot, originalHrefList) {
+async function rewriteHtmlPage(
+  sourceHtmlPath,
+  jsRelFromDistRoot,
+  cssRelListFromDistRoot,
+  originalHrefList
+) {
   const htmlText = await readTextFile(sourceHtmlPath);
   const domRoot = parse(htmlText);
 
@@ -308,7 +330,7 @@ async function rewriteHtmlPage(sourceHtmlPath, jsRelFromDistRoot, cssRelListFrom
   const pageOutputDirectoryAbsolute = path.dirname(pageOutputAbsolute);
   const jsDistAbsolute = path.resolve(OUTPUT_DIRECTORY, jsRelFromDistRoot);
   const cssDistAbsoluteList = cssRelListFromDistRoot.map((distRelative) =>
-    path.resolve(OUTPUT_DIRECTORY, distRelative),
+    path.resolve(OUTPUT_DIRECTORY, distRelative)
   );
 
   // 3) Inject new assets
@@ -368,7 +390,8 @@ async function findHtmlFiles(rootDirectory = ".") {
   // Put index.html first (often the main entry)
   foundFiles.sort(
     (left, right) =>
-      (path.basename(left) === "index.html" ? -1 : 0) - (path.basename(right) === "index.html" ? -1 : 0),
+      (path.basename(left) === "index.html" ? -1 : 0) -
+      (path.basename(right) === "index.html" ? -1 : 0)
   );
   return foundFiles;
 }
@@ -410,11 +433,17 @@ async function buildAll() {
   const jsRelFromDistRoot = await bundleJavaScript(virtualEntryPath); // e.g., "assets/bundle-<hash>.js"
 
   // 4) Styles: ONLY from index.html → one hashed file per <link> in original order
-  const { hashedCssPathsFromDistRoot, originalHrefList } = await processStylesFromIndex("index.html");
+  const { hashedCssPathsFromDistRoot, originalHrefList } =
+    await processStylesFromIndex("index.html");
 
   // 5) Rewrite every HTML page with per-page relative asset URLs
   for (const htmlFile of htmlFiles) {
-    await rewriteHtmlPage(htmlFile, jsRelFromDistRoot, hashedCssPathsFromDistRoot, originalHrefList);
+    await rewriteHtmlPage(
+      htmlFile,
+      jsRelFromDistRoot,
+      hashedCssPathsFromDistRoot,
+      originalHrefList
+    );
   }
 
   // 6) Copy passthrough directories

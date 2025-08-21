@@ -11,7 +11,7 @@ import {
   toggleElementVisibility,
   showLibraryFilterInSettings,
   showDebugButtons,
-  enableExportButtons
+  enableExportButtons,
 } from "./uiFeedback.js";
 import { collectBookMetadata, collectSeriesMetadata } from "./metadataFlow.js";
 import { fetchExistingContent, fetchAudiobookShelfLibraries } from "./dataFetcher.js";
@@ -29,7 +29,12 @@ import { emptyDivContent, addLabeledCheckbox } from "./elementFactory.js";
 import { bindDebugViewerControls } from "./interactions.js";
 import { initDebugModal } from "./debugView.js";
 import { isDebugEnabled, getDebugLogs } from "./debug.js";
-import { beginRun, endRun, computeStoragePresence } from "./localStorage.js";
+import {
+  beginRun,
+  endRun,
+  computeStoragePresence,
+  ensureWorkingMemoryReady,
+} from "./localStorage.js";
 
 // Stores current data fetched from AudiobookShelf
 export let existingContent;
@@ -45,7 +50,7 @@ export let libraryArrayObject = {};
  * Initializes core UI and form behavior after DOM is ready
  */
 document.addEventListener("DOMContentLoaded", async () => {
-  await beginRun({ fresh: true });
+  await ensureWorkingMemoryReady();
   // Set up UI event listeners and populate hidden series menu
   initializeUIInteractions();
   populateHiddenItemsMenu();
