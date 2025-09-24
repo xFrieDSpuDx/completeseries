@@ -13,7 +13,8 @@ function isValidUrl(string) {
   try {
     new URL(string);
     return true; // valid URL
-  } catch (_) {
+  } catch (error) {
+    console.warn("Invalid URL:", string, error);
     return false; // invalid URL
   }
 }
