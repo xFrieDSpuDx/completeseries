@@ -2,6 +2,22 @@ import { addDivElement, addImageElement } from "./elementFactory.js";
 import { generateBookTiles } from "./bookTileBuilder.js";
 import { openBookModal } from "./modalHandler.js";
 import { showBooksModal, adjustModalWidth } from "./uiFeedback.js";
+
+/**
+ * Checks whether a given string is a valid fully qualified URL.
+ *
+ * @param {string} string - The input string to validate.
+ * @returns {boolean} - Returns true if the string is a valid URL, false otherwise.
+ */
+function isValidUrl(string) {
+  try {
+    new URL(string);
+    return true; // valid URL
+  } catch (_) {
+    return false; // invalid URL
+  }
+}
+
 /**
  * Retrieves an HTML element by its ID.
  *
@@ -100,9 +116,22 @@ export function addSeriesImage(parentElement, bookMetadata, altText) {
  * @returns {string} - The modified image URL.
  */
 export function appendImageSizeVariation(imageUrl, sizeVariation) {
+  const placeholderImage = new URL("/assets/book-placeholder.svg", window.location.origin).href;
+  
+  if (!imageUrl || typeof imageUrl !== "string") {
+    console.warn("Invalid image URL provided, using placeholder.");
+    return placeholderImage;
+  }
+
   const lastDotIndex = imageUrl.lastIndexOf(".");
   if (lastDotIndex === -1) {
-    throw new Error("Image URL does not contain a file extension.");
+    console.warn("Image URL does not contain a file extension.");
+    return placeholderImage;
+  }
+
+  if (!isValidUrl(imageUrl)) {
+    console.warn("Image URL is not valid, using placeholder.");
+    return placeholderImage;
   }
 
   const name = imageUrl.substring(0, lastDotIndex);
