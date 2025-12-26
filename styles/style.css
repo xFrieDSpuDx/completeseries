@@ -1001,11 +1001,13 @@ button.accent-button-inline-right.active {
 
   #visibilityManager {
     max-width: 95%;
+    min-width: 95%;
     left: -95%;
   }
 
   #settingsManager {
     max-width: 95%;
+    min-width: 95%;
     right: -95%;
   }
 
