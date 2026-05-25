@@ -1,5 +1,5 @@
 /**
- * Fetches metadata from audimeta.de for a specific Audible book or series.
+ * Fetches metadata from libex.lostcartographer.xyz for a specific Audible book or series.
  * Includes response headers such as rate limits and cache status.
  *
  * @param {Object} params - Input parameters for the request.
@@ -8,7 +8,7 @@
  * @param {string} params.region - Audible region code, e.g., "uk", "us", "de" (defaults to "uk").
  *
  * @returns {Promise<Object>} - An object containing:
- *   - audiMetaResponse: Parsed JSON data from audimeta.de.
+ *   - audiMetaResponse: Parsed JSON data from libex.lostcartographer.xyz.
  *   - responseHeaders: Metadata from the response headers including rate limits and cache status.
  *
  * @throws {Error} If required fields are missing or the fetch request fails.
@@ -27,8 +27,8 @@ export async function fetchAudimetaMetadata(params) {
   // Build the API URL based on type
   const apiUrl =
     type === "book"
-      ? `https://audimeta.de/book/${trimmedASIN}?cache=true&region=${regionCode}`
-      : `https://audimeta.de/series/${trimmedASIN}/books?region=${regionCode}&cache=true`;
+      ? `https://libex.lostcartographer.xyz/book/${trimmedASIN}?cache=true&region=${regionCode}`
+      : `https://libex.lostcartographer.xyz/series/${trimmedASIN}/books?region=${regionCode}&cache=true`;
 
   // Perform the fetch request
   const response = await fetch(apiUrl, {
@@ -41,7 +41,7 @@ export async function fetchAudimetaMetadata(params) {
   // Handle non-OK responses gracefully
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`audimeta.de request failed (${response.status}): ${errorText}`);
+    throw new Error(`libex.lostcartographer.xyz request failed (${response.status}): ${errorText}`);
   }
 
   // Extract and return both data and headers

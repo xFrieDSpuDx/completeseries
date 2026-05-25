@@ -218,12 +218,12 @@ export async function fetchAudiobookShelfLibraries(formData) {
 }
 
 /**
- * Retrieves metadata for a specific Audible item (book or series) directly from audimeta.de.
+ * Retrieves metadata for a specific Audible item (book or series) directly from libex.lostcartographer.xyz.
  *
  * @param {string} itemASIN - The Audible ASIN identifier
  * @param {string} region - Audible region code (e.g., "uk", "us", "de")
  * @param {string} itemType - Either "book" or "series"
- * @returns {Promise<Object>} - Metadata response from audimeta.de
+ * @returns {Promise<Object>} - Metadata response from libex.lostcartographer.xyz
  * @throws {Error} - If the request fails or response is invalid
  */
 export async function fetchAudibleMetadata(itemASIN, region, itemType) {

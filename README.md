@@ -9,6 +9,10 @@ Live demo: [completeseries.lily-pad.uk](https://completeseries.lily-pad.uk)
 
 ### ⚠️ Security & Server Use
 
+**The Metadata agent has moved from Audimeta.de, a trusted source to an unknown libex.lostcartographer.xyz. I have confirmed the new source works, but have not had a deep look into it.
+
+Work as started to migrate away from 3rd party metadata providers and to use Audible API directly.**
+
 By default this project uses JavaScript to authenticate with your AudiobookShelf server. To achieve this CORS acceptions must be added in AudiobookShelf. These settings are found in the Audiobook main settings page under "Allowed CORS Origins". You should add the domain you are accessing this project from, e.g. you are accessing it form https://completeseries.lily-pad.uk you should add that URL into the Allow CORS Origins text area. If you are hosting locally e.g. http://localhost:8080, then add that URL instead.
 
 Potential issues with CORS; you can not access an HTTP URL from an HTTPS URL. E.g. you are accessing this app from https://completeseries.lily-pad.uk and trying to connect to your AudiobookShelf server at http://audiobooks.example.com. This will always fail.
@@ -26,7 +30,7 @@ You can inspect the full source code in this repository to verify that yourself.
 
 ## 🚀 Overview
 
-**Complete My Series** helps you find audiobooks missing from your library's series collections. It integrates with your AudiobookShelf server and uses data from [audimeta.de](https://audimeta.de) to determine which titles you're missing from each Audible series.
+**Complete My Series** helps you find audiobooks missing from your library's series collections. It integrates with your AudiobookShelf server and uses data from [libex.lostcartographer.xyz](https://libex.lostcartographer.xyz) to determine which titles you're missing from each Audible series.
 
 ---
 
@@ -61,8 +65,8 @@ You can inspect the full source code in this repository to verify that yourself.
    - If you have a single library this screen will not be shown and the default library will be used.
 
 4. **Discover missing books**
-   - The app fetches your library, finds the first book in each series, then uses that to get the full series metadata from `audimeta.de`.
-   - If the series metadata has already been fetched from `audimeta.de` internal storage is used to improve performance and reduce API requests.
+   - The app fetches your library, finds the first book in each series, then uses that to get the full series metadata from `libex.lostcartographer.xyz`.
+   - If the series metadata has already been fetched from `libex.lostcartographer.xyz` internal storage is used to improve performance and reduce API requests.
 
 5. **Review and buy**
    - Click a series tile to see all missing titles.
