@@ -1,5 +1,5 @@
 // dataFetcher.js
-import { fetchAudimetaMetadata } from "./fetchAudimetaMetadata.js";
+import { fetchMetadataFromProvider } from "./metadataProvider.js";
 import { sanitiseAudiobookShelfURL, isInternalAudiobookShelfURL } from "./dataCleaner.js";
 import { loadMetadataFromLocalStorage } from "./localStorage.js";
 import { fetchAudiobookShelfLibrariesCall } from "./fetchLibraries.js";
@@ -218,24 +218,23 @@ export async function fetchAudiobookShelfLibraries(formData) {
 }
 
 /**
- * Retrieves metadata for a specific Audible item (book or series) directly from libex.lostcartographer.xyz.
+ * Retrieves metadata for a specific Audible catalog item from the active metadata provider.
  *
  * @param {string} itemASIN - The Audible ASIN identifier
  * @param {string} region - Audible region code (e.g., "uk", "us", "de")
  * @param {string} itemType - Either "book" or "series"
- * @returns {Promise<Object>} - Metadata response from libex.lostcartographer.xyz
+ * @returns {Promise<Object>} - Provider metadata response and transport metadata
  * @throws {Error} - If the request fails or response is invalid
  */
-export async function fetchAudibleMetadata(itemASIN, region, itemType) {
+export async function fetchCatalogMetadata(itemASIN, region, itemType) {
   try {
-    return await fetchAudimetaMetadata({
+    return await fetchMetadataFromProvider({
       asin: itemASIN,
-      // eslint-disable-next-line object-shorthand
-      region: region,
+      region,
       type: itemType,
     });
   } catch (error) {
-    throw new Error(`Failed to fetch metadata for ASIN ${itemASIN}: ${error.message}`);
+    throw new Error(`Failed to fetch catalog metadata for ASIN ${itemASIN}: ${error.message}`);
   }
 }
 

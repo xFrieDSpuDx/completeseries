@@ -9,7 +9,7 @@ Live demo: [completeseries.lily-pad.uk](https://completeseries.lily-pad.uk)
 
 ### ⚠️ Security & Server Use
 
-**The Metadata agent has moved from Audimeta.de, a trusted source to an unknown libex.lostcartographer.xyz. I have confirmed the new source works, but have not had a deep look into it.
+**The default metadata provider has moved from Audimeta.de, a trusted source, to libex.lostcartographer.xyz. I have confirmed the new source works, but have not had a deep look into it.
 
 Work as started to migrate away from 3rd party metadata providers and to use Audible API directly.**
 
@@ -30,7 +30,7 @@ You can inspect the full source code in this repository to verify that yourself.
 
 ## 🚀 Overview
 
-**Complete My Series** helps you find audiobooks missing from your library's series collections. It integrates with your AudiobookShelf server and uses data from [libex.lostcartographer.xyz](https://libex.lostcartographer.xyz) to determine which titles you're missing from each Audible series.
+**Complete My Series** helps you find audiobooks missing from your library's series collections. It integrates with your AudiobookShelf server and uses the active metadata provider to determine which titles you're missing from each Audible series.
 
 ---
 
@@ -65,8 +65,8 @@ You can inspect the full source code in this repository to verify that yourself.
    - If you have a single library this screen will not be shown and the default library will be used.
 
 4. **Discover missing books**
-   - The app fetches your library, finds the first book in each series, then uses that to get the full series metadata from `libex.lostcartographer.xyz`.
-   - If the series metadata has already been fetched from `libex.lostcartographer.xyz` internal storage is used to improve performance and reduce API requests.
+   - The app fetches your library, finds the first book in each series, then uses that to get the full series metadata from the active metadata provider.
+   - If the series metadata has already been fetched, internal storage is used to improve performance and reduce API requests.
 
 5. **Review and buy**
    - Click a series tile to see all missing titles.

@@ -1,18 +1,18 @@
-// metadataCollector.js
-import { fetchAudibleMetadata, findFromStorage } from "./dataFetcher.js";
+// metadataFlow.js
+import { fetchCatalogMetadata, findFromStorage } from "./dataFetcher.js";
 import { setMessage, setRateMessage } from "./uiFeedback.js";
 import { storeMetadataToLocalStorage } from "./localStorage.js";
 
-// Rate limit configuration
-const rateLimitResetTime = 60000; // Time in milliseconds before rate limit resets
-let processStartTime; // Tracks when the batch process started
+// Provider throttling configuration.
+const rateLimitResetTime = 60000; // Provider rate-limit reset window in milliseconds.
+let processStartTime; // Tracks when the current metadata batch started.
 
 /**
- * Fetches metadata for a list of Audible book ASINs.
- * Also tracks and manages rate limiting per response headers.
+ * Fetches provider metadata for local first-book ASINs and extracts candidate series ASINs.
+ * Also tracks provider rate-limit headers when the provider exposes them.
  *
  * @param {Array<Object>} existingSeries - List of books with { asin, series, title }
- * @param {string} audibleRegion - Audible region code (e.g., 'uk', 'us')
+ * @param {string} audibleRegion - Audible marketplace region code (e.g., 'uk', 'us')
  * @param {boolean} includeSubSeries - Whether to include subseries or not
  * @returns {Promise<Array<string>>} List of unique series ASINs
  */
@@ -38,17 +38,17 @@ export async function collectBookMetadata(existingSeries, audibleRegion, include
       setMessage(`Fetching series unique ID: ${processedCount + 1} / ${totalSeries}`);
 
       if (!metadata) {
-        // If metadata is not found in local storage, fetch it from the API
-        const { audiMetaResponse, responseHeaders = {} } =
-          (await fetchAudibleMetadata(bookASIN, audibleRegion, "book")) ?? {};
+        // If metadata is not cached, fetch it from the active metadata provider.
+        const { metadataResponse, responseHeaders = {} } =
+          (await fetchCatalogMetadata(bookASIN, audibleRegion, "book")) ?? {};
 
-        if (!audiMetaResponse || typeof audiMetaResponse !== "object") {
-          const err = new Error("Audible metadata missing or malformed.");
+        if (!metadataResponse || typeof metadataResponse !== "object") {
+          const err = new Error("Provider metadata missing or malformed.");
           err.details = { bookASIN, audibleRegion };
           throw err;
         }
 
-        metadata = audiMetaResponse;
+        metadata = metadataResponse;
 
         const remainingRequestsEstimate = calculateRemainingRequests(
           totalSeries,
@@ -62,7 +62,7 @@ export async function collectBookMetadata(existingSeries, audibleRegion, include
 
         storeMetadataToLocalStorage(metadata, "existingFirstBookASINs");
       }
-      // If metadata is not available, skip this book
+      // If provider metadata is not available, skip this book.
       if (!metadata || !metadata.series) continue;
 
       for (const bookSeries of metadata.series) {
@@ -81,11 +81,11 @@ export async function collectBookMetadata(existingSeries, audibleRegion, include
 }
 
 /**
- * Fetches metadata for each series using its ASIN.
- * Cleans out hidden books and respects rate limits.
+ * Fetches provider metadata for each discovered series ASIN.
+ * Respects provider rate-limit headers when the provider exposes them.
  *
  * @param {Array<string>} seriesAsins - Audible series ASINs to fetch
- * @param {string} audibleRegion - Audible region code (e.g., 'uk')
+ * @param {string} audibleRegion - Audible marketplace region code (e.g., 'uk')
  * @returns {Promise<Array<Object>>} Array of { seriesAsin, response } entries
  */
 export async function collectSeriesMetadata(seriesAsins, audibleRegion, existingContent) {
@@ -102,12 +102,12 @@ export async function collectSeriesMetadata(seriesAsins, audibleRegion, existing
       setMessage(`Fetching series metadata: ${processedCount + 1} / ${totalSeries}`);
 
       if (!seriesMetadata) {
-        // If metadata is not found in local storage, fetch it from the API
-        const { audiMetaResponse, responseHeaders = {} } =
-          (await fetchAudibleMetadata(seriesAsin, audibleRegion, "series")) ?? {};
+        // If metadata is not cached, fetch it from the active metadata provider.
+        const { metadataResponse, responseHeaders = {} } =
+          (await fetchCatalogMetadata(seriesAsin, audibleRegion, "series")) ?? {};
 
-        if (!audiMetaResponse || typeof audiMetaResponse !== "object") {
-          const err = new Error("Audible metadata missing or malformed.");
+        if (!metadataResponse || typeof metadataResponse !== "object") {
+          const err = new Error("Provider metadata missing or malformed.");
           err.details = { seriesAsin, audibleRegion };
           throw err;
         }
@@ -120,13 +120,13 @@ export async function collectSeriesMetadata(seriesAsins, audibleRegion, existing
 
         await checkForRateLimitDelay(responseHeaders, remainingRequestsEstimate);
 
-        if (!Array.isArray(audiMetaResponse)) continue;
+        if (!Array.isArray(metadataResponse)) continue;
 
         if (!existingContent) continue;
 
         seriesMetadata = {
           seriesAsin,
-          response: audiMetaResponse,
+          response: metadataResponse,
         };
 
         storeMetadataToLocalStorage(seriesMetadata, "existingBookMetadata");
@@ -159,18 +159,27 @@ function calculateRemainingRequests(total, processed, type) {
 }
 
 /**
- * Applies a dynamic wait if API rate limit has been reached and response is uncached.
+ * Applies a dynamic wait when the provider exposes rate-limit headers and quota is exhausted.
+ * Missing rate-limit headers are treated as "unknown", not as zero remaining requests.
  *
- * @param {Object} responseHeaders - The headers returned from the API response
+ * @param {Object} responseHeaders - Transport metadata returned from the provider
  * @param {number} remainingRequestsEstimate - Approximate requests left in batch
  */
 async function checkForRateLimitDelay(responseHeaders, remainingRequestsEstimate) {
-  if (responseHeaders.cached) return;
+  if (responseHeaders.cached === "true") return;
+
+  const requestRemaining = Number.parseInt(responseHeaders.requestRemaining, 10);
+  const requestLimit = Number.parseInt(responseHeaders.requestLimit, 10);
+
+  const hasUsableRateLimitHeaders =
+    Number.isFinite(requestRemaining) && Number.isFinite(requestLimit) && requestLimit > 0;
+
+  if (!hasUsableRateLimitHeaders) return;
 
   const elapsed = Date.now() - processStartTime;
 
-  if (Number(responseHeaders.requestRemaining) === 0) {
-    await calculateRateLimitDelay(elapsed, remainingRequestsEstimate, responseHeaders.requestLimit);
+  if (requestRemaining === 0) {
+    await calculateRateLimitDelay(elapsed, remainingRequestsEstimate, requestLimit);
   }
 }
 
