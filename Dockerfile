@@ -1,29 +1,21 @@
-FROM php:8.2-fpm-alpine
+FROM node:22-alpine AS build
 
-# Install Nginx
-RUN apk add --no-cache nginx
+WORKDIR /app
 
-# Configure Nginx Logging
-# Redirect access logs to stdout and error logs to stderr
-RUN ln -sf /dev/stdout /var/log/nginx/access.log \
-    && ln -sf /dev/stderr /var/log/nginx/error.log
+COPY package.json package-lock.json ./
+RUN npm ci
 
-# Configure Nginx
-RUN rm /etc/nginx/http.d/default.conf
-COPY nginx.conf /etc/nginx/http.d/default.conf
+COPY . .
+ARG VITE_GOOGLE_BOOKS_API_KEY=""
+ENV VITE_GOOGLE_BOOKS_API_KEY=$VITE_GOOGLE_BOOKS_API_KEY
+RUN npm run build
 
-# Setup Work Dir
-WORKDIR /var/www/html
+FROM nginx:1.27-alpine
 
-# Copy application files
-COPY . /var/www/html/
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Fix permissions
-RUN chown -R www-data:www-data /var/www/html/ \
-    && chmod -R 755 /var/www/html/
-
-# Expose port 80
 EXPOSE 80
 
-# Start Nginx and PHP-FPM
-CMD ["/bin/sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD wget -qO- http://127.0.0.1/ >/dev/null || exit 1

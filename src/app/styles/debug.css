@@ -1,0 +1,263 @@
+/* Debug panel */
+
+/* Tool drawers, debug, and review panels */
+
+.debug-panel {
+  display: flex;
+  flex-direction: column;
+  max-width: none;
+  max-height: 100%;
+  min-height: 0;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--secondary-bg);
+}
+
+.tool-drawer-shell--fullscreen .debug-panel {
+  height: 100%;
+}
+
+.debug-panel__header {
+  padding: 0.85rem 1rem;
+  font-weight: 700;
+}
+
+.debug-panel__content {
+  display: grid;
+  flex: 1 1 auto;
+  gap: 1rem;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 0 1rem 1rem;
+  border-top: 1px solid var(--border);
+  -webkit-overflow-scrolling: touch;
+}
+
+.debug-controls {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns:
+    minmax(8rem, 0.7fr) minmax(8rem, 0.7fr) minmax(10rem, 0.9fr)
+    minmax(14rem, 1.4fr) auto;
+  gap: 0.75rem;
+  align-items: end;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: rgba(31, 31, 31, 0.98);
+}
+
+.debug-controls label {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.debug-controls .selection-field {
+  margin: 0;
+}
+
+.debug-controls .selection-control {
+  margin-top: 0;
+}
+
+.debug-controls select,
+.debug-controls input {
+  margin-top: 0;
+}
+
+.debug-controls__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.debug-controls__actions span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.debug-controls__actions button {
+  width: auto;
+  min-height: 2.5rem;
+  margin-top: 0;
+  padding: 0.45rem 0.7rem;
+}
+
+.debug-panel__export {
+  justify-self: start;
+  width: auto;
+  min-height: 2.35rem;
+  margin-top: 1rem;
+  padding: 0.45rem 0.75rem;
+}
+
+.debug-panel__note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.debug-table-wrap {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.debug-table {
+  width: 100%;
+  min-width: 64rem;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  table-layout: fixed;
+}
+
+.debug-table__outcome {
+  width: 4.75rem;
+}
+
+.debug-table__scan {
+  width: 5.5rem;
+}
+
+.debug-table__series {
+  width: 12rem;
+}
+
+.debug-table__title {
+  width: 11rem;
+}
+
+.debug-table__checks {
+  width: 15rem;
+}
+
+.debug-table__details {
+  width: auto;
+}
+
+.debug-table th,
+.debug-table td {
+  padding: 0.55rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.debug-table td {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.debug-card-list {
+  display: none;
+}
+
+.debug-row-details summary {
+  width: max-content;
+  padding: 0;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.debug-row-details section {
+  margin-top: 0.55rem;
+}
+
+.debug-row-details h4 {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.82rem;
+}
+
+.debug-row-details ul {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0.25rem 0 0;
+  padding-left: 1rem;
+}
+
+.debug-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+.debug-pagination-slot--top {
+  display: none;
+}
+
+.debug-mobile-pagination-footer {
+  display: none;
+}
+
+.debug-pagination button {
+  width: auto;
+  min-height: 2.35rem;
+  margin-top: 0;
+  padding: 0.45rem 0.75rem;
+}
+
+.debug-pagination span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.debug-unresolved-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.debug-history {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.debug-history summary {
+  margin: 0;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.debug-history ul {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.debug-history li {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background: var(--primary-bg);
+}
+
+.debug-history span,
+.debug-history small,
+.review-list small {
+  color: var(--muted);
+}
+
+.debug-unresolved-list li {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background: var(--primary-bg);
+}

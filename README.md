@@ -1,146 +1,181 @@
-# 📘 Complete Your Collection
+# Complete Series V2
 
-### Every series brought together
+Complete Series finds gaps in audiobook series stored in Audiobookshelf. It compares the books you own with selected catalogues and shows which series may be incomplete.
 
-**Identify missing audiobooks from the series you own**  
-_Designed for use with Audible series and AudiobookShelf._
+V2 rewrites the original project as a TypeScript and React browser app. It removes the PHP layer, adds clearer review and debug tools, and no longer depends on one third-party metadata provider.
 
-Live demo: [completeseries.lily-pad.uk](https://completeseries.lily-pad.uk)
+## Repository Migration
 
-### ⚠️ Security & Server Use
+V2 was built in a separate repository so V1 could remain available while the rewrite was tested. This repository now contains V2, and V1 is deprecated because its third-party metadata-provider flow is no longer a trustworthy release path.
 
-**The default metadata provider has moved from Audimeta.de, a trusted source, to libex.lostcartographer.xyz. I have confirmed the new source works, but have not had a deep look into it.
+## Highlights
 
-Work as started to migrate away from 3rd party metadata providers and to use Audible API directly.**
+- Audiobookshelf is contacted directly from the browser.
+- Audible is the default and recommended metadata provider.
+- Apple Books, Google Books, and Open Library can be selected as experimental review providers.
+- Matching can use ASIN, SKU, ISBN, title, subtitle, author, narrator, series name, and series position evidence.
+- Series that cannot be matched confidently are shown in Review instead of being silently skipped.
+- Hidden items, manual matches, filters, debug output, provider cache data, and results can be exported.
 
-By default this project uses JavaScript to authenticate with your AudiobookShelf server. To achieve this CORS acceptions must be added in AudiobookShelf. These settings are found in the Audiobook main settings page under "Allowed CORS Origins". You should add the domain you are accessing this project from, e.g. you are accessing it form https://completeseries.lily-pad.uk you should add that URL into the Allow CORS Origins text area. If you are hosting locally e.g. http://localhost:8080, then add that URL instead.
+## Screenshots
 
-Potential issues with CORS; you can not access an HTTP URL from an HTTPS URL. E.g. you are accessing this app from https://completeseries.lily-pad.uk and trying to connect to your AudiobookShelf server at http://audiobooks.example.com. This will always fail.
+The screenshots below use a curated demo Audiobookshelf library. The server URL shown in screenshots is illustrative.
 
-If you are unable to connect using JavaScript this project can use PHP to make server-side requests, acting as a proxy to avoid CORS issues — specifically for authenticating with your AudiobookShelf server. This is a manually selectable option to increase security and avoid sending authentication information to a potentially unknown server.
+### Login
 
-> ⚠️ **A word of caution:**  
-> In many PHP-based projects, usernames, passwords, or URLs _can_ be logged, either accidentally or intentionally.  
-> **That is _not_ the case here.**  
-> This project's PHP scripts do **not** store or log any credentials or personal data.
+![Login screen](docs/images/complete-series-login.jpg)
 
-You can inspect the full source code in this repository to verify that yourself. If you have any concerns about privacy or want full control, it’s strongly recommended to **self-host this project on your own server**.
+### Scan Setup
 
----
+![Scan setup screen](docs/images/complete-series-scan-setup.jpg)
 
-## 🚀 Overview
+### Results
 
-**Complete My Series** helps you find audiobooks missing from your library's series collections. It integrates with your AudiobookShelf server and uses the active metadata provider to determine which titles you're missing from each Audible series.
+![Complete Series results screen](docs/images/complete-series-results.jpg)
 
----
+### Missing Book Details
 
-## 🔧 Features
+![Missing book detail drawer](docs/images/complete-series-book-detail.jpg)
 
-- 🔐 Connects securely to your AudiobookShelf server
-- 🔎 Automatically identifies missing books in Audible series
-- 📚 Supports filtering for unique titles only (no duplicates)
-- 🎭 Hide unwanted books or series to reduce clutter
-- 💬 Full metadata view via modals, with direct links to Audible and download options
-- 🌍 Region support (UK, US, CA, AU, FR, DE, JP, IT, IN, ES, BR)
-- 🐞 View and download full debug reports to understand exactly why results were filtered
-- 📥 Download local cache to avoid being forced to request book metadata again
+### Filters
 
----
+![Filters drawer](docs/images/complete-series-menu-filters.jpg)
 
-## 🧪 How to Use
+### Libraries
 
-1. **Enter your AudiobookShelf credentials**
-   - URL, username, and password are required to retrieve your audiobook and series list.
+![Libraries drawer](docs/images/complete-series-menu-libraries.jpg)
 
-1(b). **_Enter your AudiobookShelf credentials - API Key_**
+### Review
 
-- If you use API keys instead of username and password enable this option in the advanced section.
+![Review drawer](docs/images/complete-series-menu-review.jpg)
 
-2. **Choose your settings**
-   - Default behavior: shows only unique, unabridged titles you're missing.
-   - Uncheck "Ignore matching titles" to allow duplicates with the same name.
+### Debug
 
-3. **Choose your library**
-   - If you have more than one library, pick the one(s) to search against and produce results.
-   - If you have a single library this screen will not be shown and the default library will be used.
+![Debug drawer](docs/images/complete-series-debug.jpg)
 
-4. **Discover missing books**
-   - The app fetches your library, finds the first book in each series, then uses that to get the full series metadata from the active metadata provider.
-   - If the series metadata has already been fetched, internal storage is used to improve performance and reduce API requests.
+### Hidden Items
 
-5. **Review and buy**
-   - Click a series tile to see all missing titles.
-   - Click a book to see more info and a purchase link on Audible.
+![Hidden items drawer](docs/images/complete-series-menu-hidden.jpg)
 
-6. **Hide content you don't want**
-   - Use the 👁️ icon to hide series or books permanently.
-   - Hidden items are tracked and can be managed from the sidebar (burger menu).
+### Data
 
-7. **Apply new filters**
-   - Change the filters used and get an updated results page without logging in again
-   - Clear cached contents to force a new request
+![Local data drawer](docs/images/complete-series-menu-data.jpg)
 
-8. **Download results**
-   - Download the results to CSV or Json format
+### Server
 
-9. **Debug Modal**
-   - The Debug Modal provides a detailed, real-time view of your library’s data and applied filters, helping with troubleshooting and understanding the app’s logic.
-   - Group results
-   - Filter results
-   - Download results as JSON or CSV
+![Server drawer](docs/images/complete-series-menu-server.jpg)
 
----
+### Download
 
-## 🖼️ Screenshots
+![Download drawer](docs/images/complete-series-menu-download.jpg)
 
-| Feature                             | Screenshot                                                                                                                                     |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| 🏠 Home Page                        | ![HomePage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HomepageFilterClosed.png)               |
-| 🏠 Home Page Filters                | ![HomePageFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HomepageFilterOpen.png)          |
-| 🔑 Home Page API Key Login          | ![HomePageFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/LoginWithAPIKey.png)             |
-| 🔀 Home Page Filters                | ![HomePageFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/PHPProxyAndWarning.png)          |
-| 📚 Library Selection                | ![LibrarySelection](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/LibrarySelect.png)              |
-| 📊 Results Page                     | ![ResultsPage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/ResultsPage.png)                     |
-| ⏳ Results Loading                  | ![ResultsPage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/ResultsLoadingPlaceholder.png)       |
-| 🧰 Filter Results Page              | ![FilterResultsPage](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/FilterOptionsAfterResults.png) |
-| 📚 Book Modal                       | ![BooksModal](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/BooksModal.png)                       |
-| 📖 Book Details                     | ![BookDetails](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/BookDetails.png)                     |
-| 🙈 Hide Individual Book             | ![HideBooks](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HideBooks.png)                         |
-| 🚫 Hide Entire Series               | ![HideSeries](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HideSeries.png)                       |
-| 👁️ Hidden Books & Series Modal      | ![HiddenBooksAndSeries](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/HiddenBooksAndSeries.png)   |
-| 🐞 Debug Modal (No Filters)         | ![DebugModalNoFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/Debug.png)                   |
-| 🐞 Debug Modal (Filters & Grouping) | ![DebugModalWithFilters](https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/refs/heads/main/ExampleImages/DebugFilterGroup.png)      |
+## Local Development
 
----
+Install dependencies and start the development server:
 
-## 📦 Deployment
+```bash
+npm install
+npm run dev
+```
 
-You can host your own version or use the one at [https://completeseries.lily-pad.uk](https://completeseries.lily-pad.uk). The project is as client-side as possible, however older AudiobookShelf installs and certain setups rely on PHP to stop CORS issues. By default the application tries to use JavaScript but does give the option to fallback to using a PHP proxy if needed. The proxy option is found in the advanced section of the home page.
+Open `http://127.0.0.1:5173/` or `http://localhost:5173/`.
 
-This repository ships with a full, production-grade toolchain so you can build and host your own optimised bundle instead of running the raw dev files. The build process bundles and minifies JS/CSS, rewrites HTML to use content-hashed assets, and copies required `assets/` and optional `php/` proxy files into `dist/` for zero-config deployment. Linting (ESLint) and formatting (Prettier) configs are included to keep contributions consistent. See the commands below to install, build, preview, and lint your local clone.
+Before committing changes, run:
 
-#### 1) Install (Node 18+)
-
-npm install # or: npm ci
-
-#### 2) Build a production bundle → dist/
-
+```bash
+npm run typecheck
+npm run test
+npm run coverage
 npm run build
+```
 
-#### 3) Preview the built site locally
+Coverage is expected to stay above `80%` for statements and lines.
 
-npm run serve:all
+## Google Books Key
 
-#### (Optional) Rebuild on changes during development
+Google Books works best with an API key. Users can enter a key in the scan filters, or a deployment can provide a default key at build time.
 
-npm run watch
+For local development, copy `.env.example` to `.env.local` and set:
 
-#### (Optional) Lint & auto-fix
+```bash
+VITE_GOOGLE_BOOKS_API_KEY=your_key_here
+```
 
-npm run lint && npm run lint:fix && npm run format
+Browser apps cannot keep this key secret. Treat it as a quota and identification key, not as a private credential.
 
----
+## Hosting
 
-## 📄 License
+Build the static app:
 
-MIT – Use it, improve it, share it.
+```bash
+npm run build
+```
+
+Serve the generated `dist` directory from a web server. Complete Series is a browser app, but the host also needs two same-origin provider routes:
+
+- `/api/audible/{region}` forwards public Audible catalogue requests.
+- `/api/apple-books` forwards Apple Search API requests when Apple blocks direct browser reads.
+
+These routes are hosted by the same web server that serves Complete Series. They are not a third-party metadata service.
+
+The included Vite, NGINX, and cPanel Node configurations strip credential, cookie, origin, referrer, API-key, and forwarding headers before provider requests are sent onwards. Audiobookshelf usernames, passwords, API keys, bearer tokens, server URLs, library data, hidden items, manual matches, saved filters, debug history, local exports, and Google Books keys are not sent through the Audible or Apple Books provider routes.
+
+For full setup, hosting, and data-forwarding details, see [Setup and configuration](docs/setup-configuration.md).
+
+### cPanel
+
+If your cPanel host provides Node.js application support, use `app.js` as the startup file after building the app. It serves `dist/` and provides the restricted Audible and Apple Books provider routes without needing NGINX.
+
+Upload `app.js`, `dist/`, `server/cpanel-server.mjs`, `package.json`, and `package-lock.json` to the cPanel app root, then set the startup file to:
+
+```text
+app.js
+```
+
+Static-only cPanel hosting will load the interface but will not support Audible or Apple Books scans. See [cPanel hosting](docs/setup-configuration.md#cpanel-hosting) for the full checklist.
+
+## Docker
+
+Docker is optional. The provided image builds the Vite app and serves the static bundle with NGINX:
+
+```bash
+docker compose up --build
+```
+
+The app will be available at `http://127.0.0.1:8080/`.
+
+To bake in a default Google Books key for the browser app, set `VITE_GOOGLE_BOOKS_API_KEY` before building. Users can still enter their own key in the scan filters.
+
+Docker validation steps are listed in [Setup and configuration](docs/setup-configuration.md#docker-validation-checklist).
+
+## Project Structure
+
+```text
+src/
+  app/                 React app shell and frontend feature folders
+    changelog/         Landing-page change log
+    components/        Shared controls and display components
+    debug/             Small debug display helpers used by results
+    hooks/             Shared React hooks
+    results/           Results grid, drawers, exports, and missing-book detail
+    review/            Review cards, evidence, and manual series overrides
+    setup/             Login, library selection, scan filters, and progress
+    storage/           Browser storage, local data tools, and hidden items
+  cache/               Shared cache interfaces
+  domain/              Matching, filtering, ownership, and normalisation
+  features/            Scan and debug workflows
+  fixtures/            Small datasets for tests and UI previews
+  integrations/        Audiobookshelf and metadata integrations
+    metadata/          Provider registry and shared metadata helpers
+      appleBooks/      Apple Books result interpretation helpers
+      cache/           Persistent and in-memory provider response caches
+      googleBooks/     Google Books result interpretation helpers
+      openLibrary/     Open Library result interpretation helpers
+  shared/              Small shared UI components
+```
+
+## Documentation
+
+- [Setup and configuration](docs/setup-configuration.md)
+- [Metadata provider architecture](docs/provider-architecture.md)
+- [Change log](CHANGELOG.md)

@@ -1,0 +1,33 @@
+/* Form actions and messages */
+
+.button-secondary {
+  border: 1px solid var(--border);
+  color: var(--text);
+  background-color: var(--primary-bg);
+}
+
+.button-secondary:hover {
+  border-color: var(--accent);
+  background-color: #202020;
+}
+
+button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.message,
+.error-message,
+.success-message {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.error-message {
+  color: var(--danger);
+}
+
+.success-message {
+  color: var(--success);
+}

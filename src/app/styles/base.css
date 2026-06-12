@@ -1,0 +1,237 @@
+/* Base layout and theme */
+
+:root {
+  --primary-bg: #1f1f1f;
+  --secondary-bg: #2a2a2a;
+  --accent: #ff9900;
+  --accent-hover: #cc7a00;
+  --accent-soft: rgba(255, 153, 0, 0.12);
+  --accent-border: rgba(255, 153, 0, 0.65);
+  --accent-text: #ffd29a;
+  --text: #fff;
+  --placeholder-text: #aaa;
+  --muted: #ccc;
+  --border: #444;
+  --danger: #ff4f4f;
+  --success: #007200;
+  --success-hover: #004e00;
+  --success-soft: #163116;
+  --success-border: rgba(63, 183, 98, 0.62);
+  color: var(--text);
+  background-color: var(--primary-bg);
+  font-family:
+    Poppins,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background-color: var(--primary-bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button:focus,
+input:focus,
+select:focus,
+summary:focus {
+  outline: none;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.125rem var(--accent);
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.stage-shell,
+.form-container {
+  width: 100%;
+  max-width: 90rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem;
+}
+
+.stage-shell--centred,
+.form-container {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-panel {
+  width: 100%;
+  max-width: 32rem;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  border-radius: 0.625rem;
+  background-color: var(--secondary-bg);
+  box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.4);
+}
+
+.login-panel__footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.85rem;
+}
+
+.login-panel__text-action {
+  width: auto;
+  min-height: 0;
+  margin-top: 0;
+  padding: 0.15rem 0.25rem;
+  border: 0;
+  border-radius: 0.25rem;
+  color: var(--muted);
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: underline;
+  text-underline-offset: 0.18rem;
+}
+
+.login-panel__text-action:hover {
+  color: var(--accent-text);
+  background: transparent;
+}
+
+.connection-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.setup-card {
+  max-width: 36rem;
+}
+
+.setup-card .library-panel {
+  margin-top: 0;
+}
+
+.setup-card .setup-settings-stack {
+  margin-top: 1rem;
+}
+
+.setup-actions--card {
+  margin-top: 1rem;
+}
+
+.login-state-panel {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.login-state-panel h2,
+.login-state-panel p {
+  margin: 0;
+}
+
+.login-state-panel h2 {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.login-state-panel p {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.login-state-panel__control {
+  width: 100%;
+}
+
+.login-state-panel .success-message,
+.login-state-panel .error-message {
+  margin-top: 0;
+  text-align: left;
+}
+
+.logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5.5rem;
+  height: 5.5rem;
+  margin: 0 auto 1.5rem;
+  background: transparent;
+}
+
+.logo-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.logo-mark--small {
+  width: 4.5rem;
+  height: 4.5rem;
+  margin: 0;
+  flex: 0 0 auto;
+}
+
+.logo-mark--standard {
+  width: 5.5rem;
+  height: 5.5rem;
+}
+
+.headingContainer {
+  padding-bottom: 1.5rem;
+}
+
+.headingContainer h1,
+.headingContainer p {
+  margin: 0;
+}
+
+.headingContainer h1 {
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+.headingContainer p {
+  font-size: 1.1rem;
+  font-style: italic;
+}

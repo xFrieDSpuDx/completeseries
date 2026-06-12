@@ -1,0 +1,354 @@
+/* Missing-book drawer */
+
+.modal-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  padding: 0;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.68);
+}
+
+.modal-backdrop:hover,
+.tool-drawer-backdrop:hover {
+  background: rgba(0, 0, 0, 0.68);
+}
+
+.books-modal-panel {
+  position: relative;
+  z-index: 1;
+  width: min(58rem, 100%);
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-left: 1px solid var(--border);
+  border-radius: 0;
+  background: var(--secondary-bg);
+  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.5);
+}
+
+.books-modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--secondary-bg);
+}
+
+.books-modal-header h2,
+.books-modal-header p {
+  margin: 0;
+}
+
+.book-modal-notice {
+  margin: 1rem 1rem 0;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--success-border);
+  border-radius: 0.5rem;
+  background: var(--success-soft);
+  color: var(--text);
+  font-size: 0.88rem;
+}
+
+.merged-series-summary {
+  display: grid;
+  gap: 0.6rem;
+  margin: 1rem 1rem 0;
+  padding: 0.75rem;
+  border: 1px solid var(--accent-border);
+  border-radius: 0.5rem;
+  background: var(--accent-soft);
+}
+
+.merged-series-summary h3 {
+  margin: 0;
+  color: var(--accent-text);
+  font-size: 0.92rem;
+  line-height: 1.2;
+}
+
+.merged-series-summary ul {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.merged-series-summary li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  align-items: baseline;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid rgba(255, 153, 0, 0.28);
+  border-radius: 0.375rem;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.merged-series-summary span {
+  min-width: 0;
+  color: var(--text);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.merged-series-summary small {
+  color: var(--muted);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.modal-close {
+  width: 2.25rem;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  min-height: 2.25rem;
+  max-height: 2.25rem;
+  margin: 0;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  background: var(--primary-bg);
+  display: grid;
+  flex: 0 0 2.25rem;
+  place-items: center;
+}
+
+.modal-close:hover {
+  border-color: var(--accent);
+  background: var(--primary-bg);
+}
+
+.icon-button img {
+  width: 100%;
+  height: 100%;
+  filter: brightness(0) invert(1);
+  object-fit: contain;
+}
+
+.books-modal-grid {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.book-detail-card {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--primary-bg);
+}
+
+.book-detail-cover {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 0.375rem;
+  background: #202020;
+}
+
+.book-position-badge {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  z-index: 2;
+  min-width: 2.1rem;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.68);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+}
+
+.book-detail-eye {
+  top: 0.4rem;
+  left: 0.4rem;
+}
+
+.book-detail-cover img,
+.book-detail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book-detail-body h3,
+.book-detail-body p {
+  margin: 0;
+}
+
+.book-detail-body p,
+.book-detail-facts {
+  color: var(--muted);
+}
+
+.reason-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.55rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reason-flags li {
+  padding: 0.28rem 0.45rem;
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.book-detail-facts {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0.6rem 0;
+  font-size: 0.85rem;
+}
+
+.book-detail-facts div {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  gap: 0.5rem;
+}
+
+.book-detail-facts dt {
+  color: var(--placeholder-text);
+}
+
+.book-detail-facts dd {
+  margin: 0;
+}
+
+.book-detail-link {
+  display: inline-block;
+  width: max-content;
+  max-width: 100%;
+  color: var(--accent);
+}
+
+.book-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.55rem;
+}
+
+.book-detail-action-with-help {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.book-detail-action-button {
+  width: auto;
+  min-height: 2.35rem;
+  margin: 0;
+  padding: 0.45rem 0.65rem;
+  border-color: var(--accent-border);
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  font-size: 0.82rem;
+}
+
+.book-detail-action-button:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.series-tile p,
+.unresolved-panel p,
+.unresolved-panel span {
+  color: var(--muted);
+}
+
+.book-overview {
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border);
+}
+
+.book-overview h4,
+.book-overview p {
+  margin: 0;
+}
+
+.book-overview h4 {
+  font-size: 0.92rem;
+}
+
+.book-overview p {
+  margin-top: 0.35rem;
+  color: var(--muted);
+}
+
+.text-button {
+  width: auto;
+  min-height: 0;
+  margin-top: 0.35rem;
+  padding: 0;
+  color: var(--accent);
+  background: transparent;
+  font-size: 0.88rem;
+}
+
+.text-button:hover {
+  background: transparent;
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.unresolved-panel {
+  max-width: 56rem;
+  margin: 2rem auto 0;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background-color: var(--secondary-bg);
+}
+
+.unresolved-panel ul {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.unresolved-panel li {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background-color: var(--primary-bg);
+}

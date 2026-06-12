@@ -1,0 +1,352 @@
+/* Responsive layout */
+
+@media (max-width: 1080px) {
+  .setup-layout {
+    grid-template-columns: minmax(18rem, 1fr) minmax(18rem, 1fr);
+  }
+
+  .setup-section--tools {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .stage-shell,
+  .form-container,
+  #seriesOutput {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .login-panel,
+  .scan-progress-panel {
+    padding: 1.25rem;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .page-header__brand {
+    align-items: flex-start;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .page-header__action {
+    width: 100%;
+  }
+
+  .setup-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .setup-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .setup-settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-summary-card {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-summary-card button {
+    width: 100%;
+  }
+
+  .advanced__content {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-drawer-content {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+
+  .filter-group--search {
+    grid-column: auto;
+  }
+
+  .setup-section--tools {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .results-utility-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .local-store-row {
+    grid-template-columns: 1fr;
+  }
+
+  .local-data-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .download-panel__row {
+    grid-template-columns: 1fr;
+  }
+
+  .download-panel__row button {
+    justify-self: start;
+  }
+
+  .local-store-row button {
+    justify-self: start;
+  }
+
+  .results-header {
+    align-items: center;
+    flex-direction: column;
+    padding: 0;
+    text-align: center;
+  }
+
+  .results-header__identity {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .results-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .results-stats {
+    justify-content: center;
+  }
+
+  #seriesOutput {
+    padding-bottom: 5.5rem;
+  }
+
+  .results-command-bar-shell {
+    position: fixed;
+    top: auto;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    width: auto;
+    max-width: none;
+    margin: 0;
+  }
+
+  .results-command-bar {
+    padding-bottom: calc(0.4rem + env(safe-area-inset-bottom));
+  }
+
+  .results-command-scroll-button {
+    width: 1.85rem;
+    height: 2.2rem;
+  }
+
+  .results-command-scroll-button--left {
+    left: -0.35rem;
+  }
+
+  .results-command-scroll-button--right {
+    right: -0.35rem;
+  }
+
+  .results-command-group {
+    gap: 0.34rem;
+    padding-right: 0.45rem;
+    padding-left: 0.2rem;
+  }
+
+  .results-command-group__label {
+    font-size: 0.62rem;
+  }
+
+  .results-sort-control {
+    width: 9.75rem;
+    min-width: 0;
+  }
+
+  .results-command-bar button {
+    min-width: 0;
+    padding-right: 0.55rem;
+    padding-left: 0.55rem;
+  }
+
+  .results-scan-details summary {
+    align-items: center;
+    flex-direction: column;
+    gap: 0.15rem;
+    text-align: center;
+  }
+
+  .series-tile {
+    width: min(100%, 21rem);
+  }
+
+  .books-modal-header,
+  .book-detail-card {
+    grid-template-columns: 1fr;
+  }
+
+  .books-modal-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
+
+  .modal-close {
+    width: 2.25rem;
+  }
+
+  .scan-progress-panel {
+    max-height: calc(100vh - 2.5rem);
+    overflow: hidden;
+    padding: 1.25rem;
+  }
+
+  .progress-log {
+    max-height: 28vh;
+  }
+
+  .review-summary,
+  .review-details__grid,
+  .review-card__header,
+  .review-candidate-list__title {
+    grid-template-columns: 1fr;
+  }
+
+  .review-card__header,
+  .review-candidate-list__title {
+    align-items: stretch;
+  }
+
+  .review-manual-match-message {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .review-manual-match-message button,
+  .review-candidate-list__action {
+    width: 100%;
+  }
+
+  .review-score {
+    width: 4.25rem;
+  }
+
+  .tool-drawer-shell--fullscreen {
+    padding: 0;
+  }
+
+  .tool-drawer-shell--fullscreen .tool-drawer-panel {
+    height: 100dvh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .debug-controls {
+    position: static;
+    grid-template-columns: 1fr;
+    padding: 0.65rem;
+  }
+
+  .debug-controls__actions {
+    align-items: stretch;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+  }
+
+  .debug-controls__actions button {
+    flex: 1 1 7rem;
+    width: auto;
+  }
+
+  .debug-controls__actions span {
+    flex: 1 0 100%;
+  }
+
+  .debug-table-wrap {
+    overflow: visible;
+  }
+
+  .debug-table {
+    display: none;
+  }
+
+  .debug-card-list {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .debug-card {
+    display: grid;
+    gap: 0.45rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--primary-bg);
+  }
+
+  .debug-card__field {
+    display: grid;
+    grid-template-columns: 5.25rem minmax(0, 1fr);
+    gap: 0.6rem;
+    margin: 0;
+  }
+
+  .debug-card__field dt {
+    color: var(--placeholder-text);
+    font-weight: 700;
+  }
+
+  .debug-card__field dd {
+    min-width: 0;
+    margin: 0;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  .debug-pagination-slot--top {
+    display: none;
+  }
+
+  .debug-pagination-slot--bottom {
+    display: none;
+  }
+
+  .debug-mobile-pagination-footer {
+    display: block;
+    flex: 0 0 auto;
+    padding: 0.65rem 1rem calc(0.65rem + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    background: var(--secondary-bg);
+  }
+
+  .debug-mobile-pagination-footer .debug-pagination {
+    margin: 0;
+  }
+
+  .debug-pagination {
+    align-items: stretch;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 0.45rem;
+    padding: 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--primary-bg);
+  }
+
+  .debug-pagination button {
+    width: 100%;
+  }
+
+  .debug-pagination span {
+    align-self: center;
+    padding: 0 0.2rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+}

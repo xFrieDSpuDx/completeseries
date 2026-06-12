@@ -1,8 +1,10 @@
 services:
-  completeseries:
-    container_name: completeseries
+  complete-series-v2:
     build:
       context: .
-      dockerfile: Dockerfile
+      args:
+        VITE_GOOGLE_BOOKS_API_KEY: ${VITE_GOOGLE_BOOKS_API_KEY:-}
+    image: complete-series-v2:local
     ports:
       - "8080:80"
+    restart: unless-stopped

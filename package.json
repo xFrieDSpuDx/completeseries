@@ -1,42 +1,29 @@
 {
-  "name": "completeseries",
-  "version": "1.0.0",
-  "description": "**Identify missing audiobooks from the series you own**   *Designed for use with Audible series and AudiobookShelf.*",
+  "name": "completeseries-v2",
+  "version": "0.1.0",
+  "private": true,
   "type": "module",
   "scripts": {
-    "build": "node esbuild.config.mjs",
-    "watch": "node esbuild.config.mjs --watch",
-    "serve:dist": "php -S localhost:8080 -t dist",
-    "serve:php": "php -S localhost:8080 -t dist",
-    "serve:all": "npm run serve:php",
-    "clean": "node --input-type=module -e \"await (await import('fs/promises')).rm('dist', {recursive:true, force:true}); console.log('dist/ removed')\"",
-    "rebuild": "npm run clean && npm run build",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier . --write",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "start": "node app.js",
+    "start:cpanel": "node app.js",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "dependencies": {
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
   "devDependencies": {
-    "@eslint/css": "^0.10.0",
-    "@eslint/js": "^9.33.0",
-    "autoprefixer": "^10.4.21",
-    "concurrently": "^9.2.0",
-    "cssnano": "^6.1.2",
-    "esbuild": "^0.23.1",
-    "eslint": "^9.33.0",
-    "eslint-config-prettier": "^10.1.8",
-    "execa": "^9.6.0",
-    "globals": "^16.3.0",
-    "node-html-parser": "^7.0.1",
-    "postcss": "^8.5.6",
-    "postcss-cli": "^11.0.1",
-    "prettier": "^3.6.2",
-    "svgo": "^3.3.2"
-  },
-  "engines": {
-    "node": ">=18.0.0"
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.7.0",
+    "@vitest/coverage-v8": "^2.1.9",
+    "typescript": "^6.0.3",
+    "vite": "^5.4.21",
+    "vitest": "^2.1.9"
   }
 }

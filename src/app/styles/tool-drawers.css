@@ -1,0 +1,118 @@
+/* Tool drawers */
+
+.tool-drawer-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 12;
+  display: flex;
+  justify-content: flex-end;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+.tool-drawer-shell--fullscreen {
+  align-items: stretch;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.tool-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.tool-drawer-backdrop:hover {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.tool-drawer-panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(30rem, 100%);
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  border-left: 1px solid var(--border);
+  background: var(--secondary-bg);
+  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.5);
+}
+
+.tool-drawer-shell--fullscreen .tool-drawer-panel {
+  width: min(82rem, 100%);
+  height: calc(100dvh - 2rem);
+  max-height: calc(100dvh - 2rem);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+
+.tool-drawer-header {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--secondary-bg);
+}
+
+.tool-drawer-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.tool-drawer-content {
+  display: grid;
+  flex: 1 1 auto;
+  align-content: start;
+  gap: 1rem;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 1rem;
+  background: rgba(31, 31, 31, 0.42);
+  -webkit-overflow-scrolling: touch;
+}
+
+.tool-drawer-shell--fullscreen .tool-drawer-content {
+  overflow: hidden;
+}
+
+.tool-drawer-content .utility-panel {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(42, 42, 42, 0.8);
+}
+
+.tool-drawer-content > .results-filter-panel,
+.tool-drawer-content > .results-library-panel {
+  min-height: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  background: rgba(42, 42, 42, 0.8);
+  overflow: hidden;
+}
+
+.tool-drawer-content > .results-library-panel {
+  overflow: visible;
+}
+
+.tool-drawer-content--libraries {
+  overflow: visible;
+}
+
+.tool-drawer-content > .results-filter-panel > .results-filter-actions,
+.tool-drawer-content > .results-library-panel > .results-filter-actions {
+  margin: 0;
+}
