@@ -1,5 +1,10 @@
 # Change log
 
+## 2026-06-13 - Docker package publishing
+
+- Restored GitHub Container Registry publishing for the V2 Docker image.
+- Documented the published `ghcr.io/xfriedspudx/completeseries:latest` image.
+
 ## 2026-06-12 - Complete Series V2 first public build
 
 Complete Series has been rebuilt as a TypeScript and React browser app. This first V2 build

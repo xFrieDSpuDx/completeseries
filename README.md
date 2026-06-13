@@ -144,6 +144,12 @@ docker compose up --build
 
 The app will be available at `http://127.0.0.1:8080/`.
 
+The published container image is available from GitHub Container Registry:
+
+```bash
+docker run --rm -p 8080:80 ghcr.io/xfriedspudx/completeseries:latest
+```
+
 To bake in a default Google Books key for the browser app, set `VITE_GOOGLE_BOOKS_API_KEY` before building. Users can still enter their own key in the scan filters.
 
 Docker validation steps are listed in [Setup and configuration](docs/setup-configuration.md#docker-validation-checklist).
