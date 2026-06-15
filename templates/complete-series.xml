@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>complete-series</Name>
+  <Repository>ghcr.io/xfriedspudx/completeseries:latest</Repository>
+  <Registry>https://github.com/xFrieDSpuDx/completeseries/pkgs/container/completeseries</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <MyMAC/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/xFrieDSpuDx/completeseries/issues</Support>
+  <Project>https://github.com/xFrieDSpuDx/completeseries</Project>
+  <ReadMe>https://github.com/xFrieDSpuDx/completeseries#readme</ReadMe>
+  <Overview>Complete Series helps find gaps in audiobook series stored in Audiobookshelf.</Overview>
+  <Category>MediaApp:Books</Category>
+  <Description>Complete Series compares your Audiobookshelf library with selected catalogue providers and shows audiobook series that may be incomplete.</Description>
+  <WebUI>http://[IP]:[PORT:80]</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/main/templates/complete-series.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/xFrieDSpuDx/completeseries/main/public/favicon/favicon-512x512.png</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+  <Config Name="WebUI" Target="80" Default="8080" Mode="tcp" Description="Web interface port" Type="Port" Display="always" Required="true" Mask="false">8080</Config>
+  <TailscaleStateDir/>
+</Container>

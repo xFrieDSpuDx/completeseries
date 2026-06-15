@@ -1,5 +1,9 @@
 # Change log
 
+## 2026-06-15 - Unraid Docker template
+
+- Added an Unraid Docker template using bridge networking, host port 8080, and the 512px Complete Series favicon.
+
 ## 2026-06-13 - Docker package publishing
 
 - Restored GitHub Container Registry publishing for the V2 Docker image.
