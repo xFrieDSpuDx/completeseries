@@ -2,6 +2,7 @@
 
 ## 2026-06-13 - Docker package publishing
 
+- Added an Unraid Docker template using bridge networking, host port 8080, and the 512px Complete Series favicon.
 - Restored GitHub Container Registry publishing for the V2 Docker image.
 - Documented the published `ghcr.io/xfriedspudx/completeseries:latest` image.
 

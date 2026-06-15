@@ -150,6 +150,8 @@ The published container image is available from GitHub Container Registry:
 docker run --rm -p 8080:80 ghcr.io/xfriedspudx/completeseries:latest
 ```
 
+An Unraid template is available at [templates/complete-series.xml](templates/complete-series.xml). It uses Docker bridge networking, host port `8080`, and container port `80`.
+
 To bake in a default Google Books key for the browser app, set `VITE_GOOGLE_BOOKS_API_KEY` before building. Users can still enter their own key in the scan filters.
 
 Docker validation steps are listed in [Setup and configuration](docs/setup-configuration.md#docker-validation-checklist).
