@@ -8,10 +8,11 @@ import type { MissingBookDiagnostic, MissingBookOptions } from "./missingBookTyp
 import { findManualBookMatch } from "./manualBookMatches";
 import {
   buildLocalIdentifierIndex,
+  findLocalSeriesPositionMatch,
   hasLocalIdentifierMatch,
-  hasLocalSeriesPositionMatch,
   hasLocalTitleCandidateWithDifferentNarrator,
   hasLocalTitleMatch,
+  type LocalSeriesPositionMatch,
 } from "./ownershipMatching";
 import {
   describeProviderRegion,
@@ -189,11 +190,11 @@ export function evaluateProviderBookForMissingResult(
     }
   }
 
-  if (
-    options.ignoreSameSeriesPosition &&
-    hasLocalSeriesPositionMatch(providerBook, localSeries, providerSeries)
-  ) {
-    diagnostic.checks.push("Skipped because this series position already exists locally.");
+  const localPositionMatch = options.ignoreSameSeriesPosition
+    ? findLocalSeriesPositionMatch(providerBook, localSeries, providerSeries)
+    : null;
+  if (localPositionMatch) {
+    diagnostic.checks.push(describeSeriesPositionMatch(localPositionMatch));
     return skip();
   }
   if (options.ignoreSameSeriesPosition) {
@@ -299,4 +300,21 @@ function describeSeriesPositionMiss(
   if (providerPosition === null) return "No provider series position was available to match.";
 
   return `No local book was found at provider series position ${providerPosition}.`;
+}
+
+/**
+ * Purpose: Describe why the same-position ownership filter hid a provider book.
+ *
+ * @param match - Local/provider position match details.
+ * @returns Human-readable same-position diagnostic text.
+ */
+function describeSeriesPositionMatch(match: LocalSeriesPositionMatch): string {
+  if (match.localPositionIsRange && match.localPosition !== match.providerPosition) {
+    return (
+      `Skipped because provider position ${match.providerPosition} ` +
+      `is covered by local omnibus position ${match.localPosition}.`
+    );
+  }
+
+  return "Skipped because this series position already exists locally.";
 }

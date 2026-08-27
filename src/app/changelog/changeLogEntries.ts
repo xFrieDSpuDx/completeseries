@@ -12,6 +12,29 @@ export type ChangeLogEntry = {
 
 export const changeLogEntries: ChangeLogEntry[] = [
   {
+    date: "2026-08-27",
+    title: "Omnibus and publisher pack matching",
+    summary:
+      "Complete Series now recognises owned audiobook packs that cover several series positions, so books inside those packs are no longer shown as missing.",
+    sections: [
+      {
+        heading: "Result quality",
+        items: [
+          "Owned packs with positions such as 1-8 or Book 1 to Book 8 can now cover the individual books in that range.",
+          "The multi-book filter recognises more range wording when hiding provider omnibus results.",
+          "Decimal positions such as 3.5 stay separate, so side stories are not hidden by broad pack ranges.",
+        ],
+      },
+      {
+        heading: "Matching consistency",
+        items: [
+          "Position matching now uses one shared coverage check across ownership checks, provider filtering, series matching, and owned metadata enrichment.",
+          "Title matching stays cautious for series where book titles repeat the series name, so later numbered books are not hidden by an earlier title.",
+        ],
+      },
+    ],
+  },
+  {
     date: "2026-06-12",
     title: "Complete Series V2 first public build",
     summary:

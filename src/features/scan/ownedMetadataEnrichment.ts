@@ -6,6 +6,7 @@ import {
   textSimilarity,
   valuesOverlap,
 } from "../../domain/normalise";
+import { seriesPositionCovers } from "../../domain/seriesPositionCoverage";
 import type { MetadataDiscoveryOptions } from "./metadataDiscovery";
 import { getMetadataProvidersById } from "../../integrations/metadata/metadataProviderRegistry";
 
@@ -104,30 +105,15 @@ function couldLocalBookExplainCandidate(
  * @param localBook - Local Audiobookshelf book with parsed position evidence.
  * @param candidateBook - Provider book whose series entries may include several
  * positions.
- * @returns `true` when any local and provider position value matches.
+ * @returns `true` when any local position value covers a provider position.
  */
 function hasAnySeriesPositionOverlap(
   localBook: LocalBookEvidence,
   candidateBook: ProviderSeriesBook
 ): boolean {
-  if (localBook.position.numeric === null && localBook.position.raw === null) return false;
-
   return candidateBook.series.some((seriesEntry) => {
     const providerPosition = parseSeriesPosition(seriesEntry.position);
-
-    if (
-      localBook.position.numeric !== null &&
-      providerPosition.numeric !== null &&
-      localBook.position.numeric === providerPosition.numeric
-    ) {
-      return true;
-    }
-
-    return (
-      localBook.position.raw !== null &&
-      providerPosition.raw !== null &&
-      normaliseText(localBook.position.raw) === normaliseText(providerPosition.raw)
-    );
+    return seriesPositionCovers(localBook.position, providerPosition);
   });
 }
 

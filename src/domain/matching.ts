@@ -14,6 +14,7 @@ import {
   textSimilarity,
   valuesOverlap,
 } from "./normalise";
+import { seriesPositionCovers } from "./seriesPositionCoverage";
 
 const MATCH_THRESHOLD = 55;
 const STRONG_SERIES_NAME_SIMILARITY = 0.9;
@@ -280,27 +281,13 @@ function findLikelyProviderBook(
  * evidence.
  * @param providerBook - The provider book whose series entries contain
  * position metadata.
- * @returns `true` when either numeric or raw text positions match.
+ * @returns `true` when the local position is the same as, or covers, a provider
+ * position.
  */
 function hasPositionMatch(localBook: LocalBookEvidence, providerBook: ProviderSeriesBook): boolean {
-  if (localBook.position.numeric === null && localBook.position.raw === null) return false;
-
   return providerBook.series.some((seriesEntry) => {
     const providerPosition = parseSeriesPosition(seriesEntry.position);
-
-    if (
-      localBook.position.numeric !== null &&
-      providerPosition.numeric !== null &&
-      localBook.position.numeric === providerPosition.numeric
-    ) {
-      return true;
-    }
-
-    return (
-      localBook.position.raw !== null &&
-      providerPosition.raw !== null &&
-      normaliseText(localBook.position.raw) === normaliseText(providerPosition.raw)
-    );
+    return seriesPositionCovers(localBook.position, providerPosition);
   });
 }
 

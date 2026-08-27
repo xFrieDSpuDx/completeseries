@@ -4,12 +4,33 @@ import type {
   ProviderSeriesBook,
   ProviderSeriesCandidate,
 } from "./audiobook";
-import { normaliseIdentifier, normaliseText, valuesOverlap } from "./normalise";
-import { getProviderSeriesPosition } from "./providerBookChecks";
-import { areSubtitlesCompatible, hasCompatibleTitleEvidence } from "./titleEvidence";
+import {
+  normaliseIdentifier,
+  normaliseText,
+  parseSeriesPosition,
+  valuesOverlap,
+} from "./normalise";
+import { getProviderSeriesPositionEvidence } from "./providerBookChecks";
+import {
+  formatSeriesPosition,
+  hasSeriesPositionEvidence,
+  isWholeNumberSeriesPositionRange,
+  seriesPositionCovers,
+} from "./seriesPositionCoverage";
+import {
+  areSubtitlesCompatible,
+  buildTitleEvidence,
+  hasCompatibleTitleEvidence,
+} from "./titleEvidence";
 
 export type TitleMatchOptions = {
   matchNarratorEditions?: boolean;
+};
+
+export type LocalSeriesPositionMatch = {
+  localPosition: string;
+  providerPosition: string;
+  localPositionIsRange: boolean;
 };
 
 /**
@@ -78,7 +99,17 @@ export function hasLocalTitleMatch(
       return false;
     }
 
-    if (hasSharedSeriesName(providerBook, localBook)) return true;
+    const sharedSeriesNames = getSharedSeriesNames(providerBook, localBook);
+    const sharedSeriesName = sharedSeriesNames.length > 0;
+    if (
+      sharedSeriesName &&
+      hasConflictingSeriesPositionEvidence(providerBook, localBook) &&
+      hasSeriesTitleAsBookTitle(providerBook, localBook, sharedSeriesNames)
+    ) {
+      return false;
+    }
+
+    if (sharedSeriesName) return true;
 
     return (
       areSubtitlesCompatible(localSubtitle, providerSubtitle) ||
@@ -114,25 +145,72 @@ export function hasLocalTitleCandidateWithDifferentNarrator(
 }
 
 /**
- * Purpose: Check whether local and provider metadata place a title in the same
- * named series.
+ * Purpose: Find series names shared by a provider book and local book.
  *
  * @param providerBook - Provider book being checked for ownership.
  * @param localBook - Local Audiobookshelf book that has compatible title
  * evidence.
- * @returns `true` when both records share at least one normalised series name.
+ * @returns Shared normalised series names.
  */
-function hasSharedSeriesName(
+function getSharedSeriesNames(
   providerBook: ProviderSeriesBook,
   localBook: LocalBookEvidence
-): boolean {
+): string[] {
   const localSeriesNames = new Set(
     (localBook.seriesNames ?? []).map(normaliseText).filter(Boolean)
   );
-  if (localSeriesNames.size === 0) return false;
+  if (localSeriesNames.size === 0) return [];
 
-  return providerBook.series.some((seriesEntry) =>
-    localSeriesNames.has(normaliseText(seriesEntry.name))
+  return providerBook.series
+    .map((seriesEntry) => normaliseText(seriesEntry.name))
+    .filter((seriesName) => seriesName && localSeriesNames.has(seriesName));
+}
+
+/**
+ * Purpose: Stop title-only ownership matches from hiding clearly different
+ * entries in the same series.
+ *
+ * @param providerBook - Provider book being checked for ownership.
+ * @param localBook - Local book with compatible title and shared series
+ * evidence.
+ * @returns `true` when both records expose series-position evidence but the
+ * local position does not cover any provider position.
+ */
+function hasConflictingSeriesPositionEvidence(
+  providerBook: ProviderSeriesBook,
+  localBook: LocalBookEvidence
+): boolean {
+  if (!hasSeriesPositionEvidence(localBook.position)) return false;
+
+  const providerPositions = providerBook.series
+    .map((seriesEntry) => parseSeriesPosition(seriesEntry.position))
+    .filter(hasSeriesPositionEvidence);
+  if (providerPositions.length === 0) return false;
+
+  return !providerPositions.some((providerPosition) =>
+    seriesPositionCovers(localBook.position, providerPosition)
+  );
+}
+
+/**
+ * Purpose: Detect series where the book title is also the series title, because
+ * those need position evidence to avoid hiding later numbered entries.
+ *
+ * @param providerBook - Provider book being checked for ownership.
+ * @param localBook - Local Audiobookshelf book with compatible title evidence.
+ * @param sharedSeriesNames - Normalised series names shared by both records.
+ * @returns `true` when either title is the same as a shared series name.
+ */
+function hasSeriesTitleAsBookTitle(
+  providerBook: ProviderSeriesBook,
+  localBook: LocalBookEvidence,
+  sharedSeriesNames: string[]
+): boolean {
+  const providerTitleEvidence = buildTitleEvidence(providerBook.title, providerBook.subtitle);
+  const localTitleEvidence = buildTitleEvidence(localBook.title, localBook.subtitle);
+
+  return sharedSeriesNames.some(
+    (seriesName) => providerTitleEvidence.has(seriesName) || localTitleEvidence.has(seriesName)
   );
 }
 
@@ -167,13 +245,37 @@ export function hasLocalSeriesPositionMatch(
   localSeries: LocalSeriesEvidence,
   providerSeries: ProviderSeriesCandidate
 ): boolean {
-  const localPositions = new Set(
-    localSeries.books
-      .map((book) => book.position.numeric ?? book.position.raw)
-      .filter((position) => position !== null)
-      .map(String)
-  );
+  return findLocalSeriesPositionMatch(providerBook, localSeries, providerSeries) !== null;
+}
 
-  const providerPosition = getProviderSeriesPosition(providerBook, providerSeries);
-  return providerPosition !== null && localPositions.has(String(providerPosition));
+/**
+ * Purpose: Find the local series position that already covers a provider book.
+ *
+ * @param providerBook - The provider book that may otherwise be reported as
+ * missing.
+ * @param localSeries - The matched Audiobookshelf series containing local
+ * position evidence.
+ * @param providerSeries - The matched provider series currently being compared.
+ * @returns Details of the first local position that covers the provider
+ * position, or `null` when no coverage exists.
+ */
+export function findLocalSeriesPositionMatch(
+  providerBook: ProviderSeriesBook,
+  localSeries: LocalSeriesEvidence,
+  providerSeries: ProviderSeriesCandidate
+): LocalSeriesPositionMatch | null {
+  const providerPosition = getProviderSeriesPositionEvidence(providerBook, providerSeries);
+  if (!hasSeriesPositionEvidence(providerPosition)) return null;
+
+  for (const localBook of localSeries.books) {
+    if (!seriesPositionCovers(localBook.position, providerPosition)) continue;
+
+    return {
+      localPosition: formatSeriesPosition(localBook.position),
+      providerPosition: formatSeriesPosition(providerPosition),
+      localPositionIsRange: isWholeNumberSeriesPositionRange(localBook.position),
+    };
+  }
+
+  return null;
 }
