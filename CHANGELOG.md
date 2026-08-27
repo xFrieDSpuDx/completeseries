@@ -1,5 +1,18 @@
 # Change log
 
+## 2026-08-27 - Omnibus and publisher pack matching
+
+- Fixed missing-book checks for owned omnibus and publisher pack entries, so a local position such
+  as `1-8` can cover the individual books inside that range.
+- Expanded the multi-book filter to recognise more position wording, including `Book 1 to Book 8`,
+  `1 and 2`, and similar range formats.
+- Reused the same position coverage helper across ownership checks, provider filtering, series
+  matching, and owned metadata enrichment so position behaviour is easier to keep consistent.
+- Kept decimal positions such as `3.5` separate so side stories are not hidden by broad omnibus
+  ranges.
+- Kept title matching cautious for series where book titles repeat the series name, so later
+  numbered books are not hidden just because book one has a similar title.
+
 ## 2026-06-15 - Unraid Docker template
 
 - Added an Unraid Docker template using bridge networking, host port 8080, and the 512px Complete Series favicon.

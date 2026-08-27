@@ -1,5 +1,6 @@
 import type { ProviderSeriesBook, ProviderSeriesCandidate, RegionCode } from "./audiobook";
 import { normaliseIdentifier, normaliseText, parseSeriesPosition } from "./normalise";
+import { isWholeNumberSeriesPositionRange } from "./seriesPositionCoverage";
 
 const AUDIBLE_EMPTY_PLACEHOLDER_RELEASE_DATE = "2200-01-01";
 
@@ -97,7 +98,7 @@ export function hasMultiBookSeriesPosition(
   providerSeries: ProviderSeriesCandidate
 ): boolean {
   const providerPosition = getProviderSeriesPositionEvidence(providerBook, providerSeries);
-  return Boolean(providerPosition.raw?.includes("-"));
+  return isWholeNumberSeriesPositionRange(providerPosition);
 }
 
 /**
