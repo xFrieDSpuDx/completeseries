@@ -44,6 +44,35 @@ describe("titleEvidence", () => {
       )
     ).toBe(false);
   });
+
+  it("does not treat a different volume number as a spelling difference", () => {
+    const providerBook = buildProviderBook("Kuma Kuma Kuma Bear (Light Novel) Vol. 13");
+
+    expect(
+      hasCompatibleTitleEvidence(
+        providerBook,
+        buildLocalBook("Kuma Kuma Kuma Bear (Light Novel) Vol. 1")
+      )
+    ).toBe(false);
+    expect(
+      hasCompatibleTitleEvidence(
+        providerBook,
+        buildLocalBook("Kuma Kuma Kuma Bear (Light Novel) Vol. 12")
+      )
+    ).toBe(false);
+    expect(
+      hasCompatibleTitleEvidence(
+        providerBook,
+        buildLocalBook("Kuma Kuma Kuma Bear (Light Novel) Vol. 13")
+      )
+    ).toBe(true);
+    expect(
+      hasCompatibleTitleEvidence(
+        buildProviderBook("Beware of Chicken 6: A Xianxia Cultivation Novel"),
+        buildLocalBook("Beware of Chicken 5: A Xianxia Cultivation Novel")
+      )
+    ).toBe(false);
+  });
 });
 
 /**

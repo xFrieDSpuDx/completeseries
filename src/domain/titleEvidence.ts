@@ -118,7 +118,8 @@ function getTitlePrefixVariants(title: string): string[] {
  * @param providerTitle - Normalised provider title evidence.
  * @param localTitle - Normalised local title evidence.
  * @returns `true` when both titles have the same token shape and only minor
- * single-token spelling differences.
+ * single-token spelling differences. Tokens containing digits never count as
+ * spelling differences, so `Vol. 13` does not match `Vol. 1` or `Vol. 12`.
  */
 function areTitleEvidenceValuesSimilar(providerTitle: string, localTitle: string): boolean {
   if (providerTitle === localTitle) return true;
@@ -134,6 +135,7 @@ function areTitleEvidenceValuesSimilar(providerTitle: string, localTitle: string
 
     changedTokens += 1;
     if (changedTokens > 1) return false;
+    if (/\d/.test(providerTokens[index]) || /\d/.test(localTokens[index])) return false;
     if (levenshteinDistance(providerTokens[index], localTokens[index]) > 1) return false;
   }
 
